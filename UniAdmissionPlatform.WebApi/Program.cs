@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace UniAdmissionPlatform_BE
+namespace UniAdmissionPlatform.WebApi
 {
     public class Program
     {
