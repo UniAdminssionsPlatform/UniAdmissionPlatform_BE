@@ -11,15 +11,14 @@
       <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
       <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.18" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="AutoMapperModules" />
       <Folder Include="Commons\Constants" />
-      <Folder Include="Commons\Enums" />
       <Folder Include="Commons\Toolkit" />
-      <Folder Include="Entities" />
       <Folder Include="Repositories" />
       <Folder Include="Services" />
       <Folder Include="ViewModels" />

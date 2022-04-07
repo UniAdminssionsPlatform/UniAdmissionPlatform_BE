@@ -11,7 +11,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
                 options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Populate;
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.Formatting = Formatting.Indented;
