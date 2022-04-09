@@ -22,11 +22,20 @@
     <ItemGroup>
       <Folder Include="Attributes" />
       <Folder Include="Controllers" />
-      <Folder Include="Resource" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\UniAdmissionPlatform.BusinessTier\UniAdmissionPlatform.BusinessTier.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Helpers\swagger.css" />
+      <None Remove="Helpers\index.html" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\index.html" />
+      <EmbeddedResource Include="Resources\index.html" />
     </ItemGroup>
 
     <PropertyGroup>

@@ -15,8 +15,22 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <summary>
         /// Lấy tất cả các tên phim hoạt hình hay nhất hệ mặt trời
         /// </summary>
-        /// <response code="200"><h3>code="0": success <br/>
-        /// code="7": fail</h3></response>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
         /// <returns></returns>
         [HttpGet]
         public IActionResult GetFilms()

@@ -24,4 +24,9 @@
       <Folder Include="ViewModels" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Commons\Resources\rbac_model.conf" />
+      <EmbeddedResource Include="Commons\Resources\rbac_model.conf" />
+    </ItemGroup>
+
 </Project>
