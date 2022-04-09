@@ -52,7 +52,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
         {
             return new OpenApiInfo
             {
-                Title = "Spirit Astro",
+                Title = "Uni Admission Platform Open API",
                 Version = apiDescription.ApiVersion.ToString(),
                 Description = "This service provide api for UniAdmissionPlatform!",
             };
