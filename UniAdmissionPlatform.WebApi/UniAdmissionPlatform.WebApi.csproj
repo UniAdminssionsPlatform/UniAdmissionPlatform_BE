@@ -31,11 +31,14 @@
     <ItemGroup>
       <None Remove="Helpers\swagger.css" />
       <None Remove="Helpers\index.html" />
+      <None Update="Resources\Casbin\rbac_model.conf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources\Swagger\index.html" />
       <None Remove="Resources\index.html" />
-      <EmbeddedResource Include="Resources\index.html" />
     </ItemGroup>
 
     <PropertyGroup>
