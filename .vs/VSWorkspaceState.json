@@ -1,14 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\.github",
     "\\.github\\workflows",
-    "\\UniAdmissionPlatform.BusinessTier",
-    "\\UniAdmissionPlatform.DataTier",
     "\\UniAdmissionPlatform.DataTier\\BaseConnect",
-    "\\UniAdmissionPlatform.WebApi",
     "\\UniAdmissionPlatform.WebApi\\Properties"
   ],
-  "SelectedNode": "\\.github\\workflows\\cd.aws.yml",
+  "SelectedNode": "\\UniAdmissionPlatform_BE.sln",
   "PreviewInSolutionExplorer": false
 }
