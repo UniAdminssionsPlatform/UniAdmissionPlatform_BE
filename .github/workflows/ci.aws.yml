@@ -1,7 +1,7 @@
 # The name of the workflow.
 # This is the name that's displayed for status
 # badges (commonly embedded in README.md files).
-name: build, Test and Deploy
+name: build, Test
 on:
   push:
     branches:
@@ -27,5 +27,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Run automated test
         run: dotnet test -c Release --no-build
