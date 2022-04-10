@@ -24,3 +24,8 @@ jobs:
 
       - name: Build app
         run: dotnet build -c Release --no-restore
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run automated test
+        run: dotnet test -c Release --no-build
