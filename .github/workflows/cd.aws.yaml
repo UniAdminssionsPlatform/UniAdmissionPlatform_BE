@@ -1,0 +1,46 @@
+# The name of the workflow.
+# This is the name that's displayed for status
+# badges (commonly embedded in README.md files).
+name: build and deploy
+on:
+  push:
+    branches:
+      - main
+      - develope
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 5
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "5.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build app
+        run: dotnet build -c Release --no-restore
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: UniAdmissionPlatformWebApi
+          environment_name: UniAdmissionPlatform-dev
+          version_label: 12345
+          region: ap-southeast-1
+          deployment_package: deploy.zip

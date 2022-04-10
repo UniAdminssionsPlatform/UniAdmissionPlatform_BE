@@ -1,0 +1,21 @@
+
+{
+    "region" : "ap-southeast-1",
+    "configuration" : "Debug",
+    "framework"     : "net5.0",
+    "self-contained" : false,
+    "application"    : "UniAdmissionPlatformWebApi",
+    "environment"    : "UniAdmissionPlatform-dev",
+    "app-path"       : "/",
+    "iis-website"    : "Default Web Site",
+    "enable-xray"    : false,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-01fea661f705faee2\";\"aws:ec2:vpc,Subnets\"=\"subnet-0bb20422c4bcc9977\"",
+    "solution-stack"       : "64bit Windows Server 2016 v2.9.0 running IIS 10.0",
+    "environment-type"     : "SingleInstance",
+    "cname"                : "uniadmissionplatform-dev",
+    "instance-type"        : "m3.xlarge",
+    "key-pair"             : "",
+    "instance-profile"     : "aws-elasticbeanstalk-ec2-role",
+    "service-role"         : "aws-elasticbeanstalk-service-role"
+}
