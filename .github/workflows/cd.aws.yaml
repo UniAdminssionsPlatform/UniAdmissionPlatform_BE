@@ -25,17 +25,6 @@ jobs:
       - name: Build app
         run: dotnet build -c Release --no-restore
 
-      # - name: Test
-      #   run: dotnet test --no-restore --verbosity normal
-
-  deploy:
-    needs: build
-    name: deploy uni-be
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v2
-
       - name: Publish
         run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --self-contained false
 
@@ -43,6 +32,14 @@ jobs:
         run: |
           cd ${{ github.workspace }}/out 
           zip -r ${{ github.workspace }}/out.zip *
+
+  deploy:
+    needs: build
+    name: deploy uni-be
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
