@@ -9,6 +9,7 @@ on:
       - develope
 jobs:
   build:
+    name: build uni-be
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
