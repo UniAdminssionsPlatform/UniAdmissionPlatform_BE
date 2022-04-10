@@ -32,6 +32,11 @@ jobs:
         run: |
           cd ${{ github.workspace }}/out 
           zip -r ${{ github.workspace }}/out.zip *
+      - name: Upload zip source
+        uses: actions/upload-artifact@v2
+        with:
+          name: uni_be
+          path: out.zip
 
   deploy:
     needs: build
@@ -40,6 +45,11 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+
+      - name: Clone source zip
+        uses: actions/download-artifact@v2
+        with:
+          name: uni_be
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
