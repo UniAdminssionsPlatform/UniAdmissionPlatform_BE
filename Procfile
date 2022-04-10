@@ -1,0 +1,1 @@
+web: dotnet exec ./UniAdmissionPlatform.WebApi.dll
