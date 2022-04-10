@@ -1,0 +1,129 @@
+﻿<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css">
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16"/>
+    <style>
+
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+
+        #doc {
+            margin: 5px;
+        }
+
+        #doc * {
+            border: 1px solid cadetblue;
+        }
+
+        #doc th {
+            background-color: rgba(105, 255, 143, 0.62);
+        }
+
+        #doc td {
+            padding: 5px;
+        }
+
+        #doc tr:hover {
+            background-color: #fafafa;
+        }
+
+        .grid-container {
+            display: flex;
+            grid-template-columns: auto auto auto auto;
+            background-color: #4158D0;
+            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            padding: 10px;
+        }
+        
+        .music-box {
+            flex: 50%;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="grid-container">
+    <div class="music-box">
+        <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/1422370093&color=%23af859f&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+    </div>
+    <div class="music-box" style="padding: 0 20px; color: #fafafa">
+        <div>
+            <h1>Welcome to UniAdmissionPlatform Open API</h1>
+            <h2>Chúc mấy anh em làm việc vui vẻ</h2>
+            <h2>From </h2>
+            <h3>Nguyễn Đình Hào - SE140646</h3>
+            <h3>Nguyễn Văn Bắc - SE141019</h3>
+            <h2>with love</h2>
+        </div>
+    </div>
+</div>
+<div id="swagger-ui"></div>
+
+<!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
+<script>
+    if (window.navigator.userAgent.indexOf("Edge") > -1) {
+        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+        window.fetch = undefined;
+    }
+</script>
+
+<script src="./swagger-ui-bundle.js"></script>
+<script src="./swagger-ui-standalone-preset.js"></script>
+<script>
+    window.onload = function () {
+        var configObject = JSON.parse('{"urls":[{"url":"/swagger/v1/swagger.json","name":"V1"},{"url":"/swagger/v1/swagger.json","name":"UniAdmissionPlatform.WebApi v1"}],"deepLinking":false,"displayOperationId":false,"defaultModelsExpandDepth":1,"defaultModelExpandDepth":1,"defaultModelRendering":"example","displayRequestDuration":false,"docExpansion":"list","showExtensions":false,"showCommonExtensions":false,"supportedSubmitMethods":["get","put","post","delete","options","head","patch","trace"]}');
+        var oauthConfigObject = JSON.parse('{"scopeSeparator":" ","useBasicAuthenticationWithAccessCodeGrant":false,"usePkceWithAuthorizationCodeGrant":false}');
+
+        // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
+        configObject.urls.forEach(function (item) {
+            if (item.url.startsWith("http") || item.url.startsWith("/")) return;
+            item.url = window.location.href.replace("index.html", item.url).split('#')[0];
+        });
+
+        // If validatorUrl is not explicitly provided, disable the feature by setting to null
+        if (!configObject.hasOwnProperty("validatorUrl"))
+            configObject.validatorUrl = null
+
+        // If oauth2RedirectUrl isn't specified, use the built-in default
+        if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
+            configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+
+        // Apply mandatory parameters
+        configObject.dom_id = "#swagger-ui";
+        configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+        configObject.layout = "StandaloneLayout";
+
+        // Begin Swagger UI call region
+
+        const ui = SwaggerUIBundle(configObject);
+
+        ui.initOAuth(oauthConfigObject);
+
+        // End Swagger UI call region
+
+        window.ui = ui
+    }
+</script>
+</body>
+</html>

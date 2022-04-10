@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.WebApi.AppStart;
 using UniAdmissionPlatform.WebApi.Middlewares;
 
@@ -37,8 +38,13 @@ namespace UniAdmissionPlatform.WebApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+            
             services.InitSwagger();
+            
+            services.AddSingleton<ICasbinService, CasbinService>();
+            
             services.ConfigureJsonFormatServices();
+            
             services.AddRouting(options => options.LowercaseUrls = true);
             
             services.ConfigureVersioningServices();
@@ -69,9 +75,10 @@ namespace UniAdmissionPlatform.WebApi
                 {
                     c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                 }
-            
+
+                c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("UniAdmissionPlatform.WebApi.Resources.Swagger.index.html");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1");
             });
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
 
             app.UseDeveloperExceptionPage();
 

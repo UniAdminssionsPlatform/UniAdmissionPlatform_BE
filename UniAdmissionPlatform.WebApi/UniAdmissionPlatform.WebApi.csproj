@@ -22,11 +22,23 @@
     <ItemGroup>
       <Folder Include="Attributes" />
       <Folder Include="Controllers" />
-      <Folder Include="Resource" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\UniAdmissionPlatform.BusinessTier\UniAdmissionPlatform.BusinessTier.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Helpers\swagger.css" />
+      <None Remove="Helpers\index.html" />
+      <None Update="Resources\Casbin\rbac_model.conf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Swagger\index.html" />
+      <None Remove="Resources\index.html" />
     </ItemGroup>
 
     <PropertyGroup>
