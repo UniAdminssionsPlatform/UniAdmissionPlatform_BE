@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.WebApi.AppStart;
 using UniAdmissionPlatform.WebApi.Middlewares;
@@ -50,7 +51,9 @@ namespace UniAdmissionPlatform.WebApi
             services.ConfigureVersioningServices();
 
             services.ConfigureFilterServices();
-            
+
+            services.InitializerDI();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

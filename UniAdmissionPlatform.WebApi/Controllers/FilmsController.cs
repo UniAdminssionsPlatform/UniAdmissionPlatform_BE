@@ -27,7 +27,20 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///         </tr>
         ///         <tr>
         ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
+        ///             <td><pre><code class="language-json hljs">{
+        ///  "code": 0,
+        ///  "data": [
+        ///    {
+        ///      "name": "Phàm nhân tu tiên",
+        ///      "main_actor": "Hàn Lập"
+        ///    },
+        ///    {
+        ///      "name": "Đấu la đại lục",
+        ///      "main_actor": "Đường Tam"
+        ///    }
+        ///  ],
+        ///  "msg": null
+        ///}</code></pre></td>
         ///         </tr>
         ///     </table>
         /// </response>
