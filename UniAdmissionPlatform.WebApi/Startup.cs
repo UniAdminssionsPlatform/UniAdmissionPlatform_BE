@@ -45,6 +45,8 @@ namespace UniAdmissionPlatform.WebApi
             services.AddSingleton<ICasbinService, CasbinService>();
             
             services.ConfigureJsonFormatServices();
+
+            services.InitFirebase();
             
             services.AddRouting(options => options.LowercaseUrls = true);
             
@@ -53,6 +55,10 @@ namespace UniAdmissionPlatform.WebApi
             services.ConfigureFilterServices();
 
             services.InitializerDI();
+
+            services.AddSingleton<IAuthService, AuthService>();
+
+            services.ConfigureAutoMapperServices();
 
         }
 

@@ -21,11 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Attributes" />
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\UniAdmissionPlatform.BusinessTier\UniAdmissionPlatform.BusinessTier.csproj" />
     </ItemGroup>
 
