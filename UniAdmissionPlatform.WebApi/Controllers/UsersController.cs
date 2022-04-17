@@ -54,9 +54,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            // var decodedToken = await FirebaseAuth.DefaultInstance
-            //     .VerifyIdTokenAsync(loginRequest.FirebaseToken);
-            var uid = "1";
+            var decodedToken = await FirebaseAuth.DefaultInstance
+                .VerifyIdTokenAsync(loginRequest.FirebaseToken);
+            var uid = decodedToken.Uid;
 
             try
             {

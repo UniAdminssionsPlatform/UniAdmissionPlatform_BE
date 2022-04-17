@@ -57,6 +57,7 @@ namespace UniAdmissionPlatform.WebApi
             services.InitializerDI();
 
             services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
 
             services.ConfigureAutoMapperServices();
 
