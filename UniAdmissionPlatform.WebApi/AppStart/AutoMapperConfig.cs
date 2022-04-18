@@ -5,17 +5,20 @@ using UniAdmissionPlatform.BusinessTier.Commons;
 
 namespace UniAdmissionPlatform.WebApi.AppStart
 {
-    public static class AutoMapperConfig
+    namespace UniAdmissionPlatform.WebApi.AppStart
     {
-        public static void ConfigureAutoMapperServices(this IServiceCollection services)
+        public static class AutoMapperConfig
         {
-            var mappingConfig = new MapperConfiguration(mc =>
+            public static void ConfigureAutoMapperServices(this IServiceCollection services)
             {
-                mc.AddProfile(new AutoMapperResolver());
-                mc.ConfigUserMapperModule();
-            });
-            var mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new AutoMapperResolver());
+                    mc.ConfigTagMapperModule();
+                });
+                var mapper = mappingConfig.CreateMapper();
+                services.AddSingleton(mapper);
+            }
         }
     }
 }

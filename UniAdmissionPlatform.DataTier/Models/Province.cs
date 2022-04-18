@@ -9,6 +9,7 @@ namespace UniAdmissionPlatform.DataTier.Models
     {
         public Province()
         {
+            Events = new HashSet<Event>();
             HighSchools = new HashSet<HighSchool>();
             Universities = new HashSet<University>();
         }
@@ -18,6 +19,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int RegionId { get; set; }
 
         public virtual Region Region { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<HighSchool> HighSchools { get; set; }
         public virtual ICollection<University> Universities { get; set; }
     }
