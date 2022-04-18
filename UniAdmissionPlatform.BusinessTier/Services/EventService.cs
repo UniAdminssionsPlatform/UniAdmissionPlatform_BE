@@ -66,6 +66,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var eventInRequest = mapper.Map<Event>(updateEventRequest);
         
             uniEvent.Name = eventInRequest.Name;
+            uniEvent.ShortDescription = eventInRequest.ShortDescription;
+            uniEvent.Description = eventInRequest.Description;
+            uniEvent.ThumbnailUrl = eventInRequest.ThumbnailUrl;
+            uniEvent.FileUrl = eventInRequest.FileUrl;
+            uniEvent.Status = eventInRequest.Status;
+            uniEvent.HostName = eventInRequest.HostName;
+            uniEvent.TargetStudent = eventInRequest.TargetStudent;
             uniEvent.UpdatedAt = DateTime.Now;
         
             await UpdateAsyn(uniEvent);
