@@ -16,6 +16,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int HighSchoolId { get; set; }
+        public int Status { get; set; }
 
         public virtual HighSchool HighSchool { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }

@@ -18,9 +18,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Name { get; set; }
         public string Code { get; set; }
         public int MajorGroupId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
 
         public virtual MajorGroup MajorGroup { get; set; }
         public virtual ICollection<MajorDepartment> MajorDepartments { get; set; }
