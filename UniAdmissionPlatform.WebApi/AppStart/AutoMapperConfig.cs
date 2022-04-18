@@ -13,6 +13,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
             {
                 mc.AddProfile(new AutoMapperResolver());
                 mc.ConfigUserMapperModule();
+                mc.ConfigEventMapperModule();
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

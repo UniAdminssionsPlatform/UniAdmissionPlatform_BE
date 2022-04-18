@@ -15,7 +15,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class CasbinController : ControllerBase
     {
         private readonly ICasbinService _casbinService;
-
+        
         public CasbinController(ICasbinService casbinService)
         {
             _casbinService = casbinService;
