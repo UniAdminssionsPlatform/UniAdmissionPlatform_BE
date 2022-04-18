@@ -15,9 +15,6 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
 
         public virtual ICollection<StudentRecordItem> StudentRecordItems { get; set; }
         public virtual ICollection<SubjectGroupSubject> SubjectGroupSubjects { get; set; }
