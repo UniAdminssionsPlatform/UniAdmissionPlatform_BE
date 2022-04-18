@@ -19,6 +19,5 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? DeletedAt { get; set; }
 
         public virtual ICollection<NewsTag> NewsTags { get; set; }
-
     }
 }

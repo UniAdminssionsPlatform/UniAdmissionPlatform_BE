@@ -34,6 +34,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int? ProvinceId { get; set; }
         public string MeetingUrl { get; set; }
 
+        public virtual EventType EventType { get; set; }
         public virtual Province Province { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
