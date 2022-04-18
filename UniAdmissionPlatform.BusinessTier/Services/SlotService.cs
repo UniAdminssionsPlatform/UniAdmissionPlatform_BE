@@ -45,7 +45,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     "Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
             }
             
-            if (await Get().Where(s => s.StartTime >= slot.StartTime && s.EndTime >= slot.StartTime // start time nam trong thang slot khac
+            if (await Get().Where(s => s.StartTime <= slot.StartTime && s.EndTime >= slot.StartTime // start time nam trong thang slot khac
                                       || slot.EndTime != null && s.StartTime <= slot.EndTime && s.EndTime >= slot.EndTime // end time nam trong thang slot khac
                                       || slot.EndTime != null && s.StartTime <= slot.StartTime && s.EndTime >= slot.EndTime // ca slot lan end time deu nam trong slot khac
                                       ).AnyAsync())
