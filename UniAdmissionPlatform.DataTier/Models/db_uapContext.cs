@@ -198,6 +198,8 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("Event");
 
+                entity.HasIndex(e => e.EventTypeId, "Event_EventType_Id_fk");
+
                 entity.HasIndex(e => e.ProvinceId, "Event_Province_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_event_deleted_at");
@@ -221,6 +223,12 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasColumnType("tinytext");
 
                 entity.Property(e => e.TargetStudent).IsRequired();
+
+                entity.HasOne(d => d.EventType)
+                    .WithMany(p => p.Events)
+                    .HasForeignKey(d => d.EventTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Event_EventType_Id_fk");
 
                 entity.HasOne(d => d.Province)
                     .WithMany(p => p.Events)
