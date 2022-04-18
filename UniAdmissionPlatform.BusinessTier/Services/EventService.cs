@@ -73,6 +73,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             uniEvent.Status = eventInRequest.Status;
             uniEvent.HostName = eventInRequest.HostName;
             uniEvent.TargetStudent = eventInRequest.TargetStudent;
+            uniEvent.EventTypeId = eventInRequest.EventTypeId;
+            uniEvent.Address = eventInRequest.Address;
+            uniEvent.ProvinceId = eventInRequest.ProvinceId;
+            uniEvent.MeetingUrl = eventInRequest.MeetingUrl;
             uniEvent.UpdatedAt = DateTime.Now;
         
             await UpdateAsyn(uniEvent);
