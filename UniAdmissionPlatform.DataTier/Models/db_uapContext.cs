@@ -197,8 +197,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("Event");
 
-                entity.HasIndex(e => e.SlotId, "Event_Slot_Id_fk");
-
                 entity.HasIndex(e => e.DeletedAt, "ix_event_deleted_at");
 
                 entity.Property(e => e.Description).IsRequired();
@@ -216,20 +214,23 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasColumnType("tinytext");
 
                 entity.Property(e => e.TargetStudent).IsRequired();
-
-                entity.HasOne(d => d.Slot)
-                    .WithMany(p => p.Events)
-                    .HasForeignKey(d => d.SlotId)
-                    .HasConstraintName("Event_Slot_Id_fk");
             });
 
             modelBuilder.Entity<EventCheck>(entity =>
             {
                 entity.ToTable("EventCheck");
 
+                entity.HasIndex(e => e.EventId, "EventCheck_Event_Id_fk");
+
                 entity.HasIndex(e => e.SlotId, "EventCheck_Slot_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_event_check_deleted_at");
+
+                entity.HasOne(d => d.Event)
+                    .WithMany(p => p.EventChecks)
+                    .HasForeignKey(d => d.EventId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("EventCheck_Event_Id_fk");
 
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.EventChecks)
@@ -596,8 +597,6 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.ToTable("Role");
 
                 entity.Property(e => e.Id).HasMaxLength(20);
-
-                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
