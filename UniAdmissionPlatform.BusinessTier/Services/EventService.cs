@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
@@ -18,7 +19,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IEventService
     {
-        Task<int> CreateEvent(CreateEventRequest createEventRequest);
+        Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest);
         Task UpdateEvent(int id, UpdateEventRequest updateEventRequest);
         Task DeleteEvent(int id);
         Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort,
@@ -35,12 +36,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
         
-        public async Task<int> CreateEvent(CreateEventRequest createEventRequest)
+        public async Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest)
         {
             
             var mapper = _mapper.CreateMapper();
             var uniEvent = mapper.Map<Event>(createEventRequest);
-            
+
+            var uniEventUniversityEvents = uniEvent.UniversityEvents = new List<UniversityEvent>();
+            uniEventUniversityEvents.Add(new UniversityEvent
+            {
+                UniversityId = universityId,
+            });
+
+
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
         }

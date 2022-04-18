@@ -14,12 +14,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
-        private readonly IUniversityEventService _universityEventService;
         private readonly IAuthService _authService;
         
-        public EventsController(IEventService eventService, IUniversityEventService universityEventService, IAuthService authService)
+        public EventsController(IEventService eventService, IAuthService authService)
         {
-            _universityEventService = universityEventService;
             _eventService = eventService;
             _authService = authService;
         }
@@ -48,11 +46,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                
-                var eventId = await _eventService.CreateEvent(createEventRequest);
                 var universityId = _authService.GetUniversityId(HttpContext);
-                
-                await _universityEventService.CreateUniversityEvent(universityId,eventId);
+                var eventId = await _eventService.CreateEvent(universityId, createEventRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new{eventId}, $"Tạo thành công event có id = {eventId}"));
             }
             catch (ErrorResponse e)
