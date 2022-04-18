@@ -10,7 +10,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public Slot()
         {
             EventChecks = new HashSet<EventCheck>();
-            Events = new HashSet<Event>();
         }
 
         public int Id { get; set; }
@@ -20,6 +19,5 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public virtual HighSchool HighSchool { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }
-        public virtual ICollection<Event> Events { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace UniAdmissionPlatform.DataTier.Models
     {
         public Event()
         {
+            EventChecks = new HashSet<EventCheck>();
             HighSchoolEvents = new HashSet<HighSchoolEvent>();
             OrganizationEvents = new HashSet<OrganizationEvent>();
             Participations = new HashSet<Participation>();
@@ -22,7 +23,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Description { get; set; }
         public string ThumbnailUrl { get; set; }
         public string FileUrl { get; set; }
-        public int? SlotId { get; set; }
         public int Status { get; set; }
         public string HostName { get; set; }
         public string TargetStudent { get; set; }
@@ -31,7 +31,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
-        public virtual Slot Slot { get; set; }
+        public virtual ICollection<EventCheck> EventChecks { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual ICollection<OrganizationEvent> OrganizationEvents { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
