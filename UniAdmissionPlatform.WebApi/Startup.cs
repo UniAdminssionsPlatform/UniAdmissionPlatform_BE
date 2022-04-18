@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.DataTier.Models;
 using UniAdmissionPlatform.WebApi.AppStart;
 using UniAdmissionPlatform.WebApi.Middlewares;
 
@@ -56,7 +58,11 @@ namespace UniAdmissionPlatform.WebApi
 
             services.InitializerDI();
 
+            services.AddDbContext<db_uapContext>(
+                opt => opt.UseMySQL(Configuration["ConnectionStrings:DbContext"]));
+
             services.AddSingleton<IAuthService, AuthService>();
+            
             services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
 
             services.ConfigureAutoMapperServices();
