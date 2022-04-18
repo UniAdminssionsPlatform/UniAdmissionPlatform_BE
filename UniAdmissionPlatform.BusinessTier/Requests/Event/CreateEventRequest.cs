@@ -10,6 +10,10 @@
         public int Status { get; set; }
         public string HostName { get; set; }
         public string TargetStudent { get; set; }
+        public int EventTypeId { get; set; }
+        public string Address { get; set; }
+        public int? ProvinceId { get; set; }
+        public string MeetingUrl { get; set; }
         
     }
 }
