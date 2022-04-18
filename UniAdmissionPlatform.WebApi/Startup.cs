@@ -17,6 +17,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.DataTier.Models;
 using UniAdmissionPlatform.WebApi.AppStart;
+using UniAdmissionPlatform.WebApi.AppStart.UniAdmissionPlatform.WebApi.AppStart;
 using UniAdmissionPlatform.WebApi.Middlewares;
 
 namespace UniAdmissionPlatform.WebApi
@@ -57,6 +58,8 @@ namespace UniAdmissionPlatform.WebApi
             services.ConfigureFilterServices();
 
             services.InitializerDI();
+            
+            services.ConfigureAutoMapperServices();
 
             services.AddDbContext<db_uapContext>(
                 opt => opt.UseMySQL(Configuration["ConnectionStrings:DbContext"]));

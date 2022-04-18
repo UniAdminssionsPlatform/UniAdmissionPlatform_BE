@@ -35,6 +35,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IEventCheckService, EventCheckService>();
             services.AddScoped<IEventCheckRepository, EventCheckRepository>();
         
+            services.AddScoped<IEventTypeService, EventTypeService>();
+            services.AddScoped<IEventTypeRepository, EventTypeRepository>();
+        
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IGenderRepository, GenderRepository>();
         

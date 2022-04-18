@@ -22,6 +22,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Certification> Certifications { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<EventCheck> EventChecks { get; set; }
+        public virtual DbSet<EventType> EventTypes { get; set; }
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<GoalAdmission> GoalAdmissions { get; set; }
         public virtual DbSet<GoalAdmissionType> GoalAdmissionTypes { get; set; }
@@ -197,13 +198,21 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("Event");
 
+                entity.HasIndex(e => e.EventTypeId, "Event_EventType_Id_fk");
+
+                entity.HasIndex(e => e.ProvinceId, "Event_Province_Id_fk");
+
                 entity.HasIndex(e => e.DeletedAt, "ix_event_deleted_at");
+
+                entity.Property(e => e.Address).HasColumnType("tinytext");
 
                 entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.FileUrl).HasColumnType("tinytext");
 
                 entity.Property(e => e.HostName).IsRequired();
+
+                entity.Property(e => e.MeetingUrl).HasColumnType("tinytext");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -214,6 +223,17 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasColumnType("tinytext");
 
                 entity.Property(e => e.TargetStudent).IsRequired();
+
+                entity.HasOne(d => d.EventType)
+                    .WithMany(p => p.Events)
+                    .HasForeignKey(d => d.EventTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Event_EventType_Id_fk");
+
+                entity.HasOne(d => d.Province)
+                    .WithMany(p => p.Events)
+                    .HasForeignKey(d => d.ProvinceId)
+                    .HasConstraintName("Event_Province_Id_fk");
             });
 
             modelBuilder.Entity<EventCheck>(entity =>
@@ -237,6 +257,15 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.SlotId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("EventCheck_Slot_Id_fk");
+            });
+
+            modelBuilder.Entity<EventType>(entity =>
+            {
+                entity.ToTable("EventType");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -351,8 +380,6 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.MajorGroupId, "Major_MajorGroup_Id_fk");
 
-                entity.HasIndex(e => e.DeletedAt, "ix_major_deleted_at");
-
                 entity.Property(e => e.Code)
                     .IsRequired()
                     .HasColumnType("tinytext");
@@ -398,8 +425,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             modelBuilder.Entity<MajorGroup>(entity =>
             {
                 entity.ToTable("MajorGroup");
-
-                entity.HasIndex(e => e.DeletedAt, "ix_major_group_deleted_at");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -750,11 +775,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.HasIndex(e => e.StudentId, "StudentCertification_StudentId_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.Description).IsRequired();
+
+                entity.Property(e => e.ImageUrl)
                     .IsRequired()
                     .HasColumnType("tinytext");
-
-                entity.Property(e => e.ImageUrl).HasColumnType("tinyint");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -798,8 +823,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("Subject");
 
-                entity.HasIndex(e => e.DeletedAt, "ix_subject_deleted_at");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("tinytext");
@@ -808,8 +831,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             modelBuilder.Entity<SubjectGroup>(entity =>
             {
                 entity.ToTable("SubjectGroup");
-
-                entity.HasIndex(e => e.DeletedAt, "ix_subject_group_deleted_at");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -883,9 +904,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.Description).HasColumnType("tinyint");
+                entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.Email).HasColumnType("tinyint");
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -895,9 +918,13 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.UniversityCode).HasColumnType("tinyint");
+                entity.Property(e => e.UniversityCode)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
 
-                entity.Property(e => e.WebsiteUrl).HasColumnType("tinyint");
+                entity.Property(e => e.WebsiteUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
 
                 entity.HasOne(d => d.Province)
                     .WithMany(p => p.Universities)
@@ -955,7 +982,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.DeletedAt, "ix_university_program_deleted_at");
 
-                entity.Property(e => e.Description).HasColumnType("tinyint");
+                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
