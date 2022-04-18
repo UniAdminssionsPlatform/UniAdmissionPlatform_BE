@@ -1,6 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Slot;
@@ -30,11 +34,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             var slot = mapper.Map<Slot>(createSlotRequest);
 
-            if (slot.EndTime != null && slot.StartTime <= slot.EndTime)
+            if (slot.EndTime != null && slot.StartTime >= slot.EndTime)
             {
                 throw new ErrorResponse((int)HttpStatusCode.BadRequest,
                     "Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
             }
+            
+            if (await Get().Where(s => s.StartTime >= slot.StartTime && s.EndTime >= slot.StartTime 
+                                      || slot.EndTime != null && s.StartTime <= slot.EndTime && s.EndTime >= slot.EndTime
+                                      || slot.EndTime != null && s.StartTime <= slot.StartTime && s.EndTime >= slot.EndTime).AnyAsync())
+            {
+                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                    "Slot bị trùng lịch với slot khác!");
+            }
+            
+            
+            
             
             slot.HighSchoolId = highSchoolId;
             slot.Status = (int)SlotStatus.Open;
