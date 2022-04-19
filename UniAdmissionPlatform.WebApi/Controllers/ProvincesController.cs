@@ -12,18 +12,18 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     
-    public class EventTypesController : ControllerBase
+    public class ProvincesController : ControllerBase
     {
-        private readonly IEventTypeService _eventTypeService;
+        private readonly IProvinceService _eventTypeService;
         
-        public EventTypesController(IEventTypeService eventTypeService)
+        public ProvincesController(IProvinceService eventTypeService)
         {
             _eventTypeService = eventTypeService;
             
         }
         
         /// <summary>
-        /// Get list event type
+        /// Get list province
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -43,13 +43,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetListEventType([FromQuery] EventTypeBaseViewModel filter, string sort,
+        public async Task<IActionResult> GetListProvince([FromQuery] ProvinceBaseViewModel filter, string sort,
             int page, int limit)
         {
             try
             {
-                var eventTypes = await _eventTypeService.GetAllEventTypes(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<EventTypeBaseViewModel>>.OkWithDetail(eventTypes, $"Đạt được thành công"));
+                var eventTypes = await _eventTypeService.GetAllProvinces(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<ProvinceBaseViewModel>>.OkWithDetail(eventTypes, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

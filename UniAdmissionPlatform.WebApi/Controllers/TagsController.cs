@@ -125,7 +125,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [CasbinAuthorize]
         public async Task<IActionResult> GetListTag([FromQuery] TagBaseViewModel filter, string sort,
             int page, int limit)
         {
