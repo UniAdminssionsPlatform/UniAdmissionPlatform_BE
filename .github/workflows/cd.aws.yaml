@@ -24,7 +24,7 @@ jobs:
         run: dotnet restore
 
       - name: Publish
-        run: cd ${{ github.workspace }}; dotnet restore; dotnet publish -r win10-x64 --configuration "Release" --self-contained "true" -o ../site;
+        run: dotnet publish -r linux-x64 --configuration "Release" --self-contained "true" -o ../site;
 
       - name: Zip Package
         run: cd site; zip ../site.zip *; cd ..; zip UniAdmissionPlatform.zip site.zip aws-windows-deployment-manifest.json
