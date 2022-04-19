@@ -17,11 +17,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IEventService _eventService;
         private readonly IAuthService _authService;
+        private readonly ISlotService _slotService;
         
-        public EventsController(IEventService eventService, IAuthService authService)
+        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService)
         {
             _eventService = eventService;
             _authService = authService;
+            _slotService = slotService;
         }
         /// <summary>
         /// Create a event
@@ -66,10 +68,17 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut("book-slot-for-uni-admin")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
+
+            
             var universityId = _authService.GetUniversityId(HttpContext);
 
             try
             {
+                var isValid = await _slotService.CheckStatusOfSlot(bookSlotForUniAdminRequest.SlotId, SlotStatus.Open);
+                if (!isValid)
+                {
+                    throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Slot này không được mở để book.");
+                }
                 await _eventService.BookSlotForUniAdmin(universityId, bookSlotForUniAdminRequest);
                 return Ok(MyResponse<object>.OkWithMessage("Book thành công!"));
             }

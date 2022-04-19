@@ -23,6 +23,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateSlot(int highSchoolId, CreateSlotRequest createSlotRequest);
         Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page, int limit);
         Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit);
+
+        Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus);
     }
     
     public partial class SlotService
@@ -129,6 +131,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
-        
+
+        public async Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus)
+        {
+            return await Get(s => s.Id == slotId && s.Status == (int) slotStatus).AnyAsync();
+        }
     }
 }

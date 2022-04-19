@@ -113,8 +113,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             // check xem event do co phai cua university khong
             var uniEvent = await Get().Where(e =>
-                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityEvents.Contains(new UniversityEvent {UniversityId = universityId}))
+                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityEvents.Contains(new UniversityEvent {UniversityId = universityId, EventId = bookSlotForUniAdminRequest.EventId}))
                 .Include(e => e.EventChecks)
+                .ThenInclude(ec => ec.Slot)
                 .FirstOrDefaultAsync();
             if (uniEvent == null)
             {
@@ -124,11 +125,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             // neu event do da thuoc truong cua no roi thi check xem no da duoc book vao slot nay chua
              var ec = uniEvent.EventChecks.FirstOrDefault(ec => ec.SlotId == bookSlotForUniAdminRequest.SlotId);
+
+             
             if (ec != null && ec.Status != (int) EventCheckStatus.Reject)
             {
                 throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Event của bạn đã được book ở slot này.");
             }
-            
+
             uniEvent.EventChecks.Add(new EventCheck
             {
                 SlotId = bookSlotForUniAdminRequest.SlotId,
