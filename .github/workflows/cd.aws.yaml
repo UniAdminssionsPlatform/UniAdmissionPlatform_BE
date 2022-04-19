@@ -31,14 +31,15 @@ jobs:
 
       - name: Zip Package
         run: |
-          cd ${{ github.workspace }}/out 
-          zip -r ${{ github.workspace }}/out.zip *
-          zip site.zip aws-windows-deployment-manifest.json
+          cd site
+          zip ../site.zip *
+          cd ..
+          zip UniAdmissionPlatform.zip site.zip aws-windows-deployment-manifest.json
       - name: Upload zip source
         uses: actions/upload-artifact@v2
         with:
           name: uni_be
-          path: out.zip
+          path: UniAdmissionPlatform.zip
 
   deploy:
     needs: build
