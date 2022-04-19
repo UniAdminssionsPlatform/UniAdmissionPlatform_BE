@@ -1,6 +1,3 @@
-# The name of the workflow.
-# This is the name that's displayed for status
-# badges (commonly embedded in README.md files).
 name: build and deploy
 on:
   push:
@@ -27,17 +24,30 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: |
-          cd UniAdmissionPlatform.WebApi
-          dotnet restore
-          dotnet publish  -r linux-x64 --configuration "Release" --self-contained "true" -o ../site
+        run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --self-contained false
 
       - name: Zip Package
         run: |
-          cd site
-          zip ../site.zip *
-          cd ..
-          zip UniAdmissionPlatform.zip site.zip aws-windows-deployment-manifest.json
+          cd ${{ github.workspace }}/out 
+          zip -r ${{ github.workspace }}/out.zip *
+      - name: Upload zip source
+        uses: actions/upload-artifact@v2
+        with:
+          name: uni_be
+          path: out.zip
+
+  deploy:
+    needs: build
+    name: deploy uni-be
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Clone source zip
+        uses: actions/download-artifact@v2
+        with:
+          name: uni_be
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
@@ -49,39 +59,6 @@ jobs:
           region: ap-southeast-1
           version_label: ${{ github.run_id }}
           version_description: ${{ github.sha }}
-          deployment_package: UniAdmissionPlatform.zip
+          deployment_package: ${{ github.workspace }}/out.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
-
-      # - name: Upload zip source
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: uni_be
-      #     path: UniAdmissionPlatform.zip
-
-  # deploy:
-  #   needs: build
-  #   name: deploy uni-be
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v3
-
-  #     - name: Clone source zip
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: uni_be
-
-  #     - name: Deploy to EB
-  #       uses: einaregilsson/beanstalk-deploy@v20
-  #       with:
-  #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         application_name: UniAdmissionPlatformWebApi
-  #         environment_name: UniAdmissionPlatform-dev
-  #         region: ap-southeast-1
-  #         version_label: ${{ github.run_id }}
-  #         version_description: ${{ github.sha }}
-  #         deployment_package: UniAdmissionPlatform.zip
-  #         use_existing_version_if_available: true
-  #         wait_for_deployment: true
