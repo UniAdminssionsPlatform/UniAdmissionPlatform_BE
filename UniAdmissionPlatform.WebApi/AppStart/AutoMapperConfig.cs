@@ -17,6 +17,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigTagMapperModule();
                     mc.ConfigEventMapperModule();
                     mc.ConfigEventTypeMapperModule();
+                    mc.ConfigProvinceMapperModule();
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);
