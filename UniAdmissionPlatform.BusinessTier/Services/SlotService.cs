@@ -22,6 +22,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<int> CreateSlot(int highSchoolId, CreateSlotRequest createSlotRequest);
         Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page, int limit);
+        Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit);
     }
     
     public partial class SlotService
@@ -67,6 +68,41 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page, int limit)
         {
             var query = Get().Where(s => s.HighSchoolId == highSchoolId);
+
+            if (filter.StartTime != null)
+            {
+                query = query.Where(s => s.StartTime >= filter.StartTime);
+            }
+
+            if (filter.EndTime != null)
+            {
+                query = query.Where(s => s.EndTime <= filter.EndTime);
+            }
+
+            if (filter.Status != null)
+            {
+                query = query.Where(s => s.Status == filter.Status);
+            }
+
+            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            return new PageResult<SlotViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit)
+        {
+            var query = Get();
+
+            if (filter.HighSchoolId != null)
+            {
+                query = query.Where(s => s.HighSchoolId == filter.HighSchoolId);
+            }
 
             if (filter.StartTime != null)
             {

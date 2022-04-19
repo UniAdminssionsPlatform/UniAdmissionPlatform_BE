@@ -63,5 +63,24 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+
+        [HttpGet("get-slots-for-uni-admin")]
+        public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, int page, int limit)
+        {
+            try
+            {
+                var slots = await _slotService.GetSlotForAdminUni(slotFilterForUniAdmin, page, limit);
+                return Ok(MyResponse<PageResult<SlotViewModel>>.OkWithDetail(slots, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
     }
 }
