@@ -28,9 +28,9 @@ jobs:
 
       - name: Publish
         run: |
-        cd \UniAdmissionPlatform.WebApi
-        dotnet restore
-        dotnet publish  -r linux-x64 --configuration "Release" --self-contained "true" -o ../site
+          cd UniAdmissionPlatform.WebApi
+          dotnet restore
+          dotnet publish  -r linux-x64 --configuration "Release" --self-contained "true" -o ../site
 
       - name: Zip Package
         run: |
