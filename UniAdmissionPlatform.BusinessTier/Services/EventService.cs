@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
@@ -48,7 +49,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 UniversityId = universityId,
             });
 
-
+            uniEvent.Status = (int) EventStatus.OnGoing;
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
         }

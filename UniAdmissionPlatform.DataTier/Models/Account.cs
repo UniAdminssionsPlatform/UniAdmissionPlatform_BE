@@ -31,5 +31,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual Organization Organization { get; set; }
         public virtual Role Role { get; set; }
         public virtual University University { get; set; }
+        public virtual Student Student { get; set; }
     }
 }
