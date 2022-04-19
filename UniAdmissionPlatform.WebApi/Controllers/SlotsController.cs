@@ -24,7 +24,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _slotService = slotService;
         }
 
-        [HttpGet("get-slots-for-uni-admin")]
+        [HttpGet("get-slots-for-school-admin")]
         public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
