@@ -44,6 +44,11 @@ namespace UniAdmissionPlatform.WebApi
             }));
             
             services.InitSwagger();
+            //config to deployment
+            services.AddHttpsRedirection(options =>
+            {
+                options.HttpsPort = 5001;
+            });
             
             services.AddSingleton<ICasbinService, CasbinService>();
             
@@ -126,5 +131,13 @@ namespace UniAdmissionPlatform.WebApi
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
+        //Config to deploy
+        public static IHostBuilder CreateHostBuilder(String[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseSetting("https_port", "8080");
+            });
     }
 }
