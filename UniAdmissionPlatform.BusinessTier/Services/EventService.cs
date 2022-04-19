@@ -25,6 +25,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteEvent(int id);
         Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort,
             int page, int limit);
+
+        Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
     }
     
     public partial class EventService
@@ -116,6 +118,41 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
+        {
+            // check xem event do co phai cua university khong
+            var uniEvent = await Get().Where(e =>
+                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityEvents.Contains(new UniversityEvent {UniversityId = universityId, EventId = bookSlotForUniAdminRequest.EventId}))
+                .Include(e => e.EventChecks)
+                .ThenInclude(ec => ec.Slot)
+                .FirstOrDefaultAsync();
+            if (uniEvent == null)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.BadRequest,
+                    "Event không tồn tại hoặc không thuộc trường của bạn.");
+            }
+            
+            // neu event do da thuoc truong cua no roi thi check xem no da duoc book vao slot nay chua
+            var ec = uniEvent.EventChecks.FirstOrDefault(ec => ec.SlotId == bookSlotForUniAdminRequest.SlotId);
+
+             
+            if (ec != null && ec.Status != (int) EventCheckStatus.Reject)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Event của bạn đã được book ở slot này.");
+            }
+
+            uniEvent.EventChecks.Add(new EventCheck
+            {
+                SlotId = bookSlotForUniAdminRequest.SlotId,
+                EventId = bookSlotForUniAdminRequest.EventId,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Status = (int) EventCheckStatus.Pending,
+            });
+
+            await UpdateAsyn(uniEvent);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace UniAdmissionPlatform.BusinessTier.Commons.Enums
 {
-    public enum EventCheck
+    public enum EventCheckStatus
     {
         Reject,
         Pending,
