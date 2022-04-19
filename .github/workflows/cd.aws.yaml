@@ -32,7 +32,8 @@ jobs:
       - name: Zip Package
         run: |
           cd ${{ github.workspace }}/out 
-          zip -r ${{ github.workspace }} site.zip aws-windows-deployment-manifest.json/out.zip *
+          zip -r ${{ github.workspace }}/out.zip *
+          zip site.zip aws-windows-deployment-manifest.json
       - name: Upload zip source
         uses: actions/upload-artifact@v2
         with:
