@@ -62,6 +62,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IMajorGroupService, MajorGroupService>();
             services.AddScoped<IMajorGroupRepository, MajorGroupRepository>();
         
+            services.AddScoped<INationalityService, NationalityService>();
+            services.AddScoped<INationalityRepository, NationalityRepository>();
+        
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<INewsRepository, NewsRepository>();
         

@@ -10,7 +10,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public Gender()
         {
             Accounts = new HashSet<Account>();
-            Students = new HashSet<Student>();
         }
 
         public int Id { get; set; }
@@ -20,6 +19,5 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? DeletedAt { get; set; }
 
         public virtual ICollection<Account> Accounts { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
     }
 }

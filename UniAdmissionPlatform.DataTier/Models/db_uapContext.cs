@@ -31,6 +31,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Major> Majors { get; set; }
         public virtual DbSet<MajorDepartment> MajorDepartments { get; set; }
         public virtual DbSet<MajorGroup> MajorGroups { get; set; }
+        public virtual DbSet<Nationality> Nationalities { get; set; }
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<NewsMajor> NewsMajors { get; set; }
         public virtual DbSet<NewsTag> NewsTags { get; set; }
@@ -61,6 +62,11 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseMySQL("Server=13.250.253.49,3306;Initial Catalog=db_uap;User ID=admin;Password=uap123456;Connection Timeout=30;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -113,7 +119,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.Religion).HasColumnType("tinytext");
 
-                entity.Property(e => e.RoleId).HasMaxLength(10);
+                entity.Property(e => e.RoleId).HasMaxLength(20);
 
                 entity.HasOne(d => d.Gender)
                     .WithMany(p => p.Accounts)
@@ -329,6 +335,9 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("HighSchool");
 
+                entity.HasIndex(e => e.HighSchoolCode, "HighSchool_HighSchoolCode_uindex")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.ProvinceId, "HighSchool_Province_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_high_school_deleted_at");
@@ -336,6 +345,8 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Address)
                     .IsRequired()
                     .HasColumnType("tinytext");
+
+                entity.Property(e => e.HighSchoolCode).HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -425,6 +436,15 @@ namespace UniAdmissionPlatform.DataTier.Models
             modelBuilder.Entity<MajorGroup>(entity =>
             {
                 entity.ToTable("MajorGroup");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+            });
+
+            modelBuilder.Entity<Nationality>(entity =>
+            {
+                entity.ToTable("Nationality");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -704,62 +724,16 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("Student");
 
-                entity.HasIndex(e => e.GenderId, "Student_Gender_Id_fk");
-
-                entity.HasIndex(e => e.HighSchoolId, "Student_HighSchool_Id_fk");
-
                 entity.HasIndex(e => e.Id, "Student_Id_uindex")
                     .IsUnique();
 
                 entity.HasIndex(e => e.DeletedAt, "ix_student_deleted_at");
 
-                entity.Property(e => e.FirstName)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.IdCard)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.LastName)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.MiddleName)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.Nationality)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.PhoneNumber)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.PlaceOfBirth)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.ProfileImageUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.Property(e => e.Religion)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
-
-                entity.HasOne(d => d.Gender)
-                    .WithMany(p => p.Students)
-                    .HasForeignKey(d => d.GenderId)
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Student)
+                    .HasForeignKey<Student>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Student_Gender_Id_fk");
-
-                entity.HasOne(d => d.HighSchool)
-                    .WithMany(p => p.Students)
-                    .HasForeignKey(d => d.HighSchoolId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Student_HighSchool_Id_fk");
+                    .HasConstraintName("Student_Account_Id_fk");
             });
 
             modelBuilder.Entity<StudentCertification>(entity =>

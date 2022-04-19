@@ -12,7 +12,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             Accounts = new HashSet<Account>();
             HighSchoolEvents = new HashSet<HighSchoolEvent>();
             Slots = new HashSet<Slot>();
-            Students = new HashSet<Student>();
         }
 
         public int Id { get; set; }
@@ -20,6 +19,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public int ProvinceId { get; set; }
+        public string HighSchoolCode { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
@@ -28,6 +28,5 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual ICollection<Slot> Slots { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
     }
 }
