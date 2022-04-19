@@ -70,6 +70,12 @@ namespace UniAdmissionPlatform.WebApi
 
             services.ConfigureAutoMapperServices();
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,8 +87,16 @@ namespace UniAdmissionPlatform.WebApi
             //     app.UseSwagger();
             //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
             // }
+            app.UseForwardedHeaders();
 
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts();
+            }
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
