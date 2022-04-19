@@ -27,18 +27,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task CreateUniversityEvent(int universityId, int eventId)
         {
-            try
-            {
-                var uniEvent = new UniversityEvent{UniversityId = universityId , EventId = eventId};
-                await CreateAsyn(uniEvent);
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }    
-
+            var uniEvent = new UniversityEvent{UniversityId = universityId , EventId = eventId};
+            await CreateAsyn(uniEvent);
         }
     }
 }
