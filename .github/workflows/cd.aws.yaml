@@ -66,6 +66,6 @@ jobs:
           region: ap-southeast-1
           version_label: ${{ github.run_id }}
           version_description: ${{ github.sha }}
-          deployment_package: ${{ github.workspace }}/UniAdmissionPlatform.zip
+          deployment_package: UniAdmissionPlatform.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
