@@ -38,35 +38,53 @@ jobs:
           zip ../site.zip *
           cd ..
           zip UniAdmissionPlatform.zip site.zip aws-windows-deployment-manifest.json
-      - name: Upload zip source
-        uses: actions/upload-artifact@v2
-        with:
-          name: uni_be
-          path: UniAdmissionPlatform.zip
-
-  deploy:
-    needs: build
-    name: deploy uni-be
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
-      - name: Clone source zip
-        uses: actions/download-artifact@v2
-        with:
-          name: uni_be
-
+          
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: UniAdmissionPlatformWebApi
-          environment_name: UniAdmissionPlatform-dev
-          region: ap-southeast-1
-          version_label: ${{ github.run_id }}
-          version_description: ${{ github.sha }}
-          deployment_package: UniAdmissionPlatform.zip
-          use_existing_version_if_available: true
-          wait_for_deployment: true
+          uses: einaregilsson/beanstalk-deploy@v20
+          with:
+            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            application_name: UniAdmissionPlatformWebApi
+            environment_name: UniAdmissionPlatform-dev
+            region: ap-southeast-1
+            version_label: ${{ github.run_id }}
+            version_description: ${{ github.sha }}
+            deployment_package: UniAdmissionPlatform.zip
+            use_existing_version_if_available: true
+            wait_for_deployment: true
+
+
+
+
+      # - name: Upload zip source
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: uni_be
+      #     path: UniAdmissionPlatform.zip
+
+  # deploy:
+  #   needs: build
+  #   name: deploy uni-be
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v3
+
+  #     - name: Clone source zip
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: uni_be
+
+  #     - name: Deploy to EB
+  #       uses: einaregilsson/beanstalk-deploy@v20
+  #       with:
+  #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         application_name: UniAdmissionPlatformWebApi
+  #         environment_name: UniAdmissionPlatform-dev
+  #         region: ap-southeast-1
+  #         version_label: ${{ github.run_id }}
+  #         version_description: ${{ github.sha }}
+  #         deployment_package: UniAdmissionPlatform.zip
+  #         use_existing_version_if_available: true
+  #         wait_for_deployment: true
