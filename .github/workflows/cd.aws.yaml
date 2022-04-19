@@ -27,12 +27,12 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --self-contained false
+        run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --configuration "Release" --self-contained "true" -o
 
       - name: Zip Package
         run: |
           cd ${{ github.workspace }}/out 
-          zip -r ${{ github.workspace }}/out.zip *
+          zip -r ${{ github.workspace }}/out.zip * aws-windows-deployment-manifest.json
       - name: Upload zip source
         uses: actions/upload-artifact@v2
         with:
