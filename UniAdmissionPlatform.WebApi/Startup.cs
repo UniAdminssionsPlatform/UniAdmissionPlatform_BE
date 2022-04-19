@@ -36,18 +36,6 @@ namespace UniAdmissionPlatform.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //config to deploy
-            services.AddControllers();
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
-            });
-            services.AddHttpsRedirection(options =>
-            {
-                options.HttpsPort = 5001;
-            });
-            //end
             services.AddCors(o => o.AddPolicy(MyAllowSpecificOrigins, builder =>
             {
                 builder.AllowAnyOrigin()
@@ -95,35 +83,6 @@ namespace UniAdmissionPlatform.WebApi
             //     app.UseSwagger();
             //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
             // }
-            //config to deploy
-            app.UseForwardedHeaders();
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.IsHttps || context.Request.Headers["X-Forwarded-Proto"] == Uri.UriSchemeHttps)
-                {
-                    await next();
-                }
-                else
-                {
-                    string queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : string.Empty;
-                    var https = "https://" + context.Request.Host + context.Request.Path + queryString;
-                    context.Response.Redirect(https);
-                }
-            });
-            if (env.IsDevelopment())
-            {
-                // code removed for clarity
-            }
-            else
-            {
-                // code removed for clarity
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            // code removed for clarity
-            app.UseCertificateForwarding();
-            app.UseMvc();
-            //end
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
@@ -153,14 +112,6 @@ namespace UniAdmissionPlatform.WebApi
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
-        //Config to deploy
-        public static IHostBuilder CreateHostBuilder(String[] args) =>
-            Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-                webBuilder.UseSetting("https_port", "8080");
-            });
 
     }
 }
