@@ -23,11 +23,16 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Build app
+        run: dotnet build -c Release --no-restore
+
       - name: Publish
-        run: dotnet publish -r linux-x64 --configuration "Release" --self-contained "true" -o ../site;
+        run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --self-contained false
 
       - name: Zip Package
-        run: cd site; zip ../site.zip *; cd ..; zip UniAdmissionPlatform.zip site.zip aws-windows-deployment-manifest.json
+        run: |
+          cd ${{ github.workspace }}/out 
+          zip -r ${{ github.workspace }} site.zip aws-windows-deployment-manifest.json/out.zip *
       - name: Upload zip source
         uses: actions/upload-artifact@v2
         with:
@@ -57,6 +62,6 @@ jobs:
           region: ap-southeast-1
           version_label: ${{ github.run_id }}
           version_description: ${{ github.sha }}
-          deployment_package: ${{ github.workspace }}/UniAdmissionPlatform.zip
+          deployment_package: ${{ github.workspace }}/out.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
