@@ -7,12 +7,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection;
+using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.DataTier.Models;
 using UniAdmissionPlatform.WebApi.AppStart;
+using UniAdmissionPlatform.WebApi.AppStart.UniAdmissionPlatform.WebApi.AppStart;
+using UniAdmissionPlatform.WebApi.Middlewares;
 
 namespace UniAdmissionPlatform.WebApi
 {
@@ -36,16 +42,36 @@ namespace UniAdmissionPlatform.WebApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+            
             services.InitSwagger();
+
+            
+            services.AddSingleton<ICasbinService, CasbinService>();
+            
             services.ConfigureJsonFormatServices();
+
+            services.InitFirebase();
+            
             services.AddRouting(options => options.LowercaseUrls = true);
             
             services.ConfigureVersioningServices();
 
             services.ConfigureFilterServices();
+
+            services.InitializerDI();
             
+            services.ConfigureAutoMapperServices();
+
+            services.AddDbContext<db_uapContext>(
+                opt => opt.UseMySQL(Configuration["ConnectionStrings:DbContext"]));
+
+            services.AddSingleton<IAuthService, AuthService>();
             
-            // services.AddControllers();
+            services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
+
+            services.ConfigureAutoMapperServices();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,8 +83,6 @@ namespace UniAdmissionPlatform.WebApi
             //     app.UseSwagger();
             //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
             // }
-
-            app.UseDeveloperExceptionPage();
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
@@ -70,9 +94,10 @@ namespace UniAdmissionPlatform.WebApi
                 {
                     c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                 }
-            
+
+                c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("UniAdmissionPlatform.WebApi.Resources.Swagger.index.html");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1");
             });
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
 
             app.UseDeveloperExceptionPage();
 
@@ -80,9 +105,13 @@ namespace UniAdmissionPlatform.WebApi
 
             app.UseRouting();
             
+            app.UseMiddleware<JwtMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
+            
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
+
     }
 }
