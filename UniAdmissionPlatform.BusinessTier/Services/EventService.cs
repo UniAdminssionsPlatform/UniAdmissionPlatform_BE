@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
@@ -24,21 +25,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteEvent(int id);
         Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort,
             int page, int limit);
+
+        Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
     }
-    
+
     public partial class EventService
     {
         private readonly IConfigurationProvider _mapper;
-        
-        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper) : base(unitOfWork, 
+
+        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper) : base(unitOfWork,
             repository)
         {
             _mapper = mapper.ConfigurationProvider;
         }
-        
+
         public async Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest)
         {
-            
             var mapper = _mapper.CreateMapper();
             var uniEvent = mapper.Map<Event>(createEventRequest);
 
@@ -61,16 +63,16 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy event với id = {id}");
             }
-        
+
             var mapper = _mapper.CreateMapper();
             var eventInRequest = mapper.Map<Event>(updateEventRequest);
-        
+
             uniEvent.Name = eventInRequest.Name;
             uniEvent.UpdatedAt = DateTime.Now;
-        
+
             await UpdateAsyn(uniEvent);
         }
-        
+
         public async Task DeleteEvent(int id)
         {
             var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
@@ -78,25 +80,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy event với id = {id}");
             }
-            
+
             uniEvent.DeletedAt = DateTime.Now;
-            
+
             await UpdateAsyn(uniEvent);
         }
-        
+
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
-        
-        public async Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort, int page, int limit)
+
+        public async Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort, int page,
+            int limit)
         {
             var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper)
                 .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-        
+
             if (sort != null)
             {
                 queryable = queryable.OrderBy(sort);
             }
-            
+
             return new PageResult<EventBaseViewModel>
             {
                 List = await queryable.ToListAsync(),
@@ -104,6 +107,38 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+
+        public async Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
+        {
+            // check xem event do co phai cua university khong
+            var uniEvent = await Get().Where(e =>
+                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityEvents.Contains(new UniversityEvent {UniversityId = universityId}))
+                .Include(e => e.EventChecks)
+                .FirstOrDefaultAsync();
+            if (uniEvent == null)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.BadRequest,
+                    "Event không tồn tại hoặc không thuộc trường của bạn.");
+            }
+            
+            // neu event do da thuoc truong cua no roi thi check xem no da duoc book vao slot nay chua
+             var ec = uniEvent.EventChecks.FirstOrDefault(ec => ec.SlotId == bookSlotForUniAdminRequest.SlotId);
+            if (ec != null && ec.Status != (int) EventCheckStatus.Reject)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Event của bạn đã được book ở slot này.");
+            }
+            
+            uniEvent.EventChecks.Add(new EventCheck
+            {
+                SlotId = bookSlotForUniAdminRequest.SlotId,
+                EventId = bookSlotForUniAdminRequest.EventId,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Status = (int) EventCheckStatus.New,
+            });
+
+            await UpdateAsyn(uniEvent);
         }
     }
 }

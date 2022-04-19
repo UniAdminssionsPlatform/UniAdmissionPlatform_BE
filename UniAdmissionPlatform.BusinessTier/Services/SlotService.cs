@@ -129,5 +129,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
+        
     }
 }

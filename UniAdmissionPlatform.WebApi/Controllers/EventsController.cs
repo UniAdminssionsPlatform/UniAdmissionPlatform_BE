@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -60,6 +62,30 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-        
+
+        [HttpPut("book-slot-for-uni-admin")]
+        public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+
+            try
+            {
+                await _eventService.BookSlotForUniAdmin(universityId, bookSlotForUniAdminRequest);
+                return Ok(MyResponse<object>.OkWithMessage("Book thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case (int) HttpStatusCode.BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Book thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
+
     }
 }
