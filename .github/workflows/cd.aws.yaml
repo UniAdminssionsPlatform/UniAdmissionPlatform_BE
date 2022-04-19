@@ -24,17 +24,18 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o '${{ github.workspace }}/out' -r linux-x64 --self-contained false
+        run: dotnet publish -c Release -o '${{ github.workspace }}/site' -r linux-x64 --self-contained false
 
       - name: Zip Package
         run: |
-          cd ${{ github.workspace }}/out 
-          zip -r ${{ github.workspace }}/out.zip *
+          cd ${{ github.workspace }}/site 
+          zip -r ${{ github.workspace }}/site.zip *
+          site.zip aws-windows-deployment-manifest.json
       - name: Upload zip source
         uses: actions/upload-artifact@v2
         with:
           name: uni_be
-          path: out.zip
+          path: site.zip
 
   deploy:
     needs: build
@@ -59,6 +60,6 @@ jobs:
           region: ap-southeast-1
           version_label: ${{ github.run_id }}
           version_description: ${{ github.sha }}
-          deployment_package: ${{ github.workspace }}/out.zip
+          deployment_package: ${{ github.workspace }}/site.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
