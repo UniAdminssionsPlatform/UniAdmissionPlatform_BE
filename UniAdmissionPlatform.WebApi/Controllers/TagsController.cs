@@ -146,7 +146,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a university
+        /// Delete a tag
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
