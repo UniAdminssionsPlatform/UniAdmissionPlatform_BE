@@ -89,13 +89,6 @@ namespace UniAdmissionPlatform.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IApiVersionDescriptionProvider provider)
         {
-            // if (env.IsDevelopment())
-            // {
-            //     app.UseDeveloperExceptionPage();
-            //     app.UseSwagger();
-            //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
-            // }
-            //config production
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -107,6 +100,7 @@ namespace UniAdmissionPlatform.WebApi
                 app.UseForwardedHeaders();
                 app.UseHsts();
             }
+            app.UseHttpsRedirection();
             //end
             app.UseSwagger(c =>
             {
@@ -123,13 +117,8 @@ namespace UniAdmissionPlatform.WebApi
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("UniAdmissionPlatform.WebApi.Resources.Swagger.index.html");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1");
             });
-
             app.UseDeveloperExceptionPage();
-
-            //app.UseHttpsRedirection();
-
             app.UseRouting();
-            
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
             
