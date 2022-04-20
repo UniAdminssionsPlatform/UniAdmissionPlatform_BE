@@ -10,7 +10,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? RegionId { get; set; }
     }
 
-    public class ProvinceViewModelWithEvents : ProvinceBaseViewModel
+    public class ProvinceViewModelWithProvinces : ProvinceBaseViewModel
     {
         
     }
