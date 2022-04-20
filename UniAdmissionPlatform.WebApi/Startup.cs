@@ -43,6 +43,10 @@ namespace UniAdmissionPlatform.WebApi
                 options.ForwardedHeaders =
                     Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
             });
+            services.AddHttpsRedirection(options =>
+                {
+                    options.HttpsPort = 40;
+                });
             //end
             services.AddCors(o => o.AddPolicy(MyAllowSpecificOrigins, builder =>
             {
@@ -59,7 +63,7 @@ namespace UniAdmissionPlatform.WebApi
             services.ConfigureJsonFormatServices();
 
             services.InitFirebase();
-            
+
             services.AddRouting(options => options.LowercaseUrls = true);
             
             services.ConfigureVersioningServices();
@@ -133,6 +137,12 @@ namespace UniAdmissionPlatform.WebApi
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
-
+        public static IHostBuilder CreateHostBuilder(String[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseSetting("https_port", "8080");
+            });
     }
 }
