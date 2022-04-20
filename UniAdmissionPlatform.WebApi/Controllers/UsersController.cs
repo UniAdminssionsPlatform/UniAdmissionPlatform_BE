@@ -26,12 +26,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
         private readonly IAccountService _accountService;
+        private readonly IHighSchoolService _highSchoolService;
 
-        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService)
+        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService, IHighSchoolService highSchoolService)
         {
             _userService = userService;
             _authService = authService;
             _accountService = accountService;
+            _highSchoolService = highSchoolService;
         }
 
         /// <summary>
@@ -57,10 +59,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            // var decodedToken = await FirebaseAuth.DefaultInstance
-            //     .VerifyIdTokenAsync(loginRequest.FirebaseToken);
-            // var uid = decodedToken.Uid;
-            var uid = "1";
+            var decodedToken = await FirebaseAuth.DefaultInstance
+                .VerifyIdTokenAsync(loginRequest.FirebaseToken);
+            var uid = decodedToken.Uid;
 
             try
             {
@@ -163,5 +164,30 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
 
+        [HttpPost("register-for-student")]
+        public async Task<IActionResult> RegisterForStudent([FromBody] RegisterForStudentRequest registerForStudentRequest)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+
+            try
+            {
+                var highSchool = await _highSchoolService.GetHighSchoolByCode(registerForStudentRequest.HighSchoolCode);
+                var studentAccount = await _userService.CreateStudentAccount(userId, highSchool.Id, registerForStudentRequest);
+                return Ok(MyResponse<object>.OkWithDetail(studentAccount,"Đăng ký thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case (int) HttpStatusCode.NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    case (int) HttpStatusCode.BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+                
+            }
+        }
     }
 }

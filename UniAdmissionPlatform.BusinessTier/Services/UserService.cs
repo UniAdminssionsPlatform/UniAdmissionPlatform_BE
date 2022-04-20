@@ -27,6 +27,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<LoginResponse> Login(string uid);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
         Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
+        Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId, RegisterForStudentRequest registerForStudentRequest);
     }
 
     public partial class UserService
@@ -193,6 +194,38 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             await CreateAsyn(user);
             return user.Id;
+        }
+
+        public async Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId, RegisterForStudentRequest registerForStudentRequest)
+        {
+            var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
+            if (user.Status != (int) UserStatus.New)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Trạng thái người dùng không hợp hệ");
+            }
+
+            var mapper = _mapper.CreateMapper();
+            var userInRequest = mapper.Map<User>(registerForStudentRequest);
+            user.Account = userInRequest.Account;
+            user.Account.RoleId = "student";
+            user.Account.HighSchoolId = highSchoolId;
+            user.Status = (int)UserStatus.Active;
+            await UpdateAsyn(user);
+            return GenerateJwtTokenForActiveUser(user);
+        }
+
+        public async Task ValidateStatus(int userId, UserStatus userStatus)
+        {
+            var user = await FirstOrDefaultAsyn(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.NotFound, "Không thể tìm thấy người dùng.");
+            }
+
+            if (user.Status != (int) userStatus)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Trạng thái người dùng không hợp hệ");
+            }
         }
     }
 }
