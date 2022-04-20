@@ -17,4 +17,9 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.User
         public DateTime DateOfBirth { get; set; }
         public int GenderId { get; set; }
     }
+
+    public class RegisterForStudentRequest : RegisterRequest
+    {
+        public string HighSchoolCode { get; set; }
+    }
 }
