@@ -6,6 +6,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -104,6 +105,46 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Update fail, because server ís error");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get list event
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetListEvent([FromQuery] EventBaseViewModel filter, string sort,
+            int page, int limit)
+        {
+            try
+            {
+                var events = await _eventService.GetAllEvents(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<EventBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
                 }
             }
         }
