@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.WebApi
         }
 
         public IConfiguration Configuration { get; }
-        
+
         private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -50,31 +50,31 @@ namespace UniAdmissionPlatform.WebApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
-            
+
             services.InitSwagger();
 
-            
+
             services.AddSingleton<ICasbinService, CasbinService>();
-            
+
             services.ConfigureJsonFormatServices();
 
             services.InitFirebase();
 
             services.AddRouting(options => options.LowercaseUrls = true);
-            
+
             services.ConfigureVersioningServices();
 
             services.ConfigureFilterServices();
 
             services.InitializerDI();
-            
+
             services.ConfigureAutoMapperServices();
 
             services.AddDbContext<db_uapContext>(
                 opt => opt.UseMySQL(Configuration["ConnectionStrings:DbContext"]));
 
             services.AddSingleton<IAuthService, AuthService>();
-            
+
             services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
 
             services.ConfigureAutoMapperServices();
@@ -83,7 +83,7 @@ namespace UniAdmissionPlatform.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -102,7 +102,7 @@ namespace UniAdmissionPlatform.WebApi
             {
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
             });
-            
+
             app.UseSwaggerUI(c =>
             {
                 foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
@@ -117,7 +117,7 @@ namespace UniAdmissionPlatform.WebApi
             app.UseRouting();
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
-            
+
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
