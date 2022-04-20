@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string PlaceOfBirth { get; set; }
         [String]
         public string Nationality { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public int? GenderId { get; set; }
         [String]
         public string RoleId { get; set; }
@@ -34,6 +34,11 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
         
+    }
+
+    public class AccountViewModelWithHighSchool : AccountBaseViewModel
+    {
+        public HighSchoolBaseViewModel HighSchoolBaseViewModel { get; set; }
     }
     
     public class AccountViewModelWithAccounts : AccountBaseViewModel
