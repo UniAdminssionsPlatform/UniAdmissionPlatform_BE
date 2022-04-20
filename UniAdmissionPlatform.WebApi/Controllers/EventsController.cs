@@ -149,6 +149,49 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
+        /// <summary>
+        /// Delete a event
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAEvent(int id)
+        {
+            try
+            {
+                await _eventService.DeleteEvent(id);
+                return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case (int) HttpStatusCode.NotFound:
+                        // Business rule
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Xóa thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Delete fail, because server ís error");
+                }
+            }
+        }
+        
         
         [HttpPut("book-slot-for-uni-admin")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
