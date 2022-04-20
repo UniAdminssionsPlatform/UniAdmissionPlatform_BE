@@ -23,7 +23,10 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o '${{ github.workspace }}/site' -r linux-x64 --self-contained false
+        run: |
+          cd UniAdmissionPlatform.WebApi
+          dotnet restore
+          dotnet publish -c Release -o '${{ github.workspace }}/site' -r linux-x64 --self-contained false
 
       - name: Zip Package
         run: |
