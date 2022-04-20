@@ -36,6 +36,14 @@ namespace UniAdmissionPlatform.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //config production
+            services.AddControllersWithViews();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+            });
+            //end
             services.AddCors(o => o.AddPolicy(MyAllowSpecificOrigins, builder =>
             {
                 builder.AllowAnyOrigin()
@@ -83,6 +91,19 @@ namespace UniAdmissionPlatform.WebApi
             //     app.UseSwagger();
             //     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1"));
             // }
+            //config production
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseForwardedHeaders();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseForwardedHeaders();
+                app.UseHsts();
+            }
+            //end
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
