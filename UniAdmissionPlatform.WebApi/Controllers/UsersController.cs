@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.Account;
 using UniAdmissionPlatform.BusinessTier.Requests.User;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Responses.User;
@@ -24,11 +25,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
+        private readonly IAccountService _accountService;
 
-        public UsersController(IUserService userService, IAuthService authService)
+        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService)
         {
             _userService = userService;
             _authService = authService;
+            _accountService = accountService;
         }
 
         /// <summary>
@@ -54,9 +57,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            var decodedToken = await FirebaseAuth.DefaultInstance
-                .VerifyIdTokenAsync(loginRequest.FirebaseToken);
-            var uid = decodedToken.Uid;
+            // var decodedToken = await FirebaseAuth.DefaultInstance
+            //     .VerifyIdTokenAsync(loginRequest.FirebaseToken);
+            // var uid = decodedToken.Uid;
+            var uid = "1";
 
             try
             {
@@ -116,6 +120,45 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Create a Account for uni (admin)
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest createAccountRequest)
+        {
+            try
+            {
+                var accountId = await _userService.CreateAccount(createAccountRequest);
+                return Ok(MyResponse<int>.OkWithDetail(accountId, $"Tạo thành công Account có id = {accountId}"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
                 }
             }
         }

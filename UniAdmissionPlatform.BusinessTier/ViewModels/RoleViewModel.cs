@@ -11,7 +11,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string Description { get; set; }
     }
-    public class RoleViewModelWithEvents : RoleBaseViewModel
+    public class RoleViewModelWithRoles : RoleBaseViewModel
     {
         
     }

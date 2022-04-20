@@ -8,8 +8,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Name { get; set; }
     }
     
-    public class TagViewModelWithEvents : TagBaseViewModel
+    public class TagViewModelWithTags : TagBaseViewModel
     {
-        // public virtual ICollection<EventBaseModel> Events { get; set; }
+        // public virtual ICollection<TagBaseModel> Tags { get; set; }
     }
 }

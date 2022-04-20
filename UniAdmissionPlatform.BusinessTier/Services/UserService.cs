@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Entities;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
+using UniAdmissionPlatform.BusinessTier.Requests.Account;
 using UniAdmissionPlatform.BusinessTier.Requests.User;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Responses.User;
@@ -25,19 +26,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<LoginResponse> Login(string uid);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
+        Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
     }
+
     public partial class UserService
     {
         private readonly IConfiguration _configuration;
         private readonly IConfigurationProvider _mapper;
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repository, IConfiguration configuration, IMapper mapper) : base(
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repository, IConfiguration configuration,
+            IMapper mapper) : base(
             unitOfWork, repository)
         {
             _configuration = configuration;
             _mapper = mapper.ConfigurationProvider;
         }
-        
+
         public async Task<LoginResponse> Login(string uid)
         {
             var user = await Get().Where(u => u.Uid == uid).Include(u => u.Account).FirstOrDefaultAsync();
@@ -51,8 +55,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     (int)UserStatus.Active => GenerateJwtTokenForActiveUser(user),
                     _ => null
                 };
-            
-            
+
+
             var newUser = await InsertNewUser(uid);
             return GenerateJwtTokenForNewUser(newUser);
         }
@@ -121,7 +125,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 NeedRegister = false,
             };
         }
-        
+
         private LoginResponse GenerateJwtTokenForNewUser(User user)
         {
             var customClaims = new CustomClaims
@@ -175,6 +179,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return user;
         }
         
-        
+        public async Task<int> CreateAccount(CreateAccountRequest createAccountRequest)
+        {
+            var mapper = _mapper.CreateMapper();
+            var uapAccount = mapper.Map<Account>(createAccountRequest);
+            var user = new User
+            {
+                Account = uapAccount, 
+                Uid = "", 
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            await CreateAsyn(user);
+            return user.Id;
+        }
     }
 }
