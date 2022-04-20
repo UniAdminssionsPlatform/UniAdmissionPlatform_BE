@@ -94,7 +94,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
             
             uniEvent.DeletedAt = DateTime.Now;
-            
+            uniEvent.Status = (int) EventStatus.Cancel;
             await UpdateAsyn(uniEvent);
         }
         
