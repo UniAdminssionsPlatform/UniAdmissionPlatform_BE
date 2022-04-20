@@ -21,6 +21,8 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigRoleMapperModule();
                     mc.ConfigSlotMapperModule();
                     mc.ConfigAccountMapperModule();
+                    mc.ConfigUserMapperModule();
+                  
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);
