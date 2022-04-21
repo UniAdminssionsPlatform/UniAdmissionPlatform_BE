@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
+using UniAdmissionPlatform.BusinessTier.Commons.Toolkit;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.WebApi.Attributes;
@@ -50,13 +51,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                ValidateFileName(file, new[] { ".jpg", ".png" });
+                FileToolKit.ValidateFileName(file, new[] {".jpg", ".png"}, FileMaxSize);
             }
             catch (ErrorResponse e)
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    (int) HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Tải lên thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
                 };
@@ -65,7 +66,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var lastIndexOf = file.FileName.LastIndexOf(".", StringComparison.Ordinal);
-                var fileUrl = await _firebaseStorageService.UploadImage(file.FileName[lastIndexOf..file.FileName.Length].ToLower(),file.OpenReadStream());
+                var fileUrl = await _firebaseStorageService.UploadImage(
+                    file.FileName[lastIndexOf..file.FileName.Length].ToLower(), "image", file.OpenReadStream());
                 return Ok(MyResponse<object>.OkWithDetail(new
                 {
                     fileUrl,
@@ -79,22 +81,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         private const long FileMaxSize = 10000000;
 
-        private static void ValidateFileName(IFormFile file, string[] extensions)
-        {
-            var lastIndexOf = file.FileName.LastIndexOf(".", StringComparison.Ordinal);
-            
-            if (lastIndexOf == -1 || !extensions.Contains(file.FileName[lastIndexOf..file.FileName.Length].ToLower()))
-            {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Định dạng file bắt buộc là " + string.Join(" hoặc ",extensions) );
-            }
-
-            if (file.Length > FileMaxSize)
-            {
-                throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Dung lượng file phải bé hơn 10 MB");
-            }
-        }
     }
 }

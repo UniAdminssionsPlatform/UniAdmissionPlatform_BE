@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -17,6 +18,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<PageResult<AccountViewModelWithHighSchool>> GetAll(
             AccountBaseViewModel accountBaseViewModel, int page, int limit, string sort);
+
+        Task UploadAvatar(int accountId, string avatarUrl);
     }
     public partial class AccountService
     {
@@ -50,6 +53,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+
+        public async Task UploadAvatar(int accountId, string avatarUrl)
+        {
+            var account = await Get(a => a.Id == accountId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.NotFound, "User không có trên hệ thống!");
+            }
+
+            account.ProfileImageUrl = avatarUrl;
+
+            await UpdateAsyn(account);
         }
     }
 }

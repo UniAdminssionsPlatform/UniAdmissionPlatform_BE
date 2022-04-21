@@ -12,7 +12,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
 {
     public interface IFirebaseStorageService
     {
-        Task<string> UploadImage(string extension, Stream fileStream);
+        Task<string> UploadImage(string extension, string folder, Stream fileStream);
     }
 
     public class FirebaseStorageService : IFirebaseStorageService
@@ -23,14 +23,12 @@ namespace UniAdmissionPlatform.BusinessTier.Services
         {
             _configuration = configuration;
         }
-
         
-        public async Task<string> UploadImage(string extension, Stream fileStream)
+        public async Task<string> UploadImage(string extension, string folder,Stream fileStream)
         {
             var auth = new FirebaseAuthProvider(new FirebaseConfig(_configuration["Firebase:Api-key"]));
             var a = await auth.SignInWithEmailAndPasswordAsync(_configuration["FirebaseStoreAccount:Username"],
                 _configuration["FirebaseStoreAccount:Password"]);
-
             Console.WriteLine(a.FirebaseToken);
 
             //todo: need config more
@@ -41,9 +39,8 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
                         ThrowOnCancel = true,
                     })
-                .Child("data")
-                .Child("random")
-                .Child(Path.GetRandomFileName() + DateTime.Now.ToString(CultureInfo.CurrentCulture)  + extension)
+                .Child(folder)
+                .Child(Guid.NewGuid() + DateTime.UtcNow.ToString(CultureInfo.CurrentCulture)  + extension)
                 .PutAsync(fileStream);
 
             var fileUrlWithParams = await task;
