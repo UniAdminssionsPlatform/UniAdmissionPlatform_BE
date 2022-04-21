@@ -2,8 +2,8 @@
 {
     public enum EventCheckStatus
     {
-        Reject,
         Pending,
-        Approve
+        Approved,
+        Reject
     }
 }
