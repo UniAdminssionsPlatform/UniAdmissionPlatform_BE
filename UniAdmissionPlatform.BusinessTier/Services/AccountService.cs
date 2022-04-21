@@ -8,9 +8,11 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
+using UniAdmissionPlatform.BusinessTier.Requests.Account;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
@@ -23,6 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             AccountBaseViewModel uniAccountUniBaseViewModel, int page, int limit, string sort);
 
         Task UploadAvatar(int accountId, string avatarUrl);
+        Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest);
     }
     public partial class AccountService
     {
@@ -90,6 +93,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             account.ProfileImageUrl = avatarUrl;
 
             await UpdateAsyn(account);
+        }
+
+        public async Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest)
+        {
+            var uniAccount = await Get().Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (uniAccount == null)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tài khoản với id = {id}");
+            }
+            
+            var mapper = _mapper.CreateMapper();
+            uniAccount = mapper.Map(updateUniAccountRequest, uniAccount);
+            
+            await UpdateAsyn(uniAccount);
         }
     }
 }

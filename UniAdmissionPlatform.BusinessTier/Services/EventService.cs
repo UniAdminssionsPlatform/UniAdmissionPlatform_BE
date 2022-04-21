@@ -66,20 +66,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
         
             var mapper = _mapper.CreateMapper();
-            var eventInRequest = mapper.Map<Event>(updateEventRequest);
-        
-            uniEvent.Name = eventInRequest.Name;
-            uniEvent.ShortDescription = eventInRequest.ShortDescription;
-            uniEvent.Description = eventInRequest.Description;
-            uniEvent.ThumbnailUrl = eventInRequest.ThumbnailUrl;
-            uniEvent.FileUrl = eventInRequest.FileUrl;
-            uniEvent.Status = eventInRequest.Status;
-            uniEvent.HostName = eventInRequest.HostName;
-            uniEvent.TargetStudent = eventInRequest.TargetStudent;
-            uniEvent.EventTypeId = eventInRequest.EventTypeId;
-            uniEvent.Address = eventInRequest.Address;
-            uniEvent.ProvinceId = eventInRequest.ProvinceId;
-            uniEvent.MeetingUrl = eventInRequest.MeetingUrl;
+            uniEvent = mapper.Map(updateEventRequest,uniEvent);
             uniEvent.UpdatedAt = DateTime.Now;
         
             await UpdateAsyn(uniEvent);
