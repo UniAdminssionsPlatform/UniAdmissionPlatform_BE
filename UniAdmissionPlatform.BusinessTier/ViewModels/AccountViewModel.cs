@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
+
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
     public class AccountBaseViewModel
@@ -41,7 +41,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public HighSchoolBaseViewModel HighSchoolBaseViewModel { get; set; }
     }
     
-    public class AccountViewModelWithAccounts : AccountBaseViewModel
+    public class AccountViewModelWithUniversity : AccountBaseViewModel
     {
+        public UniversityBaseViewModel UniversityBaseViewModel { get; set; }
     }
 }
