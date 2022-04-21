@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Toolkit;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.Account;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
@@ -60,6 +61,50 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public async Task<IActionResult> GetUniversityAccount([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
+        }
+        
+        /// <summary>
+        /// Update User Account 
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateUniAccount(int id, [FromBody] UpdateUniAccountRequest updateUniAccountRequest)
+        {
+            try
+            {
+                await _accountService.UpdateUniAccount(id, updateUniAccountRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập tài khoản thành công với ID = {id}"));
+                // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case (int) HttpStatusCode.NotFound:
+                        // Business rule
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cập nhập thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Update fail, because server ís error");
+                }
+            }
         }
 
         [HttpPost("update-avatar")]
