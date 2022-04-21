@@ -25,6 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit);
 
         Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus);
+        Task CloseSlot(int highSchoolId, int slotId);
     }
     
     public partial class SlotService
@@ -135,6 +136,37 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus)
         {
             return await Get(s => s.Id == slotId && s.Status == (int) slotStatus).AnyAsync();
+        }
+
+        public async Task CloseSlot(int highSchoolId, int slotId)
+        {
+            var slot = await Get(s => s.Id == slotId).Include(s => s.EventChecks).FirstOrDefaultAsync();
+            if (slot == null)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.NotFound,
+                    "Không tìm thấy buổi này");
+            }
+
+            if (slot.HighSchoolId != highSchoolId)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                    "Buổi này không thuộc về bạn.");
+            }
+
+            if (slot.Status == (int)SlotStatus.Close)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                    "Buổi này đã bị đóng.");
+            }
+
+            slot.Status = (int)SlotStatus.Close;
+            foreach (var eventCheck in slot.EventChecks)
+            {
+                eventCheck.Status = (int)EventCheckStatus.Reject;
+                //todo: send notification to university
+            }
+            
+            await UpdateAsyn(slot);
         }
     }
 }

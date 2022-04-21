@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,28 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Tạo thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+
+        [HttpPut("close-slot")]
+        public async Task<IActionResult> CloseSlot(int slotId)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            try
+            {
+                await _slotService.CloseSlot(highSchoolId, slotId);
+                return Ok(MyResponse<object>.OkWithMessage("Đóng buổi thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    (int)HttpStatusCode.NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Đóng thất bại. " + e.Error.Message),
+                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Đóng thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
