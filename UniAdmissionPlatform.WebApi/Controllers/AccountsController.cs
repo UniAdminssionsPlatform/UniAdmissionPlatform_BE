@@ -35,6 +35,32 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             return Ok(await _accountService.GetAll(filter, page, limit, sort));
         }
+        
+        /// <summary>
+        /// Get list University Account
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet("university-profile")]
+        public async Task<IActionResult> GetUniversityAccount([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
+        {
+            return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
+        }
 
         [HttpPost("update-avatar")]
         [CustomAuthorize]
