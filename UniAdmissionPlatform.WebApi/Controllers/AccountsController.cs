@@ -128,11 +128,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPut("admin/{id:int}")]
-        public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountRequest updateAccountRequest)
+        public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountRequestForAdmin updateAccountRequestForAdmin)
         {
             try
             {
-                await _accountService.UpdateAccount(id, updateAccountRequest);
+                await _accountService.UpdateAccount(id, updateAccountRequestForAdmin);
                 return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập tài khoản thành công với ID = {id}"));
             }
             catch (ErrorResponse e)
@@ -140,6 +140,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 switch (e.Error.Code)
                 {
                     case (int) HttpStatusCode.NotFound:
+                        // Business rule
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cập nhập thất bại. " + e.Error.Message);
+                    case (int) HttpStatusCode.BadRequest:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);

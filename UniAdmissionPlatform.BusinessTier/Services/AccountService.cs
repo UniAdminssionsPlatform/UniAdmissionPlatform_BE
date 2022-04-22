@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Account;
@@ -26,16 +28,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task UploadAvatar(int accountId, string avatarUrl);
         Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest);
-        Task UpdateAccount(int id, UpdateAccountRequest updateAccountRequest);
+        Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
     }
     public partial class AccountService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly IRoleService _roleService;
 
-        public AccountService(IUnitOfWork unitOfWork, IAccountRepository repository, IMapper mapper) : base(unitOfWork,
+        public AccountService(IUnitOfWork unitOfWork, IAccountRepository repository, IMapper mapper, IRoleService roleService) : base(unitOfWork,
             repository)
         {
             _mapper = mapper.ConfigurationProvider;
+            _roleService = roleService;
         }
 
         private const int DefaultPaging = 20;
@@ -110,8 +114,35 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(uniAccount);
         }
         
-        public async Task UpdateAccount(int id, UpdateAccountRequest updateAccountRequest)
+        public async Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin)
         {
+            RoleBaseViewModel role;
+            try
+            {
+                role = await _roleService.GetRoleById(updateAccountRequestForAdmin.RoleId);
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw;
+                }
+            }
+
+            try
+            {
+                ValidateRoleAndIdentifyId(updateAccountRequestForAdmin, (IdentifyIdEnum)role.IdentifyId);
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw;
+                }
+            }
+
             var uapAccount = await Get().Where(a => a.Id == id)
                 .FirstOrDefaultAsync();
             if (uapAccount == null)
@@ -119,31 +150,55 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tài khoản với id = {id}");
             }
 
-            // if (uapAccount.HighSchoolId != null && uapAccount.UniversityId != null)
-            // {
-            //     throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Người dùng này không thể thuộc cả hai tổ chức cùng một lúc.");
-            // }
-            
-            // if (uapAccount.HighSchoolId == null && uapAccount.UniversityId == null)
-            // {
-            //     throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Người dùng này phải thuộc một tổ chức cùng một lúc.");
-            // }
-            
-            // if (uapAccount.HighSchoolId != null && uapAccount.UniversityId == null)
-            // {
-            //     uapAccount.UniversityId = null;
-            // }
-            
-            // if (uapAccount.HighSchoolId == null && uapAccount.UniversityId != null)
-            // {
-            //     uapAccount.HighSchoolId = null;
-            // }
-            
-            
             var mapper = _mapper.CreateMapper();
-            uapAccount = mapper.Map(updateAccountRequest, uapAccount);
+            uapAccount = mapper.Map(updateAccountRequestForAdmin, uapAccount);
+            if (updateAccountRequestForAdmin.UniversityId == null)
+            {
+                uapAccount.UniversityId = null;
+            }
+            
+            if (updateAccountRequestForAdmin.HighSchoolId == null)
+            {
+                uapAccount.HighSchoolId = null;
+            }
+            
+            if (updateAccountRequestForAdmin.OrganizationId == null)
+            {
+                uapAccount.OrganizationId = null;
+            }
             
             await UpdateAsyn(uapAccount);
+        }
+
+        private static void ValidateRoleAndIdentifyId(UpdateAccountRequestForAdmin accountRequestForAdmin, IdentifyIdEnum identifyIdEnum)
+        {
+            int? highSchoolId = accountRequestForAdmin.HighSchoolId; 
+            int? universityId = accountRequestForAdmin.UniversityId;
+            int? organizationId = accountRequestForAdmin.OrganizationId;
+            switch (identifyIdEnum)
+            {
+                case IdentifyIdEnum.HighSchoolId:
+                    if (highSchoolId == null || universityId != null || organizationId != null)
+                    {
+                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                            "Người dùng này chỉ thuộc về 1 trường cấp 3");
+                    }
+                    break;
+                case IdentifyIdEnum.UniversityId:
+                    if (highSchoolId != null || universityId == null || organizationId != null)
+                    {
+                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                            "Người dùng này chỉ thuộc về 1 trường đại học");
+                    }
+                    break;
+                case IdentifyIdEnum.OrganizationId:
+                    if (highSchoolId != null || universityId == null || organizationId != null)
+                    {
+                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                            "Người dùng này chỉ thuộc về 1 tổ chức.");
+                    }
+                    break;
+            }
         }
     }
 }

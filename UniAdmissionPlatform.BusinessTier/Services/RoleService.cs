@@ -1,4 +1,5 @@
 ﻿using System.Linq.Dynamic.Core;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -8,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
@@ -15,6 +17,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<PageResult<RoleBaseViewModel>> GetAllRoles(RoleBaseViewModel filter, string sort,
             int page, int limit);
+
+        Task<RoleBaseViewModel> GetRoleById(string id);
     }
     
     public partial class RoleService
@@ -48,5 +52,16 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
+
+        public async Task<RoleBaseViewModel> GetRoleById(string id)
+        {
+            var role = await Get(r => r.Id == id).ProjectTo<RoleBaseViewModel>(_mapper).FirstOrDefaultAsync();
+            if (role == null)
+            {
+                throw new ErrorResponse((int)HttpStatusCode.NotFound, "Chức vụ này không tồn tại.");
+            }
+
+            return role;
+        } 
     }
 }

@@ -2,7 +2,7 @@
 
 namespace UniAdmissionPlatform.BusinessTier.Requests.Account
 {
-    public class UpdateAccountRequest
+    public class UpdateAccountRequestForAdmin
     {
         public string FirstName { get; set; }
         public string MiddleName { get; set; }

@@ -15,6 +15,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int IdentifyId { get; set; }
 
         public virtual ICollection<Account> Accounts { get; set; }
     }
