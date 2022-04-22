@@ -150,6 +150,45 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
+        /// Get event by ID
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetEventByID(int id)
+        {
+            try
+            {
+                var eventByID = await _eventService.GetEventByID(id);
+                return Ok(MyResponse<EventBaseViewModel>.OkWithDetail(eventByID, "Truy cập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
+                }
+            }
+        }
+        
+        /// <summary>
         /// Delete a event
         /// </summary>
         /// <response code="200">
