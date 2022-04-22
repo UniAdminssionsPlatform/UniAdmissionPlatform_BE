@@ -46,7 +46,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var highSchools = await _highSchoolService.GetAllHighSchools(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<HighSchoolFilterForSchoolAdmin>>.OkWithDetail(highSchools, $"Đạt được thành công"));
+                return Ok(MyResponse<PageResult<HighSchoolCodeViewModel>>.OkWithDetail(highSchools, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
