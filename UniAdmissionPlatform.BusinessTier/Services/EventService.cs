@@ -25,7 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteEvent(int id);
         Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort,
             int page, int limit);
-
+        Task<EventBaseViewModel> GetEventByID(int Id);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
     }
     
@@ -105,6 +105,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<EventBaseViewModel> GetEventByID(int id)
+        {
+             var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper).FirstOrDefaultAsync();
+
+            return eventById;
         }
         
         public async Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
