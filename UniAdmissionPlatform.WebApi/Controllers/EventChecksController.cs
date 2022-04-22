@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
         }
 
-        [HttpPut]
+        [HttpPut("appvove-event-to-slot")]
         public async Task<IActionResult> ApproveEventToSlot(int eventCheckId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
