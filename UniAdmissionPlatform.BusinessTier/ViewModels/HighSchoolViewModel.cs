@@ -13,6 +13,11 @@
     public class HighSchoolFilterForSchoolAdmin
     {
         public string HighSchoolCode { get; set; }
+    }
+    public class HighSchoolCodeViewModel
+    {
+        public string HighSchoolCode { get; set; }
         public string Name { get; set; }
     }
+    
 }

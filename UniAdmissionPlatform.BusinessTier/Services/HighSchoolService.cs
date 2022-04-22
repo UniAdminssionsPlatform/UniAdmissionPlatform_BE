@@ -18,7 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<HighSchool> GetHighSchoolByCode(string highSchoolCode);
 
-        Task<PageResult<HighSchoolFilterForSchoolAdmin>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit);
+        Task<PageResult<HighSchoolCodeViewModel>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit);
     }
     public partial class HighSchoolService
     {
@@ -46,18 +46,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<HighSchoolFilterForSchoolAdmin>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit)
+        public async Task<PageResult<HighSchoolCodeViewModel>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(h => h.DeletedAt == null)
-                .ProjectTo<HighSchoolFilterForSchoolAdmin>(_mapper)
-                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            var (total, queryable) = Get().Where(h => h.DeletedAt == null && h.HighSchoolCode.Equals(filter.HighSchoolCode))
+                .ProjectTo<HighSchoolCodeViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             if (sort != null)
             {
                 queryable = queryable.OrderBy(sort);
             }
 
-            return new PageResult<HighSchoolFilterForSchoolAdmin>
+            return new PageResult<HighSchoolCodeViewModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,
