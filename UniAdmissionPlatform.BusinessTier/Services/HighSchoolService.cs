@@ -16,7 +16,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IHighSchoolService
     {
-        Task<HighSchool> GetHighSchoolByCode(string highSchoolCode);
+        Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode);
 
         Task<PageResult<HighSchoolCodeViewModel>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit);
     }
@@ -31,9 +31,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
 
-        public async Task<HighSchool> GetHighSchoolByCode(string highSchoolCode)
+        public async Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode)
         {
-            var highSchool = await FirstOrDefaultAsyn(hs => hs.HighSchoolCode == highSchoolCode);
+            var highSchool = await Get().ProjectTo<HighSchoolCodeViewModel>(_mapper).FirstOrDefaultAsync(hs => hs.HighSchoolCode == highSchoolCode);
             if (highSchool == null)
             {
                 throw new ErrorResponse((int)(HttpStatusCode.NotFound),

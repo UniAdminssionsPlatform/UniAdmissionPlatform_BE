@@ -16,6 +16,7 @@
     }
     public class HighSchoolCodeViewModel
     {
+        public int Id { get; set; }
         public string HighSchoolCode { get; set; }
         public string Name { get; set; }
     }

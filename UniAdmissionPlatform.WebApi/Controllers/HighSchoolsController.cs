@@ -41,12 +41,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetListEvent([FromQuery] HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetHighSchoolByCode(string highSchoolCode)
         {
             try
             {
-                var highSchools = await _highSchoolService.GetAllHighSchools(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<HighSchoolCodeViewModel>>.OkWithDetail(highSchools, $"Đạt được thành công"));
+                var highSchools = await _highSchoolService.GetHighSchoolByCode(highSchoolCode);
+                return Ok(MyResponse<HighSchoolCodeViewModel>.OkWithDetail(highSchools, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
