@@ -106,6 +106,49 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Update Account Admin 
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpPut("admin/{id:int}")]
+        public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountRequest updateAccountRequest)
+        {
+            try
+            {
+                await _accountService.UpdateAccount(id, updateAccountRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập tài khoản thành công với ID = {id}"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case (int) HttpStatusCode.NotFound:
+                        // Business rule
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cập nhập thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Update fail, because server ís error");
+                }
+            }
+        }
 
         [HttpPost("update-avatar")]
         [CustomAuthorize]

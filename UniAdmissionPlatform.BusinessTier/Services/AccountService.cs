@@ -26,6 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task UploadAvatar(int accountId, string avatarUrl);
         Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest);
+        Task UpdateAccount(int id, UpdateAccountRequest updateAccountRequest);
     }
     public partial class AccountService
     {
@@ -107,6 +108,42 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             uniAccount = mapper.Map(updateUniAccountRequest, uniAccount);
             
             await UpdateAsyn(uniAccount);
+        }
+        
+        public async Task UpdateAccount(int id, UpdateAccountRequest updateAccountRequest)
+        {
+            var uapAccount = await Get().Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+            if (uapAccount == null)
+            {
+                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tài khoản với id = {id}");
+            }
+
+            // if (uapAccount.HighSchoolId != null && uapAccount.UniversityId != null)
+            // {
+            //     throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Người dùng này không thể thuộc cả hai tổ chức cùng một lúc.");
+            // }
+            
+            // if (uapAccount.HighSchoolId == null && uapAccount.UniversityId == null)
+            // {
+            //     throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Người dùng này phải thuộc một tổ chức cùng một lúc.");
+            // }
+            
+            // if (uapAccount.HighSchoolId != null && uapAccount.UniversityId == null)
+            // {
+            //     uapAccount.UniversityId = null;
+            // }
+            
+            // if (uapAccount.HighSchoolId == null && uapAccount.UniversityId != null)
+            // {
+            //     uapAccount.HighSchoolId = null;
+            // }
+            
+            
+            var mapper = _mapper.CreateMapper();
+            uapAccount = mapper.Map(updateAccountRequest, uapAccount);
+            
+            await UpdateAsyn(uapAccount);
         }
     }
 }
