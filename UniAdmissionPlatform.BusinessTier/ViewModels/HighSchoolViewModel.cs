@@ -9,4 +9,10 @@
         public int? ProvinceId { get; set; }
         public string HighSchoolCode { get; set; }
     }
+    
+    public class HighSchoolFilterForSchoolAdmin
+    {
+        public string HighSchoolCode { get; set; }
+        public string Name { get; set; }
+    }
 }
