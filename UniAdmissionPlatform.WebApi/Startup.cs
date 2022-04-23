@@ -46,7 +46,7 @@ namespace UniAdmissionPlatform.WebApi
                     .AllowAnyHeader();
             }));
 
-            services.InitSwagger();
+            services.ConfigureSwaggerServices();
             
             services.AddSingleton<ICasbinService, CasbinService>();
 
@@ -136,6 +136,8 @@ namespace UniAdmissionPlatform.WebApi
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.ConfigureSwagger(provider);
+            
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
