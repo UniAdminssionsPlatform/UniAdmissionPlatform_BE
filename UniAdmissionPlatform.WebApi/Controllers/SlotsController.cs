@@ -44,7 +44,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> CreateSlot([FromBody] CreateSlotRequest createSlotRequest)
         {

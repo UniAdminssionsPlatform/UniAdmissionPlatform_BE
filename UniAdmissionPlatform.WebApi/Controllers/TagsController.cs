@@ -23,7 +23,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Create a tag
+        /// Create a new tag
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -62,7 +62,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update tag
+        /// Update a specific tag by id
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -105,7 +105,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list tag
+        /// Get a list tags
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -145,7 +145,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a tag
+        /// Delete a specific tag by id
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">

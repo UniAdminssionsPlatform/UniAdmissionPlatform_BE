@@ -22,37 +22,37 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Lấy tất cả các subjects
+        /// Get list subjects
         /// </summary>
         /// <returns></returns>
-        [HttpGet("get-all-subjects")]
+        [HttpGet("subjects")]
         public IActionResult GetAllSubjects()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllSubjects()));
         }
         
         /// <summary>
-        /// Lấy tất cả các actions
+        /// Get list actions
         /// </summary>
         /// <returns></returns>
-        [HttpGet("get-all-actions")]
+        [HttpGet("actions")]
         public IActionResult GetAllActions()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllActions()));
         }
         
         /// <summary>
-        /// Lấy tất cả các objects
+        /// Get list objects
         /// </summary>
         /// <returns></returns>
-        [HttpGet("get-all-object")]
+        [HttpGet("object")]
         public IActionResult GetAllObjects()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllObjects()));
         }
         
         /// <summary>
-        /// Lấy quyền hành hiện tại
+        /// Get current policy
         /// </summary>
         /// <returns></returns>
         [HttpGet("get-policy")]
@@ -62,7 +62,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Thêm quyền hành
+        /// Create a policy
         /// </summary>
         /// <param name="addPolicyRequest"></param>
         /// <returns></returns>
@@ -81,7 +81,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Xóa quyền hành
+        /// Delete a policy
         /// </summary>
         /// <param name="removePolicyRequest"></param>
         /// <returns></returns>

@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _slotService = slotService;
         }
         /// <summary>
-        /// Create a event
+        /// Create a new event
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -66,7 +66,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update event
+        /// Update event by id
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -110,7 +110,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list event
+        /// Get a list events
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -150,7 +150,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get event by ID
+        /// Get a specific event by id
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -189,7 +189,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a event
+        /// Delete a event by id
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">

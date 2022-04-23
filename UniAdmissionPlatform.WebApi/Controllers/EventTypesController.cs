@@ -23,7 +23,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list event type
+        /// Get a list event types
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">

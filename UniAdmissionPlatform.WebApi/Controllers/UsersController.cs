@@ -126,7 +126,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Create a Account for uni (admin)
+        /// Create a new university account
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -145,7 +145,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("admin")]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest createAccountRequest)
         {
             try

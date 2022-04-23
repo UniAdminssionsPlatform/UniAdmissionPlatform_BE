@@ -21,7 +21,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         
         
         /// <summary>
-        /// Get HighSchool Code and Name
+        /// Get a specific high school name by code
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
