@@ -27,7 +27,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Tải file ảnh (.png, .jpg)
+        /// Upload a new file image(.png, .jpg)
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">

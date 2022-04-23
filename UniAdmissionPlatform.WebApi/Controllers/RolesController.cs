@@ -23,7 +23,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list Role
+        /// Get a list role
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">

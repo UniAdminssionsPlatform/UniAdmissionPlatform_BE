@@ -30,15 +30,35 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _firebaseStorageService = firebaseStorageService;
             _authService = authService;
         }
-
-        [HttpGet("get-students-info")]
+        
+        /// <summary>
+        /// Get a list of student accounts
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet("students")]
         public async Task<IActionResult> GetStudentInfo([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             return Ok(await _accountService.GetAll(filter, page, limit, sort));
         }
         
         /// <summary>
-        /// Get list University Account
+        /// Get a list of university accounts
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -57,14 +77,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpGet("university-profile")]
+        [HttpGet("universities")]
         public async Task<IActionResult> GetUniversityAccount([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
         }
         
         /// <summary>
-        /// Update User Account 
+        /// Update a user account 
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -83,7 +103,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpPut("{id:int}")]
+        [HttpPut("user/{id:int}")]
         public async Task<IActionResult> UpdateUniAccount(int id, [FromBody] UpdateUniAccountRequest updateUniAccountRequest)
         {
             try
@@ -108,7 +128,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update Account Admin 
+        /// Update all account in Admin 
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
@@ -153,7 +173,50 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Get list accounts
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAllAccounts([FromQuery] AccountBaseViewModel filter, string sort,
+            int page, int limit)
+        {
+            try
+            {
+                var events = await _accountService.GetAllAccounts(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<AccountBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Upload a new avatar
+        /// </summary>
         [HttpPost("update-avatar")]
         [CustomAuthorize]
         public async Task<IActionResult> UpdateAvatar([Required] IFormFile file)

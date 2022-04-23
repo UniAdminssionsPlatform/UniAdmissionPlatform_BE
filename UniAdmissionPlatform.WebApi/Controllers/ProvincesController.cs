@@ -23,7 +23,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list province
+        /// Get a list provinces
         /// </summary>
         /// <response code="200">
         ///     <table id="doc">
