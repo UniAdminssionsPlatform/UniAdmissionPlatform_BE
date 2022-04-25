@@ -102,5 +102,46 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Get university by ID
+        /// </summary>
+        /// <response code="200">
+        ///     <table id="doc">
+        ///         <tr>
+        ///             <th>Code</th>
+        ///             <th>Description</th>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>0 (action success)</td>
+        ///             <td>Success</td>
+        ///         </tr>
+        ///         <tr>
+        ///             <td>7 (action fail)</td>
+        ///             <td>Fail</td>
+        ///         </tr>
+        ///     </table>
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{universityId:int}")]
+        public async Task<IActionResult> GetUniversityByID(int universityId)
+        {
+            try
+            {
+                var universityById = await _universityService.GetUniversityByID(universityId);
+                return Ok(MyResponse<UniversityBaseViewModel>.OkWithDetail(universityById, "Truy cập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server is error");
+                }
+            }
+        }
     }
 }
