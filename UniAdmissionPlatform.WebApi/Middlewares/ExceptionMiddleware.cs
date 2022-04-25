@@ -30,6 +30,7 @@ namespace UniAdmissionPlatform.WebApi.Middlewares
             {
                 var response = context.Response;
                 response.ContentType = "application/json";
+                response.StatusCode = StatusCodes.Status400BadRequest;
                 var result = "";
 
                 switch (error.Code)

@@ -20,7 +20,7 @@ namespace UniAdmissionPlatform.WebApi.Attributes
                 context.Result = new JsonResult(MyResponse<dynamic>.FailWithDetail(new
                 {
                     IsLogined = false
-                }, "No Login")) { StatusCode = StatusCodes.Status200OK };
+                }, "No Login")) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }
     }
@@ -37,7 +37,7 @@ namespace UniAdmissionPlatform.WebApi.Attributes
                 context.Result = new JsonResult(MyResponse<dynamic>.FailWithDetail(new
                 {
                     IsLogined = false
-                }, "No login")) { StatusCode = StatusCodes.Status200OK };
+                }, "No login")) { StatusCode = StatusCodes.Status401Unauthorized };
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace UniAdmissionPlatform.WebApi.Attributes
             if (!casbinService!.Enforce(subs, obj, act))
             {
                 context.Result = new JsonResult(MyResponse<dynamic>.FailWithMessage("Insufficient permissions"))
-                    { StatusCode = StatusCodes.Status200OK };
+                    { StatusCode = StatusCodes.Status400BadRequest };
             }
         }
     }
