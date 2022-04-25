@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -36,7 +37,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var highSchool = await Get().ProjectTo<HighSchoolCodeViewModel>(_mapper).FirstOrDefaultAsync(hs => hs.HighSchoolCode == highSchoolCode);
             if (highSchool == null)
             {
-                throw new ErrorResponse((int)(HttpStatusCode.NotFound),
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
                     "Không thể tìm thấy trường THPT nào ứng với mã đã cung cấp.");
             }
 

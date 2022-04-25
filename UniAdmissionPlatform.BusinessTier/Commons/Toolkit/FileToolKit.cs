@@ -14,12 +14,12 @@ namespace UniAdmissionPlatform.BusinessTier.Commons.Toolkit
             
             if (lastIndexOf == -1 || !extensions.Contains(file.FileName[lastIndexOf..file.FileName.Length].ToLower()))
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Định dạng file bắt buộc là " + string.Join(" hoặc ",extensions) );
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Định dạng file bắt buộc là " + string.Join(" hoặc ",extensions) );
             }
 
             if (file.Length > fileMaxSize)
             {
-                throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Dung lượng file phải bé hơn 10 MB");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Dung lượng file phải bé hơn 10 MB");
             }
         }
     }

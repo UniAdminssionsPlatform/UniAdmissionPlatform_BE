@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Math;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -113,7 +114,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var account = await Get(a => a.Id == accountId).FirstOrDefaultAsync();
             if (account == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, "User không có trên hệ thống!");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "User không có trên hệ thống!");
             }
 
             account.ProfileImageUrl = avatarUrl;
@@ -126,7 +127,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var uniAccount = await Get().Where(a => a.Id == id).FirstOrDefaultAsync();
             if (uniAccount == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tài khoản với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {id}");
             }
             
             var mapper = _mapper.CreateMapper();
@@ -168,7 +169,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 .FirstOrDefaultAsync();
             if (uapAccount == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tài khoản với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {id}");
             }
 
             var mapper = _mapper.CreateMapper();
@@ -201,21 +202,21 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 case IdentifyIdEnum.HighSchoolId:
                     if (highSchoolId == null || universityId != null || organizationId != null)
                     {
-                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                        throw new ErrorResponse(StatusCodes.Status400BadRequest,
                             "Người dùng này chỉ thuộc về 1 trường cấp 3");
                     }
                     break;
                 case IdentifyIdEnum.UniversityId:
                     if (highSchoolId != null || universityId == null || organizationId != null)
                     {
-                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                        throw new ErrorResponse(StatusCodes.Status400BadRequest,
                             "Người dùng này chỉ thuộc về 1 trường đại học");
                     }
                     break;
                 case IdentifyIdEnum.OrganizationId:
                     if (highSchoolId != null || universityId == null || organizationId != null)
                     {
-                        throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                        throw new ErrorResponse(StatusCodes.Status400BadRequest,
                             "Người dùng này chỉ thuộc về 1 tổ chức.");
                     }
                     break;

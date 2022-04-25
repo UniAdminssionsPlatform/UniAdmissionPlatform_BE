@@ -17,10 +17,7 @@ namespace UniAdmissionPlatform.WebApi.Attributes
             var claims = context.HttpContext.Items["claims"];
             if (claims == null)
             {
-                context.Result = new JsonResult(MyResponse<dynamic>.FailWithDetail(new
-                {
-                    IsLogined = false
-                }, "No Login")) { StatusCode = StatusCodes.Status401Unauthorized };
+                context.Result = new JsonResult(MyResponse<dynamic>.FailWithMessage("Bạn chưa đăng nhập")) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }
     }
@@ -34,22 +31,19 @@ namespace UniAdmissionPlatform.WebApi.Attributes
             var claims = (CustomClaims)context.HttpContext.Items["claims"];
             if (claims == null)
             {
-                context.Result = new JsonResult(MyResponse<dynamic>.FailWithDetail(new
-                {
-                    IsLogined = false
-                }, "No login")) { StatusCode = StatusCodes.Status401Unauthorized };
+                context.Result = new JsonResult(MyResponse<dynamic>.FailWithMessage("Bạn chưa dăng nhập")) { StatusCode = StatusCodes.Status401Unauthorized };
                 return;
             }
 
             var casbinService = context.HttpContext.RequestServices.GetService<ICasbinService>();
             
-            var subs = claims.Role;
+            var sub = claims.Role;
             var obj = context.HttpContext.Request.Path;
             var act = context.HttpContext.Request.Method;
 
-            if (!casbinService!.Enforce(subs, obj, act))
+            if (!casbinService!.Enforce(sub, obj, act))
             {
-                context.Result = new JsonResult(MyResponse<dynamic>.FailWithMessage("Insufficient permissions"))
+                context.Result = new JsonResult(MyResponse<dynamic>.FailWithMessage("Bạn không có quyền"))
                     { StatusCode = StatusCodes.Status400BadRequest };
             }
         }

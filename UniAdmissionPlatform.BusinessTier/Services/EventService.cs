@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
@@ -62,7 +63,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy event với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
             }
         
             var mapper = _mapper.CreateMapper();
@@ -77,7 +78,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy event với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
             }
             
             uniEvent.DeletedAt = DateTime.Now;
@@ -124,7 +125,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 .FirstOrDefaultAsync();
             if (uniEvent == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.BadRequest,
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Event không tồn tại hoặc không thuộc trường của bạn.");
             }
             
@@ -134,7 +135,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
              
             if (ec != null && ec.Status != (int) EventCheckStatus.Reject)
             {
-                throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Event của bạn đã được book ở slot này.");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event của bạn đã được book ở slot này.");
             }
 
             uniEvent.EventChecks.Add(new EventCheck

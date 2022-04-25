@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -51,7 +52,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 return user.Status switch
                 {
                     (int)UserStatus.New => GenerateJwtTokenForNewUser(user),
-                    (int)UserStatus.Lock => throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                    (int)UserStatus.Lock => throw new ErrorResponse(StatusCodes.Status400BadRequest,
                         "Tài khoản này đã bị khóa"),
                     (int)UserStatus.Active => GenerateJwtTokenForActiveUser(user),
                     _ => null
@@ -71,7 +72,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (userInDatabase.Account != null)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Tài khoản đã đăng ký");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Tài khoản đã đăng ký");
             }
 
             userInDatabase.Account = userInRequest.Account;
@@ -201,7 +202,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
             if (user.Status != (int) UserStatus.New)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Trạng thái người dùng không hợp hệ");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
             }
 
             var mapper = _mapper.CreateMapper();
@@ -219,12 +220,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var user = await FirstOrDefaultAsyn(u => u.Id == userId);
             if (user == null)
             {
-                throw new ErrorResponse((int)HttpStatusCode.NotFound, "Không thể tìm thấy người dùng.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy người dùng.");
             }
 
             if (user.Status != (int) userStatus)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest, "Trạng thái người dùng không hợp hệ");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
             }
         }
     }

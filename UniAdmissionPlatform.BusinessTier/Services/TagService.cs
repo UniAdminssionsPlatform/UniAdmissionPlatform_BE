@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using UniAdmissionPlatform.BusinessTier.Requests.Tag;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -52,7 +53,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var tag = await Get().Where(t => t.Id == id).FirstOrDefaultAsync();
             if (tag == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tag với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tag với id = {id}");
             }
 
             var mapper = _mapper.CreateMapper();
@@ -69,7 +70,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var tag = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
             if (tag == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tag với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tag với id = {id}");
             }
             
             tag.DeletedAt = DateTime.Now;

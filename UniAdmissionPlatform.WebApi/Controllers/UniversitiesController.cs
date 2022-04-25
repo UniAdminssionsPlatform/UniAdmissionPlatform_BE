@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -107,20 +108,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// Get university by ID
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Tìm thấy thành công
+        /// </response>
+        /// <response code="400">
+        /// Không tìm thấy trường đại học
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
@@ -137,6 +131,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cannot create, because server is error");
