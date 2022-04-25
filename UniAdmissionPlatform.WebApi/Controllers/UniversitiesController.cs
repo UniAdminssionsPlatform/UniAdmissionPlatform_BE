@@ -131,20 +131,20 @@ namespace UniAdmissionPlatform.WebApi.Controllers
 
 
         /// <summary>
-        /// Get university by iD
+        /// Create a new University
         /// </summary>
         /// <response code="200">
-        /// Get university by iD successfully
+        /// Create a new University successfully
         /// </response>
         /// <response code="400">
-        /// Get university by iD fail
+        /// Create a new University fail
         /// </response>
         /// <response code="401">
         /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(Tags = new[] { "Universities" })]
+        [SwaggerOperation(Tags = new[] { "Admin - Universities" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/")]
         public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest createUniversityRequest)
         {
