@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         public static void ConfigUniversityMapperModule(this IMapperConfigurationExpression mc)
         {
             mc.CreateMap<University, UniversityBaseViewModel>();
+            mc.CreateMap<University, UniversityCodeViewModel>();
         }
     }
 }

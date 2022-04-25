@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
@@ -11,7 +12,7 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
+    // [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -46,6 +47,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPost]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]")]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest createEventRequest)
         {
             try
@@ -85,7 +88,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpPut("{id:int}")]
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
         public async Task<IActionResult> UpdateEvent(int id, [FromBody] UpdateEventRequest updateEventRequest)
         {
             try
@@ -130,6 +135,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]")]
         public async Task<IActionResult> GetListEvent([FromQuery] EventBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -169,7 +176,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
         public async Task<IActionResult> GetEventByID(int id)
         {
             try
@@ -208,7 +217,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         ///     </table>
         /// </response>
         /// <returns></returns>
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
         public async Task<IActionResult> DeleteAEvent(int id)
         {
             try
@@ -231,8 +242,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
-        
-        [HttpPut("book-slot-for-uni-admin")]
+        /// <summary>
+        /// Booking slot for university manager
+        /// </summary>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "University - Event" })]
+        [Route("~/api/v{version:apiVersion}/university/[controller]/booking")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
 
