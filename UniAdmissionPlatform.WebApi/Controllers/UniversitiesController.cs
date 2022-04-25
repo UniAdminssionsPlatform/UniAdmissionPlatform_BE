@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.University;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
@@ -14,10 +16,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class UniversitiesController : ControllerBase
     {
         private readonly IUniversityService _universityService;
-
-        public UniversitiesController(IUniversityService universityService)
+        private readonly IProvinceService _provinceService;
+        public UniversitiesController(IUniversityService universityService, IProvinceService provinceService)
         {
             _universityService = universityService;
+            _provinceService = provinceService;
         }
         
          /// <summary>
@@ -125,5 +128,47 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+
+
+        /// <summary>
+        /// Get university by iD
+        /// </summary>
+        /// <response code="200">
+        /// Get university by iD successfully
+        /// </response>
+        /// <response code="400">
+        /// Get university by iD fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Universities" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]/")]
+        public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest createUniversityRequest)
+        {
+            try
+            {
+                await _provinceService.GetById(createUniversityRequest.ProvinceId!.Value);
+                var universityId = await _universityService.CreateUniversity(createUniversityRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new { universityId },
+                    $"Tạo trường đại học thành công với id = {universityId}"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Tạo thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                             e.Error.Message);
+                }
+            }
+        }
+
+
     }
 }

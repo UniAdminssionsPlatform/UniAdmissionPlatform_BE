@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -15,6 +16,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<PageResult<ProvinceBaseViewModel>> GetAllProvinces(ProvinceBaseViewModel filter, string sort,
             int page, int limit);
+
+        Task<ProvinceBaseViewModel> GetById(int id);
     }
     
     public partial class ProvinceService
@@ -47,6 +50,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+
+        public async Task<ProvinceBaseViewModel> GetById(int id)
+        {
+            var province = await FirstOrDefaultAsyn(p => p.Id == id);
+            if (province == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy tỉnh thành");
+            }
+
+            return _mapper.CreateMapper().Map<ProvinceBaseViewModel>(province);
         }
     }
 }
