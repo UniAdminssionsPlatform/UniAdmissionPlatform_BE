@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -93,7 +94,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);
@@ -176,7 +177,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa thất bại. " + e.Error.Message);

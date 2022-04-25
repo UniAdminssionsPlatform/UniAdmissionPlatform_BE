@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -103,7 +104,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);
@@ -231,7 +232,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa thất bại. " + e.Error.Message);
@@ -259,7 +260,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 var isValid = await _slotService.CheckStatusOfSlot(bookSlotForUniAdminRequest.SlotId, SlotStatus.Open);
                 if (!isValid)
                 {
-                    throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Slot này không được mở để book.");
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest, "Slot này không được mở để book.");
                 }
                 await _eventService.BookSlotForUniAdmin(universityId, bookSlotForUniAdminRequest);
                 return Ok(MyResponse<object>.OkWithMessage("Book thành công!"));
@@ -268,7 +269,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Book thất bại. " + e.Error.Message);
                     default:

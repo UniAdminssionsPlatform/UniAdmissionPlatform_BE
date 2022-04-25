@@ -57,7 +57,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int) HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Tải lên thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
                 };

@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
@@ -45,7 +46,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (slot.EndTime != null && slot.StartTime >= slot.EndTime)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
             }
             
@@ -54,7 +55,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                                       || slot.EndTime != null && s.StartTime <= slot.StartTime && s.EndTime >= slot.EndTime // ca slot lan end time deu nam trong slot khac
                                       ).AnyAsync())
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Slot bị trùng lịch với slot khác!");
             }
             
@@ -143,19 +144,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var slot = await Get(s => s.Id == slotId).Include(s => s.EventChecks).FirstOrDefaultAsync();
             if (slot == null)
             {
-                throw new ErrorResponse((int)HttpStatusCode.NotFound,
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
                     "Không tìm thấy buổi này");
             }
 
             if (slot.HighSchoolId != highSchoolId)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này không thuộc về bạn.");
+                
             }
 
             if (slot.Status == (int)SlotStatus.Close)
             {
-                throw new ErrorResponse((int)HttpStatusCode.BadRequest,
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này đã bị đóng.");
             }
 

@@ -72,7 +72,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Đăng nhập thất bại. " + e.Error.Message);
                     default:
@@ -117,7 +117,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
@@ -179,9 +179,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);

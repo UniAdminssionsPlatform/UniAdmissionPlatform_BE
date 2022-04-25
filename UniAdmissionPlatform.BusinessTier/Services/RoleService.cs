@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -58,7 +59,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var role = await Get(r => r.Id == id).ProjectTo<RoleBaseViewModel>(_mapper).FirstOrDefaultAsync();
             if (role == null)
             {
-                throw new ErrorResponse((int)HttpStatusCode.NotFound, "Chức vụ này không tồn tại.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "Chức vụ này không tồn tại.");
             }
 
             return role;
