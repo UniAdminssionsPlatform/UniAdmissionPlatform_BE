@@ -19,4 +19,11 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Email { get; set; }
         public int? Status { get; set; }
     }
+
+    public class UniversityCodeViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string UniversityCode { get; set; }
+    }
 }
