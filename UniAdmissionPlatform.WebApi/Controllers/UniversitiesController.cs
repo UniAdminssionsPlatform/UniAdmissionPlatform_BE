@@ -89,8 +89,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                var tags = await _universityService.GetAllUniversities(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<UniversityBaseViewModel>>.OkWithDetail(tags, $"Đạt được thành công"));
+                var universities = await _universityService.GetAllUniversities(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<UniversityBaseViewModel>>.OkWithDetail(universities, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
