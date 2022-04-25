@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             AccountBaseViewModel filter, string sort, int page, int limit);
 
         Task UploadAvatar(int accountId, string avatarUrl);
-        Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest);
+        Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest);
         Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
     }
     public partial class AccountService
@@ -122,7 +122,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(account);
         }
 
-        public async Task UpdateUniAccount(int id, UpdateUniAccountRequest updateUniAccountRequest)
+        public async Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest)
         {
             var uniAccount = await Get().Where(a => a.Id == id).FirstOrDefaultAsync();
             if (uniAccount == null)
@@ -131,7 +131,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
             
             var mapper = _mapper.CreateMapper();
-            uniAccount = mapper.Map(updateUniAccountRequest, uniAccount);
+            uniAccount = mapper.Map(updateProfileRequest, uniAccount);
             
             await UpdateAsyn(uniAccount);
         }

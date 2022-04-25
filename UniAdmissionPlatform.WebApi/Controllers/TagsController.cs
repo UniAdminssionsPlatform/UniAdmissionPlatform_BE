@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Tag;
@@ -12,7 +13,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class TagsController : ControllerBase
     {
@@ -27,23 +27,18 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// Create a new tag
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Create a new tag successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new tag fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Tags" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagRequest createTagRequest)
         {
             try
@@ -63,31 +58,26 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update a specific tag by id
+        /// Create a new tag
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Create a new tag successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new tag fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateTag(int id, [FromBody] UpdateTagRequest updateTagRequest)
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Tags" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{tagId:int}")]
+        public async Task<IActionResult> UpdateTag(int tagId, [FromBody] UpdateTagRequest updateTagRequest)
         {
             try
             {
-                await _tagService.UpdateTag(id, updateTagRequest);
+                await _tagService.UpdateTag(tagId, updateTagRequest);
                 return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
             catch (ErrorResponse e)
@@ -106,26 +96,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a list tags
+        /// Get list tags
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list tags successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list tags fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Tags" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
         public async Task<IActionResult> GetListTag([FromQuery] TagBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -146,31 +131,26 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a specific tag by id
+        /// Delete a tag
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Delete a tag successfully
+        /// </response>
+        /// <response code="400">
+        /// Delete a tag fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteATag(int id)
+        [HttpDelete]
+        [SwaggerOperation(Tags = new[] { "Tags" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{tagId:int}")]
+        public async Task<IActionResult> DeleteATag(int tagId)
         {
             try
             {
-                await _tagService.DeleteTag(id);
+                await _tagService.DeleteTag(tagId);
                 return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
             }
             catch (ErrorResponse e)

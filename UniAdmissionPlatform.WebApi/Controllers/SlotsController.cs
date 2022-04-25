@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Slot;
@@ -13,7 +14,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class SlotsController : ControllerBase
     {
@@ -25,9 +25,24 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
             _slotService = slotService;
         }
-
-        [HttpGet("get-slots-for-school-admin")]
-        public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
+        
+        /// <summary>
+        /// Get list slots
+        /// </summary>
+        /// <response code="200">
+        /// Get list slots successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list slots fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]")]
+        public async Task<IActionResult> GetSlotsForHighSchoolAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
             try
@@ -46,7 +61,22 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
+        /// <summary>
+        /// Create a new slot
+        /// </summary>
+        /// <response code="200">
+        /// Create a new slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
         [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/")]
         public async Task<IActionResult> CreateSlot([FromBody] CreateSlotRequest createSlotRequest)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -65,8 +95,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-
-        [HttpPut("close-slot")]
+        
+        /// <summary>
+        /// Close a slot
+        /// </summary>
+        /// <response code="200">
+        /// Close a slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Close a slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/close-slot")]
         public async Task<IActionResult> CloseSlot(int slotId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -87,8 +132,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-
-        [HttpGet("get-slots-for-uni-admin")]
+        
+        /// <summary>
+        /// Get list slots
+        /// </summary>
+        /// <response code="200">
+        /// Get list slots successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list slots fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
         public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, int page, int limit)
         {
             try

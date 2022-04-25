@@ -22,7 +22,7 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Account
         public int? OrganizationId { get; set; }
     }
     
-    public class UpdateUniAccountRequest
+    public class UpdateProfileRequest
     {
         public string FirstName { get; set; }
         public string MiddleName { get; set; }

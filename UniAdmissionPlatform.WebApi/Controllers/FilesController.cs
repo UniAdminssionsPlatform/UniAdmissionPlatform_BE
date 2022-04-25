@@ -47,6 +47,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPost("upload-image")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UploadImage([Required] IFormFile file)
         {
             try

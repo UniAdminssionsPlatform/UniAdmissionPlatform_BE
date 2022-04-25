@@ -27,29 +27,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
             _slotService = slotService;
         }
+        
         /// <summary>
         /// Create a new event
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Create a new event successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new event fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]")]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest createEventRequest)
         {
             try
@@ -70,34 +64,27 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update event by id
+        /// Update a new event
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Update a event successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a event fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPut]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> UpdateEvent(int id, [FromBody] UpdateEventRequest updateEventRequest)
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventRequest updateEventRequest)
         {
             try
             {
-                await _eventService.UpdateEvent(id, updateEventRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập event thành công với ID = {id}"));
+                await _eventService.UpdateEvent(eventId, updateEventRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new{eventId}, $"Cập nhập event thành công với ID = {eventId}"));
                 // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
             catch (ErrorResponse e)
@@ -116,28 +103,19 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a list events
+        /// Get list events
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list events successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list events fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]")]
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
+        
         public async Task<IActionResult> GetListEvent([FromQuery] EventBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -158,33 +136,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a specific event by id
+        /// Get a event by iD
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get a event by iD successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a event by iD fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> GetEventByID(int id)
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{eventId:int}")]
+        public async Task<IActionResult> GetEventByID(int eventId)
         {
             try
             {
-                var eventByID = await _eventService.GetEventByID(id);
+                var eventByID = await _eventService.GetEventByID(eventId);
                 return Ok(MyResponse<EventBaseViewModel>.OkWithDetail(eventByID, "Truy cập thành công!"));
             }
             catch (ErrorResponse e)
@@ -199,33 +167,26 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a event by id
+        /// Delete a event by iD
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Delete a event by iD successfully
+        /// </response>
+        /// <response code="400">
+        /// Delete a event by iD fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpDelete]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> DeleteAEvent(int id)
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        public async Task<IActionResult> DeleteAEvent(int eventId)
         {
             try
             {
-                await _eventService.DeleteEvent(id);
+                await _eventService.DeleteEvent(eventId);
                 return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
             }
             catch (ErrorResponse e)
@@ -244,11 +205,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Booking slot for university manager
+        /// Book a slot in admin university
         /// </summary>
+        /// <response code="200">
+        /// Book a slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Book a slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
         [HttpPut]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/booking")]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/book")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
 
