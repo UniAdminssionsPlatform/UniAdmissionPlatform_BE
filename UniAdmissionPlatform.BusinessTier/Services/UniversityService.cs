@@ -1,10 +1,10 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
@@ -17,6 +17,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<UniversityCodeViewModel> GetUniversityNameByCode(string highSchoolCode);
         Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit);
+        Task<UniversityBaseViewModel> GetUniversityByID(int Id);
         
     }
     public partial class UniversityService
@@ -66,6 +67,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId)
+        {
+            int statusU = 1; //status Active
+            var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU)
+                .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
+
+            return universityById;
         }
         
     }
