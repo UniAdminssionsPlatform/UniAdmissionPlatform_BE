@@ -150,7 +150,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                await _provinceService.GetById(createUniversityRequest.ProvinceId);
+                await _provinceService.GetProvinceByID(createUniversityRequest.ProvinceId);
                 var universityId = await _universityService.CreateUniversity(createUniversityRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new { universityId },
                     $"Tạo trường đại học thành công với id = {universityId}"));
