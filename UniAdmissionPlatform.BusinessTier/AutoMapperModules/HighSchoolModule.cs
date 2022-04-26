@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         {
             mc.CreateMap<HighSchool, HighSchoolBaseViewModel>();
             mc.CreateMap<HighSchool, HighSchoolCodeViewModel>();
+            mc.CreateMap<HighSchool, GetHighSchoolBaseViewModel>();
         }
     }
 }
