@@ -8,6 +8,7 @@
         public string Description { get; set; }
         public int ProvinceId { get; set; }
         public string UniversityCode { get; set; }
+        public string ThumbnailUrl { get; set; }
         public string WebsiteUrl { get; set; }
         public string Email { get; set; }
     }
