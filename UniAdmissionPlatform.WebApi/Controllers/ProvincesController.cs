@@ -61,13 +61,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get province by iD
+        /// Get province by id
         /// </summary>
         /// <response code="200">
-        /// Get province by iD successfully
+        /// Get province by id successfully
         /// </response>
         /// <response code="400">
-        /// Get province by iD fail
+        /// Get province by id fail
         /// </response>
         /// <response code="401">
         /// No Login

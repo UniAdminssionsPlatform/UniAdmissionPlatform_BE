@@ -24,6 +24,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteTag(int id);
         Task<PageResult<TagBaseViewModel>> GetAllTags(TagBaseViewModel filter, string sort,
             int page, int limit);
+        Task<TagBaseViewModel> GetTagById(int tagId);
     }
     
     public partial class TagService
@@ -98,6 +99,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<TagBaseViewModel> GetTagById(int tagId)
+        {
+            var tagById = await Get().Where(p => p.Id == tagId)
+                .ProjectTo<TagBaseViewModel>(_mapper).FirstOrDefaultAsync();
+
+            if (tagById == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy tag nào nào có id = {tagId}");
+            }
+            return tagById;
         }
     }
 }
