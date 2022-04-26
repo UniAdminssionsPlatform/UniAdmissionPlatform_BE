@@ -57,9 +57,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 throw e.Error.Code switch
                 {
                     StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Cập nhập thất bại. " + e.Error.Message),
+                        "Tạo sự kiện thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Cập nhập thất bại. " + e.Error.Message),
+                        "Tạo sự kiện thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
@@ -94,9 +94,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 throw e.Error.Code switch
                 {
                     StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Cập nhập thất bại. " + e.Error.Message),
+                        "Cập nhập sự kiện thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Cập nhập thất bại. " + e.Error.Message),
+                        "Cập nhập sự kiện thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
