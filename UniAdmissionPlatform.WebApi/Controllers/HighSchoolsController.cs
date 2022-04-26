@@ -54,5 +54,40 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// /// <summary>
+        /// Get list high schools
+        /// </summary>
+        /// <response code="200">
+        /// Get list high schools successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list high schools fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
+        public async Task<IActionResult> GetAllHighSchools([FromQuery] GetHighSchoolBaseViewModel filter, string sort,
+            int page, int limit)
+        {
+            try
+            {
+                var highSchool = await _highSchoolService.GetAllHighSchools(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<GetHighSchoolBaseViewModel>>.OkWithDetail(highSchool, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
+                }
+            }
+        }
     }
 }
