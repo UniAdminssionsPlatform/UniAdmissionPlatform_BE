@@ -10,6 +10,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Address { get; set; }
         [String]
         public string PhoneNumber { get; set; }
+        [String]
+        public string Description { get; set; }
         public int? ProvinceId { get; set; }
         [String]
         public string UniversityCode { get; set; }
