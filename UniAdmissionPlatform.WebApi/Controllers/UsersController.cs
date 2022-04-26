@@ -126,7 +126,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(Tags = new[] { "Admin - Account" })]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest createAccountRequest)
         {

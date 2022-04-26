@@ -157,12 +157,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
-                }
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
