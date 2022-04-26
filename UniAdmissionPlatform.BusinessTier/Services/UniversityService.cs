@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
+using UniAdmissionPlatform.BusinessTier.Requests.University;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
@@ -19,7 +21,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<UniversityCodeViewModel> GetUniversityNameByCode(string highSchoolCode);
         Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit);
         Task<UniversityBaseViewModel> GetUniversityByID(int Id);
-        
+
+        Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest);
     }
     public partial class UniversityService
     {
@@ -84,6 +87,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             return universityById;
         }
-        
+
+        public async Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest)
+        {
+            var mapper = _mapper.CreateMapper();
+            var university = mapper.Map<University>(createUniversityRequest);
+
+            if (await Get().AnyAsync(u => u.UniversityCode == createUniversityRequest.UniversityCode))
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Mã của trường đại học đã tồn tại.");
+            }
+
+            await CreateAsyn(university);
+            return university.Id;
+        }
     }
 }
