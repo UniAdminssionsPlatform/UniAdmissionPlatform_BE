@@ -137,8 +137,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<EventBaseViewModel> GetEventByID(int id)
         {
              var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper).FirstOrDefaultAsync();
-
-            return eventById;
+             if (eventById == null)
+             {
+                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                     $"Không tìm thấy event với id ={id}");
+             }
+             return eventById;
         }
         
         public async Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
