@@ -166,5 +166,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Update a slot status to full
+        /// </summary>
+        /// <response code="200">
+        /// Update a slot status to full successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a slot status to full fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/slot-full")]
+        public async Task<IActionResult> UpdateSlotStatus(int slotId)
+        {
+            try
+            {
+                await _slotService.UpdateFullSlotStatus(slotId);
+                return Ok(MyResponse<object>.OkWithMessage("Trạng thái buổi chuyển thành đã đầy!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
