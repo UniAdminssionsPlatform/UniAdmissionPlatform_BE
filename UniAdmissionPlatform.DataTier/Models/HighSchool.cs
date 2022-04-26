@@ -16,10 +16,15 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
+        public string Email { get; set; }
         public int ProvinceId { get; set; }
         public string HighSchoolCode { get; set; }
+        public int Status { get; set; }
+        public string WebsiteUrl { get; set; }
+        public string ThumbnailUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
