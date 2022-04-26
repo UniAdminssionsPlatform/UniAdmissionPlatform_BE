@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Toolkit;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -16,7 +17,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -32,83 +32,69 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a list of student accounts
+        /// Get list student accounts
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list student accounts successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list student accounts fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpGet("students")]
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Accounts" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/student")]
         public async Task<IActionResult> GetStudentInfo([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             return Ok(await _accountService.GetAll(filter, page, limit, sort));
         }
         
         /// <summary>
-        /// Get a list of university accounts
+        /// Get list university accounts
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list university accounts successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list university accounts fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpGet("universities")]
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Accounts" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/university")]
         public async Task<IActionResult> GetUniversityAccount([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
         }
         
         /// <summary>
-        /// Update a user account 
+        /// Update a profile
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Update a profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a profile fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPut("user/{id:int}")]
-        public async Task<IActionResult> UpdateUniAccount(int id, [FromBody] UpdateUniAccountRequest updateUniAccountRequest)
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Accounts" })]
+        [Route("~/api/v{version:apiVersion}/me")]
+        public async Task<IActionResult> UpdateUniAccount([FromBody] UpdateProfileRequest updateProfileRequest)
         {
+            var id = _authService.GetUserId(HttpContext);
             try
             {
-                await _accountService.UpdateUniAccount(id, updateUniAccountRequest);
+                await _accountService.UpdateUniAccount(id, updateProfileRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập tài khoản thành công với ID = {id}"));
                 // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
@@ -116,7 +102,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);
@@ -128,26 +114,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Update all account in Admin 
+        /// Update user account
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Update user account successfully
+        /// </response>
+        /// <response code="400">
+        /// Update user account fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPut("admin/{id:int}")]
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]/{id:int}")]
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountRequestForAdmin updateAccountRequestForAdmin)
         {
             try
@@ -159,11 +140,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cập nhập thất bại. " + e.Error.Message);
@@ -178,23 +159,18 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// Get list accounts
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list accounts successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list accounts fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
         public async Task<IActionResult> GetAllAccounts([FromQuery] AccountBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -217,7 +193,19 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <summary>
         /// Upload a new avatar
         /// </summary>
-        [HttpPost("update-avatar")]
+        /// <response code="200">
+        /// Upload a new avatar successfully
+        /// </response>
+        /// <response code="400">
+        /// Upload a new avatar fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Accounts" })]
+        [Route("~/api/v{version:apiVersion}/me/upload-avatar")]
         [CustomAuthorize]
         public async Task<IActionResult> UpdateAvatar([Required] IFormFile file)
         {
@@ -229,7 +217,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Đổi ảnh đại diện thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
                 };
@@ -261,7 +249,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Đổi ảnh đại diện thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
                 };

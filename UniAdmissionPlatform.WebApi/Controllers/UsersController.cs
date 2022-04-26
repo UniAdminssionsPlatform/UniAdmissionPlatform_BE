@@ -7,6 +7,7 @@ using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Account;
@@ -19,7 +20,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -35,28 +35,20 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _accountService = accountService;
             _highSchoolService = highSchoolService;
         }
-
+        
         /// <summary>
         /// Login by firebase token
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Login by firebase token successfully
+        /// </response>
+        /// <response code="400">
+        /// Login by firebase token fail
         /// </response>
         /// <returns></returns>
-        [HttpPost("login")]
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "User" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
             var decodedToken = await FirebaseAuth.DefaultInstance
@@ -72,7 +64,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Đăng nhập thất bại. " + e.Error.Message);
                     default:
@@ -81,28 +73,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-
-        /// <summary>
+        
+        /// /// <summary>
         /// Register an account
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Register an account successfully
+        /// </response>
+        /// <response code="400">
+        /// Register an account fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPost("register")]
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "User" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/register")]
         [CustomAuthorize]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
@@ -117,7 +104,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
@@ -126,26 +113,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Create a new university account
+        /// Create a new manager account
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Create a new manager account successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new manager account fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPost("admin")]
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest createAccountRequest)
         {
             try
@@ -164,7 +146,22 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
 
-        [HttpPost("register-for-student")]
+        /// <summary>
+        /// Register for student
+        /// </summary>
+        /// <response code="200">
+        /// Register for student successfully
+        /// </response>
+        /// <response code="400">
+        /// Register for student fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "User" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/register-student")]
         public async Task<IActionResult> RegisterForStudent([FromBody] RegisterForStudentRequest registerForStudentRequest)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -179,9 +176,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);

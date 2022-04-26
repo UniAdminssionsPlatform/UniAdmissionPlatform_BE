@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -18,7 +19,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode);
 
-        Task<PageResult<HighSchoolCodeViewModel>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit);
+        Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit);
     }
     public partial class HighSchoolService
     {
@@ -36,7 +37,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var highSchool = await Get().ProjectTo<HighSchoolCodeViewModel>(_mapper).FirstOrDefaultAsync(hs => hs.HighSchoolCode == highSchoolCode);
             if (highSchool == null)
             {
-                throw new ErrorResponse((int)(HttpStatusCode.NotFound),
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
                     "Không thể tìm thấy trường THPT nào ứng với mã đã cung cấp.");
             }
 
@@ -46,10 +47,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<HighSchoolCodeViewModel>> GetAllHighSchools(HighSchoolFilterForSchoolAdmin filter, string sort, int page, int limit)
+        public async Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(h => h.DeletedAt == null && h.HighSchoolCode.Equals(filter.HighSchoolCode))
-                .ProjectTo<HighSchoolCodeViewModel>(_mapper)
+            var (total, queryable) = Get().Where(h => h.DeletedAt == null)
+                .ProjectTo<GetHighSchoolBaseViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             if (sort != null)
@@ -57,7 +58,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
 
-            return new PageResult<HighSchoolCodeViewModel>
+            return new PageResult<GetHighSchoolBaseViewModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

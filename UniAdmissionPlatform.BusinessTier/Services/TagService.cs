@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using UniAdmissionPlatform.BusinessTier.Requests.Tag;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -23,6 +24,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteTag(int id);
         Task<PageResult<TagBaseViewModel>> GetAllTags(TagBaseViewModel filter, string sort,
             int page, int limit);
+        Task<TagBaseViewModel> GetTagById(int tagId);
     }
     
     public partial class TagService
@@ -52,7 +54,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var tag = await Get().Where(t => t.Id == id).FirstOrDefaultAsync();
             if (tag == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tag với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tag với id = {id}");
             }
 
             var mapper = _mapper.CreateMapper();
@@ -69,7 +71,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var tag = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
             if (tag == null)
             {
-                throw new ErrorResponse((int) HttpStatusCode.NotFound, $"Không tìm thấy tag với id = {id}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tag với id = {id}");
             }
             
             tag.DeletedAt = DateTime.Now;
@@ -97,6 +99,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<TagBaseViewModel> GetTagById(int tagId)
+        {
+            var tagById = await Get().Where(p => p.Id == tagId)
+                .ProjectTo<TagBaseViewModel>(_mapper).FirstOrDefaultAsync();
+
+            if (tagById == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy tag nào nào có id = {tagId}");
+            }
+            return tagById;
         }
     }
 }

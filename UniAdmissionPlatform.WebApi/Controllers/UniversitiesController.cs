@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.University;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
@@ -13,36 +16,29 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class UniversitiesController : ControllerBase
     {
         private readonly IUniversityService _universityService;
-
-        public UniversitiesController(IUniversityService universityService)
+        private readonly IProvinceService _provinceService;
+        public UniversitiesController(IUniversityService universityService, IProvinceService provinceService)
         {
             _universityService = universityService;
+            _provinceService = provinceService;
         }
         
-        
-        /// <summary>
-        /// Get a specific university name by code
+         /// <summary>
+        /// Get list universities by code
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list universities by code successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list universities by code fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/university-name")]
+        [SwaggerOperation(Tags = new[] { "Universities" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/get-by-code")]
         public async Task<IActionResult> GetUniversityByCode(string universityCode)
         {
             try
@@ -61,28 +57,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
-        /// <summary>
-        /// Get a list universities
+        /// /// <summary>
+        /// Get list universities
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list universities successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list universities fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University" })]
+        [SwaggerOperation(Tags = new[] { "Universities" })]
         [Route("~/api/v{version:apiVersion}/[controller]")]
         public async Task<IActionResult> GetAllUniversities([FromQuery] UniversityBaseViewModel filter, string sort,
             int page, int limit)
@@ -104,27 +93,20 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get university by ID
+        /// Get university by iD
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get university by iD successfully
+        /// </response>
+        /// <response code="400">
+        /// Get university by iD fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University" })]
+        [SwaggerOperation(Tags = new[] { "Universities" })]
         [Route("~/api/v{version:apiVersion}/[controller]/{universityId:int}")]
         public async Task<IActionResult> GetUniversityByID(int universityId)
         {
@@ -137,11 +119,59 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cannot create, because server is error");
                 }
             }
         }
+
+
+        /// <summary>
+        /// Create a new University
+        /// </summary>
+        /// <response code="200">
+        /// Create a new University successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new University fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Admin - Universities" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]/")]
+        public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest createUniversityRequest)
+        {
+            try
+            {
+                await _provinceService.GetProvinceByID(createUniversityRequest.ProvinceId);
+                var universityId = await _universityService.CreateUniversity(createUniversityRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new { universityId },
+                    $"Tạo trường đại học thành công với id = {universityId}"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Tạo thất bại. " + e.Error.Message);
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Tạo thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                             e.Error.Message);
+                }
+            }
+        }
+
+
     }
 }

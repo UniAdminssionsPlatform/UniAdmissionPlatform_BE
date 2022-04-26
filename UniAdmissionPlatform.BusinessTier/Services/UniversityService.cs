@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
+using UniAdmissionPlatform.BusinessTier.Requests.University;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
@@ -18,7 +21,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<UniversityCodeViewModel> GetUniversityNameByCode(string highSchoolCode);
         Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit);
         Task<UniversityBaseViewModel> GetUniversityByID(int Id);
-        
+
+        Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest);
     }
     public partial class UniversityService
     {
@@ -36,7 +40,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var university = await Get().ProjectTo<UniversityCodeViewModel>(_mapper).FirstOrDefaultAsync(u => u.UniversityCode == universityCode);
             if (university == null)
             {
-                throw new ErrorResponse((int)(HttpStatusCode.NotFound),
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
                     "Không thể tìm thấy trường đại học nào ứng với mã đã cung cấp.");
             }
 
@@ -75,8 +79,28 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU)
                 .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
+            if (universityById == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy trường đại học nào có id = {universityId}");
+            }
+
             return universityById;
         }
-        
+
+        public async Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest)
+        {
+            var mapper = _mapper.CreateMapper();
+            var university = mapper.Map<University>(createUniversityRequest);
+
+            if (await Get().AnyAsync(u => u.UniversityCode == createUniversityRequest.UniversityCode))
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Mã của trường đại học đã tồn tại.");
+            }
+
+            await CreateAsyn(university);
+            return university.Id;
+        }
     }
 }

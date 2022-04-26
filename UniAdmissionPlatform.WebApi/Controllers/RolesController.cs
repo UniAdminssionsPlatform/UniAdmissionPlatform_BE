@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
@@ -9,46 +10,40 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     
     public class RolesController : ControllerBase
     {
-        private readonly IRoleService _eventTypeService;
+        private readonly IRoleService _roleTypeService;
         
-        public RolesController(IRoleService eventTypeService)
+        public RolesController(IRoleService roleTypeService)
         {
-            _eventTypeService = eventTypeService;
+            _roleTypeService = roleTypeService;
             
         }
         
         /// <summary>
-        /// Get a list role
+        /// Get list roles
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list roles successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list roles fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin - Roles" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
         public async Task<IActionResult> GetListRole([FromQuery] RoleBaseViewModel filter, string sort,
             int page, int limit)
         {
             try
             {
-                var eventTypes = await _eventTypeService.GetAllRoles(filter, sort, page, limit);
+                var eventTypes = await _roleTypeService.GetAllRoles(filter, sort, page, limit);
                 return Ok(MyResponse<PageResult<RoleBaseViewModel>>.OkWithDetail(eventTypes, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)

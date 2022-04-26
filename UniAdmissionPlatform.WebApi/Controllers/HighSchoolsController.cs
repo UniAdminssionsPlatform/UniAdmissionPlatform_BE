@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Responses;
@@ -8,7 +9,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class HighSchoolsController : ControllerBase
     {
@@ -20,33 +20,64 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         
+        
         /// <summary>
         /// Get a specific high school name by code
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get a specific high school name by code successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a specific high school name by code fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/get-by-code")]
         public async Task<IActionResult> GetHighSchoolByCode(string highSchoolCode)
         {
             try
             {
                 var highSchools = await _highSchoolService.GetHighSchoolByCode(highSchoolCode);
                 return Ok(MyResponse<HighSchoolCodeViewModel>.OkWithDetail(highSchools, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
+                }
+            }
+        }
+        
+        /// /// <summary>
+        /// Get list high schools
+        /// </summary>
+        /// <response code="200">
+        /// Get list high schools successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list high schools fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
+        public async Task<IActionResult> GetAllHighSchools([FromQuery] GetHighSchoolBaseViewModel filter, string sort,
+            int page, int limit)
+        {
+            try
+            {
+                var highSchool = await _highSchoolService.GetAllHighSchools(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<GetHighSchoolBaseViewModel>>.OkWithDetail(highSchool, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

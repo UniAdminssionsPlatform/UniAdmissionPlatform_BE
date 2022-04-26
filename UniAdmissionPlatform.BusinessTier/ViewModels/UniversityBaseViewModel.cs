@@ -18,6 +18,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string WebsiteUrl { get; set; }
         [String]
+        public string ThumbnailUrl { get; set; }
+        [String]
         public string Email { get; set; }
         public int? Status { get; set; }
     }

@@ -1,7 +1,9 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Slot;
@@ -12,7 +14,6 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class SlotsController : ControllerBase
     {
@@ -24,9 +25,24 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
             _slotService = slotService;
         }
-
-        [HttpGet("get-slots-for-school-admin")]
-        public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
+        
+        /// <summary>
+        /// Get list slots
+        /// </summary>
+        /// <response code="200">
+        /// Get list slots successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list slots fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]")]
+        public async Task<IActionResult> GetSlotsForHighSchoolAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
             try
@@ -45,7 +61,22 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
+        /// <summary>
+        /// Create a new slot
+        /// </summary>
+        /// <response code="200">
+        /// Create a new slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
         [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/")]
         public async Task<IActionResult> CreateSlot([FromBody] CreateSlotRequest createSlotRequest)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -58,14 +89,29 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Tạo thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
         }
-
-        [HttpPut("close-slot")]
+        
+        /// <summary>
+        /// Close a slot
+        /// </summary>
+        /// <response code="200">
+        /// Close a slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Close a slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/close-slot")]
         public async Task<IActionResult> CloseSlot(int slotId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -78,16 +124,31 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Đóng thất bại. " + e.Error.Message),
-                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Đóng thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
         }
-
-        [HttpGet("get-slots-for-uni-admin")]
+        
+        /// <summary>
+        /// Get list slots
+        /// </summary>
+        /// <response code="200">
+        /// Get list slots successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list slots fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
         public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, int page, int limit)
         {
             try
@@ -103,6 +164,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             e.Error.Message);
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Update a slot status to full
+        /// </summary>
+        /// <response code="200">
+        /// Update a slot status to full successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a slot status to full fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/slot-full")]
+        public async Task<IActionResult> UpdateSlotStatus(int slotId)
+        {
+            try
+            {
+                await _slotService.UpdateFullSlotStatus(slotId);
+                return Ok(MyResponse<object>.OkWithMessage("Trạng thái buổi chuyển thành đã đầy!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
     }

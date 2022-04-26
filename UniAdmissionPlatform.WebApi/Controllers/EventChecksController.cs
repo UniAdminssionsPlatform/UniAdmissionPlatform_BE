@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Responses;
@@ -13,7 +14,7 @@ using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
+    // [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class EventChecksController : ControllerBase
     {
@@ -26,27 +27,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
         }
 
-        /// <summary>
+        
+        /// /// <summary>
         /// Change event check status to approve
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Approve a event with id successfully
+        /// </response>
+        /// <response code="400">
+        /// Approve fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
-        [HttpPut("{eventCheckId:int}")]
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{eventCheckId:int}")]
         public async Task<IActionResult> ApproveEventToSlot(int eventCheckId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -60,9 +57,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int)HttpStatusCode.NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Duyệt sự kiện không thành công. " + e.Error.Message),
-                    (int)HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Duyệt sự kiện không thành công. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };

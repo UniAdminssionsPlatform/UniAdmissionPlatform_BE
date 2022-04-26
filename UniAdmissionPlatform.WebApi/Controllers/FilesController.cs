@@ -47,6 +47,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPost("upload-image")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UploadImage([Required] IFormFile file)
         {
             try
@@ -57,7 +58,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 throw e.Error.Code switch
                 {
-                    (int) HttpStatusCode.BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Tải lên thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
                 };

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -26,29 +27,23 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _authService = authService;
             _slotService = slotService;
         }
+        
         /// <summary>
         /// Create a new event
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Create a new event successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new event fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]")]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest createEventRequest)
         {
             try
@@ -59,84 +54,68 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo sự kiện thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo sự kiện thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
         /// <summary>
-        /// Update event by id
+        /// Update a new event
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Update a event successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a event fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpPut]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> UpdateEvent(int id, [FromBody] UpdateEventRequest updateEventRequest)
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventRequest updateEventRequest)
         {
             try
             {
-                await _eventService.UpdateEvent(id, updateEventRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập event thành công với ID = {id}"));
+                await _eventService.UpdateEvent(eventId, updateEventRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new{eventId}, $"Cập nhập event thành công với ID = {eventId}"));
                 // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    case (int) HttpStatusCode.NotFound:
-                        // Business rule
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cập nhập thất bại. " + e.Error.Message);
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Update fail, because server ís error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập sự kiện thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập sự kiện thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
         /// <summary>
-        /// Get a list events
+        /// Get list events
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get list events successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list events fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]")]
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/[controller]")]
+        
         public async Task<IActionResult> GetListEvent([FromQuery] EventBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -157,43 +136,33 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a specific event by id
+        /// Get a event by id
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Get a event by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a event by id fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> GetEventByID(int id)
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{eventId:int}")]
+        public async Task<IActionResult> GetEventByID(int eventId)
         {
             try
             {
-                var eventByID = await _eventService.GetEventByID(id);
+                var eventByID = await _eventService.GetEventByID(eventId);
                 return Ok(MyResponse<EventBaseViewModel>.OkWithDetail(eventByID, "Truy cập thành công!"));
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
-                }
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
@@ -201,37 +170,30 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// Delete a event by id
         /// </summary>
         /// <response code="200">
-        ///     <table id="doc">
-        ///         <tr>
-        ///             <th>Code</th>
-        ///             <th>Description</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>0 (action success)</td>
-        ///             <td>Success</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>7 (action fail)</td>
-        ///             <td>Fail</td>
-        ///         </tr>
-        ///     </table>
+        /// Delete a event by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Delete a event by id fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
         /// </response>
         /// <returns></returns>
         [HttpDelete]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/{id:int}")]
-        public async Task<IActionResult> DeleteAEvent(int id)
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        public async Task<IActionResult> DeleteAEvent(int eventId)
         {
             try
             {
-                await _eventService.DeleteEvent(id);
+                await _eventService.DeleteEvent(eventId);
                 return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
             }
             catch (ErrorResponse e)
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case StatusCodes.Status404NotFound:
                         // Business rule
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa thất bại. " + e.Error.Message);
@@ -243,11 +205,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Booking slot for university manager
+        /// Book a slot in admin university
         /// </summary>
+        /// <response code="200">
+        /// Book a slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Book a slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
         [HttpPut]
-        [SwaggerOperation(Tags = new[] { "University - Event" })]
-        [Route("~/api/v{version:apiVersion}/university/[controller]/booking")]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/book")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
 
@@ -259,7 +231,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 var isValid = await _slotService.CheckStatusOfSlot(bookSlotForUniAdminRequest.SlotId, SlotStatus.Open);
                 if (!isValid)
                 {
-                    throw new ErrorResponse((int) HttpStatusCode.BadRequest, "Slot này không được mở để book.");
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest, "Slot này không được mở để book.");
                 }
                 await _eventService.BookSlotForUniAdmin(universityId, bookSlotForUniAdminRequest);
                 return Ok(MyResponse<object>.OkWithMessage("Book thành công!"));
@@ -268,7 +240,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 switch (e.Error.Code)
                 {
-                    case (int) HttpStatusCode.BadRequest:
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Book thất bại. " + e.Error.Message);
                     default:

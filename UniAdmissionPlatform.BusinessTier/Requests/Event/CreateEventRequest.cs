@@ -1,4 +1,6 @@
-﻿namespace UniAdmissionPlatform.BusinessTier.Requests.Event
+﻿using System;
+
+namespace UniAdmissionPlatform.BusinessTier.Requests.Event
 {
     public class CreateEventRequest
     {
@@ -13,6 +15,8 @@
         public string Address { get; set; }
         public int? ProvinceId { get; set; }
         public string MeetingUrl { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         
     }
 }

@@ -338,6 +338,9 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.HasIndex(e => e.HighSchoolCode, "HighSchool_HighSchoolCode_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.HighSchoolManagerCode, "HighSchool_HighSchoolManagerCode_uindex")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.ProvinceId, "HighSchool_Province_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_high_school_deleted_at");
@@ -347,6 +350,8 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasColumnType("tinytext");
 
                 entity.Property(e => e.HighSchoolCode).HasMaxLength(20);
+
+                entity.Property(e => e.HighSchoolManagerCode).HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()

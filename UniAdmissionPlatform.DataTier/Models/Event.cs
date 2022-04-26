@@ -33,6 +33,8 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Address { get; set; }
         public int? ProvinceId { get; set; }
         public string MeetingUrl { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         public virtual EventType EventType { get; set; }
         public virtual Province Province { get; set; }
