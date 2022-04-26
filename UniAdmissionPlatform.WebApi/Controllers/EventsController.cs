@@ -54,12 +54,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
@@ -89,16 +91,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    case StatusCodes.Status404NotFound:
-                        // Business rule
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cập nhập thất bại. " + e.Error.Message);
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Update fail, because server ís error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
