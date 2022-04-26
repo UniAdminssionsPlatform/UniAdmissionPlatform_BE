@@ -14,11 +14,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     
     public class RolesController : ControllerBase
     {
-        private readonly IRoleService _eventTypeService;
+        private readonly IRoleService _roleTypeService;
         
-        public RolesController(IRoleService eventTypeService)
+        public RolesController(IRoleService roleTypeService)
         {
-            _eventTypeService = eventTypeService;
+            _roleTypeService = roleTypeService;
             
         }
         
@@ -43,7 +43,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                var eventTypes = await _eventTypeService.GetAllRoles(filter, sort, page, limit);
+                var eventTypes = await _roleTypeService.GetAllRoles(filter, sort, page, limit);
                 return Ok(MyResponse<PageResult<RoleBaseViewModel>>.OkWithDetail(eventTypes, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)

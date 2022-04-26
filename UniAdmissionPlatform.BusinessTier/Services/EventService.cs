@@ -52,6 +52,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 UniversityId = universityId,
             });
 
+            var checkDate = DateTime.Now.AddDays(7);
+            if (uniEvent.StartTime <= checkDate)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
+            }
+            
+            if (uniEvent.StartTime >= uniEvent.EndTime)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Ngày kết thúc sự kiện phải lớn hơn ngày diễn ra sự kiện!");
+            }
+            
             uniEvent.Status = (int) EventStatus.OnGoing;
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
@@ -65,11 +78,24 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
             }
-        
+            
             var mapper = _mapper.CreateMapper();
             uniEvent = mapper.Map(updateEventRequest,uniEvent);
+            
+            var checkDate = DateTime.Now.AddDays(7);
+            if (uniEvent.StartTime <= checkDate)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
+            }
+            
+            if (uniEvent.StartTime >= uniEvent.EndTime)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Ngày kết thúc sự kiện phải lớn hơn ngày diễn ra sự kiện!");
+            }
+            
             uniEvent.UpdatedAt = DateTime.Now;
-        
             await UpdateAsyn(uniEvent);
         }
         
@@ -111,8 +137,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<EventBaseViewModel> GetEventByID(int id)
         {
              var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper).FirstOrDefaultAsync();
-
-            return eventById;
+             if (eventById == null)
+             {
+                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                     $"Không tìm thấy event với id ={id}");
+             }
+             return eventById;
         }
         
         public async Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest)

@@ -1,4 +1,5 @@
-﻿using System.Linq.Dynamic.Core;
+﻿using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -17,7 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<ProvinceBaseViewModel>> GetAllProvinces(ProvinceBaseViewModel filter, string sort,
             int page, int limit);
 
-        Task<ProvinceBaseViewModel> GetById(int id);
+        Task<ProvinceBaseViewModel> GetProvinceByID(int provinceId);
     }
     
     public partial class ProvinceService
@@ -51,16 +52,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
-
-        public async Task<ProvinceBaseViewModel> GetById(int id)
+        
+        public async Task<ProvinceBaseViewModel> GetProvinceByID(int provinceId)
         {
-            var province = await FirstOrDefaultAsyn(p => p.Id == id);
-            if (province == null)
-            {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy tỉnh thành");
-            }
+            var provinceById = await Get().Where(p => p.Id == provinceId)
+                .ProjectTo<ProvinceBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
-            return _mapper.CreateMapper().Map<ProvinceBaseViewModel>(province);
+            if (provinceById == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy tỉnh thành nào nào có id = {provinceId}");
+            }
+            return provinceById;
         }
     }
 }

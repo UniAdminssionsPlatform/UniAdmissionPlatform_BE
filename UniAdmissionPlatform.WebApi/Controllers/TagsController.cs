@@ -167,6 +167,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Get tag by id
+        /// </summary>
+        /// <response code="200">
+        /// Get tag by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get tag by id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Tags" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{tagId:int}")]
+        public async Task<IActionResult> GetTagById(int tagId)
+        {
+            try
+            {
+                var tags = await _tagService.GetTagById(tagId);
+                return Ok(MyResponse<TagBaseViewModel>.OkWithDetail(tags, "Tìm kiếm thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
 
     }
 }

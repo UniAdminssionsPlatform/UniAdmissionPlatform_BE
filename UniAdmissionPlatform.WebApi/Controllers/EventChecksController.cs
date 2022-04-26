@@ -32,7 +32,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// Change event check status to approve
         /// </summary>
         /// <response code="200">
-        /// Approve a event with iD successfully
+        /// Approve a event with id successfully
         /// </response>
         /// <response code="400">
         /// Approve fail
