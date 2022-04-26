@@ -11,5 +11,7 @@
         public string ThumbnailUrl { get; set; }
         public string WebsiteUrl { get; set; }
         public string Email { get; set; }
+        public string ShortDescription { get; set; }
+        public string ProfileImageUrl { get; set; }
     }
 }

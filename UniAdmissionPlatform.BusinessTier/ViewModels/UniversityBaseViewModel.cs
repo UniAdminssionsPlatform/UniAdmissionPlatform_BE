@@ -20,6 +20,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string ThumbnailUrl { get; set; }
         [String]
+        public string ShortDescription { get; set; }
+        [String]
+        public string ProfileImageUrl { get; set; }
+        [String]
         public string Email { get; set; }
         public int? Status { get; set; }
     }
