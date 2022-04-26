@@ -23,6 +23,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string WebsiteUrl { get; set; }
         [String]
         public string ThumbnailUrl { get; set; }
+        [String]
+        public string ShortDescription { get; set; }
+        [String]
+        public string ProfileImageUrl { get; set; }
     }
     
     public class HighSchoolCodeViewModel
@@ -44,6 +48,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? Status { get; set; }
         public string WebsiteUrl { get; set; }
         public string ThumbnailUrl { get; set; }
+        public string ShortDescription { get; set; }
+        public string ProfileImageUrl { get; set; }
     }
     
 }

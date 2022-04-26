@@ -25,6 +25,8 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int Status { get; set; }
         public string WebsiteUrl { get; set; }
         public string ThumbnailUrl { get; set; }
+        public string ShortDescription { get; set; }
+        public string ProfileImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
