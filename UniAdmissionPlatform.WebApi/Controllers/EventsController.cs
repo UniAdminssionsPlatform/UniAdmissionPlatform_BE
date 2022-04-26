@@ -136,13 +136,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get a event by iD
+        /// Get a event by id
         /// </summary>
         /// <response code="200">
-        /// Get a event by iD successfully
+        /// Get a event by id successfully
         /// </response>
         /// <response code="400">
-        /// Get a event by iD fail
+        /// Get a event by id fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
@@ -167,13 +167,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Delete a event by iD
+        /// Delete a event by id
         /// </summary>
         /// <response code="200">
-        /// Delete a event by iD successfully
+        /// Delete a event by id successfully
         /// </response>
         /// <response code="400">
-        /// Delete a event by iD fail
+        /// Delete a event by id fail
         /// </response>
         /// /// <response code="401">
         /// No Login
