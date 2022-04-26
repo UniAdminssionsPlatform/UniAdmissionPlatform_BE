@@ -150,7 +150,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                await _provinceService.GetById(createUniversityRequest.ProvinceId!.Value);
+                await _provinceService.GetById(createUniversityRequest.ProvinceId);
                 var universityId = await _universityService.CreateUniversity(createUniversityRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new { universityId },
                     $"Tạo trường đại học thành công với id = {universityId}"));
@@ -160,6 +160,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 switch (e.Error.Code)
                 {
                     case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Tạo thất bại. " + e.Error.Message);
+                    case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Tạo thất bại. " + e.Error.Message);
                     default:

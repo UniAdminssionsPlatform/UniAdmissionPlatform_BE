@@ -92,8 +92,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var mapper = _mapper.CreateMapper();
             var university = mapper.Map<University>(createUniversityRequest);
-            
-            
+
+            if (await Get().AnyAsync(u => u.UniversityCode == createUniversityRequest.UniversityCode))
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Mã của trường đại học đã tồn tại.");
+            }
 
             await CreateAsyn(university);
             return university.Id;

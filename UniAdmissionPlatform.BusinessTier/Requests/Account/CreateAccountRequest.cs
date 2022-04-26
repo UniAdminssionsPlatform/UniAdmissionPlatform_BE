@@ -21,4 +21,9 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Account
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
     }
+
+    public class Test : CreateAccountRequest
+    {
+        
+    }
 }
