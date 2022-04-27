@@ -219,7 +219,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
-        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/book")]
+        [Route("~/api/v{version:apiVersion}/admin-university/slots/book")]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
 
