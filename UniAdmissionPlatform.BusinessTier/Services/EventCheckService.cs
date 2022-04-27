@@ -1,19 +1,35 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
+using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.DataTier.BaseConnect;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IEventCheckService
     {
         Task ApproveEventToSlot(int highSchoolId, int eventCheckId);
+        Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId);
     }
 
     public partial class EventCheckService
     {
+        private readonly IConfigurationProvider _mapper;
+        
+        public EventCheckService(IUnitOfWork unitOfWork, IEventCheckRepository repository, IMapper mapper) : base(unitOfWork, 
+            repository)
+        {
+            _mapper = mapper.ConfigurationProvider;
+        }
+        
         public async Task ApproveEventToSlot(int highSchoolId, int eventCheckId)
         {
             var eventCheck = await Get(ec => ec.Id == eventCheckId)
@@ -79,6 +95,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             eventCheck.Status = (int)EventCheckStatus.Approved;
             await UpdateAsyn(eventCheck);
+        }
+        
+        public async Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId)
+        {
+            var eventBySlot = await Get().Where(ec => ec.SlotId == slotId && ec.Status == (int)EventCheckStatus.Pending && ec.DeletedAt == null)
+                .Include(ec => ec.Event)
+                .ProjectTo<EventBySlotBaseViewModel>(_mapper).FirstOrDefaultAsync();
+            if (eventBySlot == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy sự kiện nào theo slot với slot id ={eventBySlot}");
+            }
+            return eventBySlot;
         }
     }
 }
