@@ -29,6 +29,13 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         
     }
     
+    public class EventBySlotBaseViewModel
+    {
+        public EventBaseViewModel Event { get; set;}
+        public int? SlotId { get; set; }
+        
+    }
+    
     public class EventViewModelWithEvents : EventBaseViewModel
     {
         // public virtual ICollection<EventBaseModel> Events { get; set; }
