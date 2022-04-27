@@ -18,6 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     }
     public class SlotViewModel
     {
+        public int Id { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int? HighSchoolId { get; set; }
