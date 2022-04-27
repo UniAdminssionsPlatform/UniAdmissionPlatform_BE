@@ -18,6 +18,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigEventMapperModule();
                     mc.ConfigMajorMapperModule();
                     mc.ConfigEventTypeMapperModule();
+                    mc.ConfigMajorGroupMapperModule();
                     mc.ConfigProvinceMapperModule();
                     mc.ConfigRoleMapperModule();
                     mc.ConfigSlotMapperModule();
