@@ -24,13 +24,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
          /// <summary>
-        /// Get list universities by code
+        /// Get a specific universities name by code
         /// </summary>
         /// <response code="200">
-        /// Get list universities by code successfully
+        /// Get a specific universities name by code successfully
         /// </response>
         /// <response code="400">
-        /// Get list universities by code fail
+        /// Get a specific universities name by code fail
         /// </response>
         /// <response code="401">
         /// No Login

@@ -36,6 +36,13 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Name { get; set; }
     }
     
+    public class HighSchoolManagerCodeViewModel
+    {
+        public int Id { get; set; }
+        public string HighSchoolManagerCode { get; set; }
+        public string Name { get; set; }
+    }
+    
     public class GetHighSchoolBaseViewModel
     {
         public int? Id { get; set; }
