@@ -27,6 +27,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigHighSchoolMapperModule();
                     mc.ConfigUniversityMapperModule();
                     mc.ConfigEventCheckMapperModule();
+                    mc.ConfigSubjectMapperModule();
 
                 });
                 var mapper = mappingConfig.CreateMapper();
