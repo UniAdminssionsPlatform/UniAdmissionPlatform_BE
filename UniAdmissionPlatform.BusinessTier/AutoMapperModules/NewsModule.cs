@@ -11,7 +11,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         {
             mc.CreateMap<News, NewsBaseViewModel>();
             mc.CreateMap<UpdateNewsRequest, News>()
-                .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));;
+                .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
             mc.CreateMap<CreateNewsRequest, News>();
         }
     }
