@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -54,6 +55,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Cannot create, because server ís error");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get a specific high school name by manager code
+        /// </summary>
+        /// <response code="200">
+        /// Get a specific high school name by manager code successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a specific high school name by manager code fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/get-by-code")]
+        public async Task<IActionResult> GetHighSchoolByManagerCode(string highSchoolManagerCode)
+        {
+            try
+            {
+                var highSchools = await _highSchoolService.GetHighSchoolByManagerCode(highSchoolManagerCode);
+                return Ok(MyResponse<HighSchoolManagerCodeViewModel>.OkWithDetail(highSchools, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }
             }
         }

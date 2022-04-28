@@ -18,7 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IHighSchoolService
     {
         Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode);
-
+        Task<HighSchoolManagerCodeViewModel> GetHighSchoolByManagerCode(string highSchoolManagerCode);
         Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit);
     }
     public partial class HighSchoolService
@@ -35,6 +35,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode)
         {
             var highSchool = await Get().ProjectTo<HighSchoolCodeViewModel>(_mapper).FirstOrDefaultAsync(hs => hs.HighSchoolCode == highSchoolCode);
+            if (highSchool == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
+                    "Không thể tìm thấy trường THPT nào ứng với mã đã cung cấp.");
+            }
+
+            return highSchool;
+        }
+        
+        public async Task<HighSchoolManagerCodeViewModel> GetHighSchoolByManagerCode(string highSchoolManagerCode)
+        {
+            var highSchool = await Get()
+                .ProjectTo<HighSchoolManagerCodeViewModel>(_mapper)
+                .FirstOrDefaultAsync(hs => hs.HighSchoolManagerCode == highSchoolManagerCode);
             if (highSchool == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound,
