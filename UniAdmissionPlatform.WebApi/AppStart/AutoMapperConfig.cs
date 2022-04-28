@@ -29,6 +29,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigEventCheckMapperModule();
                     mc.ConfigSubjectMapperModule();
                     mc.ConfigNewsMapperModule();
+                    mc.ConfigCertificationMapperModule();
 
                 });
                 var mapper = mappingConfig.CreateMapper();
