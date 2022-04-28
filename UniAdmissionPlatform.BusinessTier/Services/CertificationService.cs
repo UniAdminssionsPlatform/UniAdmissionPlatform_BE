@@ -71,7 +71,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var certification = _mapper.CreateMapper().Map<Certification>(createCertificationRequest);
             await CreateAsyn(certification);
-            
+            certification.CreatedAt = DateTime.Now;
+            certification.UpdatedAt = DateTime.Now;
             return certification.Id;
         }
 
@@ -84,7 +85,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
             var mapper = _mapper.CreateMapper();
             certification = mapper.Map(updateCertificationRequest,certification);
-            certification.UpdatedAt =DateTime.Now;
+            certification.UpdatedAt = DateTime.Now;
             await UpdateAsyn(certification);
         }
 
