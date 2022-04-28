@@ -16,6 +16,14 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                     opt => opt.MapFrom(src => src.Event))
                 .ForMember(des => des.SlotId, 
                     opt => opt.MapFrom(src => src.SlotId));
+
+            mc.CreateMap<EventCheck, EventWithSlotViewModel>()
+                .ForMember(des => des.Event,
+                    opt => opt.MapFrom(
+                        src => src.Event))
+                .ForMember(des => des.Slot,
+                    opt => opt.MapFrom(
+                        src => src.Slot));
         }
     }
 }

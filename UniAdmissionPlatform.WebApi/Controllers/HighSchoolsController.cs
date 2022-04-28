@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -13,10 +14,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class HighSchoolsController : ControllerBase
     {
         private readonly IHighSchoolService _highSchoolService;
+        private readonly IEventCheckService _eventCheckService;
 
-        public HighSchoolsController(IHighSchoolService highSchoolService)
+        public HighSchoolsController(IHighSchoolService highSchoolService, IEventCheckService eventCheckService)
         {
             _highSchoolService = highSchoolService;
+            _eventCheckService = eventCheckService;
         }
         
         
@@ -55,7 +58,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
-        /// /// <summary>
+        /// <summary>
         /// Get list high schools
         /// </summary>
         /// <response code="200">
@@ -78,6 +81,37 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 var highSchool = await _highSchoolService.GetAllHighSchools(filter, sort, page, limit);
                 return Ok(MyResponse<PageResult<GetHighSchoolBaseViewModel>>.OkWithDetail(highSchool, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server ís error");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get event-slots of high school
+        /// </summary>
+        /// <response code="200">
+        /// Get event-slots of high school successfully
+        /// </response>
+        /// <response code="400">
+        /// Get event-slots of high school fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{highSchoolId:int}/event-slot")]
+        public async Task<IActionResult> GetEventsInfoByHighSchoolId(int highSchoolId, string sort, int page, int limit)
+        {
+            try
+            {
+                var eventSlots = await _eventCheckService.GetEventsByHighSchoolId(highSchoolId, sort, page, limit);
+                return Ok(MyResponse<PageResult<EventWithSlotViewModel>>.OkWithDetail(eventSlots, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

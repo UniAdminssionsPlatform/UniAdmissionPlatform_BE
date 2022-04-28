@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -6,6 +7,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
+using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
@@ -18,6 +20,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task ApproveEventToSlot(int highSchoolId, int eventCheckId);
         Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId);
+
+        Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page,
+            int limit);
     }
 
     public partial class EventCheckService
@@ -108,6 +113,30 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     $"Không tìm thấy sự kiện nào theo slot với slot id ={eventBySlot}");
             }
             return eventBySlot;
+        }
+        
+        private const int LimitPaging = 50;
+        private const int DefaultPaging = 10;
+
+
+        public async Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Reject && ec.Slot.HighSchoolId == highSchoolId)
+                .ProjectTo<EventWithSlotViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<EventWithSlotViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
         }
     }
 }
