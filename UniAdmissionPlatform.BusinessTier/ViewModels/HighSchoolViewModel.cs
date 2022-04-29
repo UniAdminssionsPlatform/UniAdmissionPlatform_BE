@@ -57,6 +57,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string ThumbnailUrl { get; set; }
         public string ShortDescription { get; set; }
         public string ProfileImageUrl { get; set; }
+        public int? DistrictId { get; set; }
     }
     
 }

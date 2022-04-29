@@ -26,6 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string Email { get; set; }
         public int? Status { get; set; }
+        public int? DistrictId { get; set; }
     }
 
     public class UniversityCodeViewModel

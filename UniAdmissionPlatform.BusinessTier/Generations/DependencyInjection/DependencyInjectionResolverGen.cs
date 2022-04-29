@@ -29,6 +29,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<ICertificationService, CertificationService>();
             services.AddScoped<ICertificationRepository, CertificationRepository>();
         
+            services.AddScoped<IDistrictService, DistrictService>();
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+        
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IEventRepository, EventRepository>();
         
@@ -145,6 +148,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
         
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+        
+            services.AddScoped<IWardService, WardService>();
+            services.AddScoped<IWardRepository, WardRepository>();
         }
     }
 }

@@ -13,5 +13,6 @@
         public string Email { get; set; }
         public string ShortDescription { get; set; }
         public string ProfileImageUrl { get; set; }
+        public int DistrictId { get; set; }
     }
 }
