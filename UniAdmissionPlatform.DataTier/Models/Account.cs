@@ -24,6 +24,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int? HighSchoolId { get; set; }
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
+        public int WardId { get; set; }
 
         public virtual Gender Gender { get; set; }
         public virtual HighSchool HighSchool { get; set; }
@@ -31,6 +32,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual Organization Organization { get; set; }
         public virtual Role Role { get; set; }
         public virtual University University { get; set; }
+        public virtual Ward Ward { get; set; }
         public virtual Student Student { get; set; }
     }
 }
