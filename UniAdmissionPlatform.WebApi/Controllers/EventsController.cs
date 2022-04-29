@@ -20,12 +20,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IEventService _eventService;
         private readonly IAuthService _authService;
         private readonly ISlotService _slotService;
+        private readonly IUniversityEventService _universityEventService;
         
-        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService)
+        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService, IUniversityEventService universityEventService)
         {
             _eventService = eventService;
             _authService = authService;
             _slotService = slotService;
+            _universityEventService = universityEventService;
         }
         
         /// <summary>
@@ -247,6 +249,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             e.Error.Message);
                 }
+            }
+        }
+        /// <summary>
+        /// Get a event by university id
+        /// </summary>
+        /// <response code="200">
+        /// Get a event by university id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a event by university id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}")]
+        public async Task<IActionResult> GetEventByUniId(int universityId)
+        {
+            try
+            {
+                var eventByUniId = await _universityEventService.GetEventByUniId(universityId);
+                return Ok(MyResponse<EventByUniIdBaseViewModel>.OkWithDetail(eventByUniId, "Truy cập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
     }
