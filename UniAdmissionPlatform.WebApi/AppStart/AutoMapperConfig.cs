@@ -30,6 +30,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigSubjectMapperModule();
                     mc.ConfigNewsMapperModule();
                     mc.ConfigCertificationMapperModule();
+                    mc.ConfigUniversityEventMapperModule();
 
                 });
                 var mapper = mappingConfig.CreateMapper();

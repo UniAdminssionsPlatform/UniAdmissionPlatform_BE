@@ -16,6 +16,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<Event, EventBySlotBaseViewModel>();
             mc.CreateMap<UpdateEventRequest, Event>()
                 .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
+            mc.CreateMap<Event, EventByUniIdBaseViewModel>();
             mc.CreateMap<int?, int>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<bool?, bool>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<DateTime?, DateTime>().ConvertUsing((src, des) => src ?? des);
