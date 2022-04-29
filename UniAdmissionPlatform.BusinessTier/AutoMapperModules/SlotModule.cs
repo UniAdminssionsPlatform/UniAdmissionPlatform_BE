@@ -11,6 +11,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         {
             mc.CreateMap<Slot, SlotViewModel>();
             mc.CreateMap<CreateSlotRequest, Slot>();
+            mc.CreateMap<UpdateSlotRequest, Slot>();
         }
     }
 }

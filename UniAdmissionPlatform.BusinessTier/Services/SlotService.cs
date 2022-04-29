@@ -28,6 +28,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus);
         Task CloseSlot(int highSchoolId, int slotId);
         Task UpdateFullSlotStatus(int id);
+        Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest);
+
     }
     
     public partial class SlotService
@@ -194,6 +196,30 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             fullSlot.Status = (int)SlotStatus.Full;
             await UpdateAsyn(fullSlot);
+        }
+        
+        public async Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest)
+        {
+            var slot = await Get().Where(s => s.Id == slotId).FirstOrDefaultAsync();
+            if (slot == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy slot với id = {slotId}");
+            }
+
+            if (slot.Status == (int)SlotStatus.Close)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đóng!");
+            }
+            
+            if (slot.Status == (int)SlotStatus.Full)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đầy!");
+            }
+
+            var mapper = _mapper.CreateMapper();
+            slot = mapper.Map(updateSlotRequest,slot);
+            
+            await UpdateAsyn(slot);
         }
     }
 }
