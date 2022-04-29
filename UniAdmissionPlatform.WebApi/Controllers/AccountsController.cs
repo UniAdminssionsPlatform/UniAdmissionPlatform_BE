@@ -49,7 +49,19 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/[controller]/student")]
         public async Task<IActionResult> GetStudentInfo([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
-            return Ok(await _accountService.GetAll(filter, page, limit, sort));
+            try
+            {
+                var accounts = await _accountService.GetAll(filter, page, limit, sort);
+                return Ok(MyResponse<PageResult<AccountViewModelWithHighSchool>>.OkWithData(accounts));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
         }
         
         /// <summary>

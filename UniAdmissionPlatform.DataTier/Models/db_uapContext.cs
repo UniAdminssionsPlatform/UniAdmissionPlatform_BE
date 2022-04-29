@@ -20,6 +20,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<CasbinRule> CasbinRules { get; set; }
         public virtual DbSet<Certification> Certifications { get; set; }
+        public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<EventCheck> EventChecks { get; set; }
         public virtual DbSet<EventType> EventTypes { get; set; }
@@ -59,14 +60,11 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<UniversityNews> UniversityNews { get; set; }
         public virtual DbSet<UniversityProgram> UniversityPrograms { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Ward> Wards { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseMySQL("Server=13.250.253.49,3306;Initial Catalog=db_uap;User ID=admin;Password=uap123456;Connection Timeout=30;");
-            }
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -84,6 +82,8 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.HasIndex(e => e.RoleId, "Account_Role_Id_fk");
 
                 entity.HasIndex(e => e.UniversityId, "Account_University_Id_fk");
+
+                entity.HasIndex(e => e.WardId, "Account_Ward_Id_fk");
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
@@ -152,6 +152,12 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .WithMany(p => p.Accounts)
                     .HasForeignKey(d => d.UniversityId)
                     .HasConstraintName("Account_University_Id_fk");
+
+                entity.HasOne(d => d.Ward)
+                    .WithMany(p => p.Accounts)
+                    .HasForeignKey(d => d.WardId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Account_Ward_Id_fk");
             });
 
             modelBuilder.Entity<CasbinRule>(entity =>
@@ -200,13 +206,28 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Name).IsRequired();
             });
 
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.ToTable("District");
+
+                entity.HasIndex(e => e.ProvinceId, "District_Province_Id_fk");
+
+                entity.Property(e => e.Name).HasColumnType("tinytext");
+
+                entity.HasOne(d => d.Province)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.ProvinceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("District_Province_Id_fk");
+            });
+
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.ToTable("Event");
 
-                entity.HasIndex(e => e.EventTypeId, "Event_EventType_Id_fk");
+                entity.HasIndex(e => e.DistrictId, "Event_District_Id_fk");
 
-                entity.HasIndex(e => e.ProvinceId, "Event_Province_Id_fk");
+                entity.HasIndex(e => e.EventTypeId, "Event_EventType_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_event_deleted_at");
 
@@ -230,16 +251,17 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.TargetStudent).IsRequired();
 
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Events)
+                    .HasForeignKey(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Event_District_Id_fk");
+
                 entity.HasOne(d => d.EventType)
                     .WithMany(p => p.Events)
                     .HasForeignKey(d => d.EventTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Event_EventType_Id_fk");
-
-                entity.HasOne(d => d.Province)
-                    .WithMany(p => p.Events)
-                    .HasForeignKey(d => d.ProvinceId)
-                    .HasConstraintName("Event_Province_Id_fk");
             });
 
             modelBuilder.Entity<EventCheck>(entity =>
@@ -335,17 +357,25 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("HighSchool");
 
+                entity.HasIndex(e => e.DistrictId, "HighSchool_District_Id_fk");
+
                 entity.HasIndex(e => e.HighSchoolCode, "HighSchool_HighSchoolCode_uindex")
                     .IsUnique();
 
                 entity.HasIndex(e => e.HighSchoolManagerCode, "HighSchool_HighSchoolManagerCode_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ProvinceId, "HighSchool_Province_Id_fk");
-
                 entity.HasIndex(e => e.DeletedAt, "ix_high_school_deleted_at");
 
                 entity.Property(e => e.Address)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.Email)
                     .IsRequired()
                     .HasColumnType("tinytext");
 
@@ -361,11 +391,27 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.HasOne(d => d.Province)
+                entity.Property(e => e.ProfileImageUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.ShortDescription)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.ThumbnailUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.WebsiteUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.HasOne(d => d.District)
                     .WithMany(p => p.HighSchools)
-                    .HasForeignKey(d => d.ProvinceId)
+                    .HasForeignKey(d => d.DistrictId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("HighSchool_Province_Id_fk");
+                    .HasConstraintName("HighSchool_District_Id_fk");
             });
 
             modelBuilder.Entity<HighSchoolEvent>(entity =>
@@ -398,7 +444,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.Code)
                     .IsRequired()
-                    .HasColumnType("tinytext");
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -622,9 +668,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.RegionId, "Province_Region_Id_fk");
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Name).HasColumnType("tinytext");
 
                 entity.HasOne(d => d.Region)
                     .WithMany(p => p.Provinces)
@@ -804,7 +848,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasColumnType("tinytext");
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<SubjectGroup>(entity =>
@@ -875,7 +919,7 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("University");
 
-                entity.HasIndex(e => e.ProvinceId, "University_Province_Id_fk");
+                entity.HasIndex(e => e.DistrictId, "University_District_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_university_deleted_at");
 
@@ -897,6 +941,18 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
+                entity.Property(e => e.ProfileImageUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.ShortDescription)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
+                entity.Property(e => e.ThumbnailUrl)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
+
                 entity.Property(e => e.UniversityCode)
                     .IsRequired()
                     .HasColumnType("tinytext");
@@ -905,10 +961,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.HasOne(d => d.Province)
+                entity.HasOne(d => d.District)
                     .WithMany(p => p.Universities)
-                    .HasForeignKey(d => d.ProvinceId)
-                    .HasConstraintName("University_Province_Id_fk");
+                    .HasForeignKey(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("University_District_Id_fk");
             });
 
             modelBuilder.Entity<UniversityEvent>(entity =>
@@ -983,6 +1040,21 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Uid)
                     .IsRequired()
                     .HasColumnType("tinytext");
+            });
+
+            modelBuilder.Entity<Ward>(entity =>
+            {
+                entity.ToTable("Ward");
+
+                entity.HasIndex(e => e.DistrictId, "Ward_District_Id_fk");
+
+                entity.Property(e => e.Name).HasColumnType("tinytext");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Wards)
+                    .HasForeignKey(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Ward_District_Id_fk");
             });
 
             OnModelCreatingPartial(modelBuilder);

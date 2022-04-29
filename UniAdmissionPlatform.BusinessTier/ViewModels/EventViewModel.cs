@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? ProvinceId { get; set; }
         [String]
         public string MeetingUrl { get; set; }
-        
+        public int? DistrictId { get; set; }
     }
     
     public class EventBySlotBaseViewModel

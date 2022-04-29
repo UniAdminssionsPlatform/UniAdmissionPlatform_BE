@@ -31,8 +31,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
 
-        private const int LimitPaging = 50;
-        private const int DefaultPaging = 10;
+        private const int LimitPaging = 100;
+        private const int DefaultPaging = 63;
 
         public async Task<PageResult<ProvinceBaseViewModel>> GetAllProvinces(ProvinceBaseViewModel filter, string sort, int page, int limit)
         {

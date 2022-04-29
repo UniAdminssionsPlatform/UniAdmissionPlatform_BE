@@ -31,13 +31,13 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? DeletedAt { get; set; }
         public int EventTypeId { get; set; }
         public string Address { get; set; }
-        public int? ProvinceId { get; set; }
+        public int DistrictId { get; set; }
         public string MeetingUrl { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
+        public virtual District District { get; set; }
         public virtual EventType EventType { get; set; }
-        public virtual Province Province { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual ICollection<OrganizationEvent> OrganizationEvents { get; set; }

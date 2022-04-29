@@ -33,7 +33,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? HighSchoolId { get; set; }
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
-        
+        public int? WardId { get; set; }
     }
 
     public class AccountViewModelWithHighSchool : AccountBaseViewModel

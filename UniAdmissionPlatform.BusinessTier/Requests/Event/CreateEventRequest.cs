@@ -17,6 +17,7 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Event
         public string MeetingUrl { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public int DistrictId { get; set; }
         
     }
 }
