@@ -8,6 +8,11 @@ jobs:
     name: build uni-be
     runs-on: ubuntu-latest
     steps:
+      - name: Clear useless artifacts
+        uses: c-hive/gha-remove-artifacts@v1.2.0
+        with:
+          age: '5 days'
+    
       - name: Check out code
         uses: actions/checkout@v3
 
