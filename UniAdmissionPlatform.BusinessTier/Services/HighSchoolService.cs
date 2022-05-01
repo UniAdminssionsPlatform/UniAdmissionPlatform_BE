@@ -65,6 +65,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var (total, queryable) = Get().Where(h => h.DeletedAt == null)
                 .ProjectTo<GetHighSchoolBaseViewModel>(_mapper)
+                .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             if (sort != null)

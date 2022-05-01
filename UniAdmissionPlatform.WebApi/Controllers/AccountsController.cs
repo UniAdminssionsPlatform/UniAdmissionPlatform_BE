@@ -120,7 +120,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                             "Cập nhập thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Update fail, because server ís error");
+                            "Update fail, because server is error");
                 }
             }
         }
@@ -162,7 +162,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                             "Cập nhập thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Update fail, because server ís error");
+                            "Update fail, because server is error");
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }

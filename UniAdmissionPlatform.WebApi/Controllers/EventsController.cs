@@ -132,7 +132,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
@@ -201,7 +201,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                             "Xóa thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Delete fail, because server ís error");
+                            "Delete fail, because server is error");
                 }
             }
         }
@@ -284,6 +284,37 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         "Tìm kiếm thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
+            }
+        }
+        
+        /// <summary>
+        /// Get list events by university id
+        /// </summary>
+        /// <response code="200">
+        /// Get list events by university id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list events by university id fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/list-events")]
+        public async Task<IActionResult> GetListEventsByUniId(int universityId, string sort, int page, int limit)
+        {
+            try
+            {
+                var listEvent = await _universityEventService.GetListEventsByUniId(universityId, sort, page, limit);
+                return Ok(MyResponse<PageResult<EventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server is error");
+                }
             }
         }
     }

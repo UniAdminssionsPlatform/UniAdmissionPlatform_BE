@@ -57,6 +57,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var (total, queryable) = Get
                     (s => s.Status == statusU)
                 .ProjectTo<UniversityBaseViewModel>(_mapper)
+                .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             if (sort != null)

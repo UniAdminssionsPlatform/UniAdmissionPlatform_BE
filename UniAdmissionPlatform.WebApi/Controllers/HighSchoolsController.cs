@@ -54,7 +54,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
@@ -156,7 +156,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
