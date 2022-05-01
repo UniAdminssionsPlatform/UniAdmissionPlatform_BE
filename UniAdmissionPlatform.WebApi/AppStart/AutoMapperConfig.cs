@@ -21,6 +21,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigMajorGroupMapperModule();
                     mc.ConfigProvinceMapperModule();
                     mc.ConfigRoleMapperModule();
+                    mc.ConfigSubjectGroupMapperModule();
                     mc.ConfigSlotMapperModule();
                     mc.ConfigAccountMapperModule();
                     mc.ConfigUserMapperModule();
