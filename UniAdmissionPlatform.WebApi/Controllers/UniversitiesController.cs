@@ -52,11 +52,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
-        
+
         /// /// <summary>
         /// Get list universities
         /// </summary>
@@ -87,11 +87,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server ís error");
+                            "Cannot create, because server is error");
                 }
             }
         }
-        
+
         /// <summary>
         /// Get university by iD
         /// </summary>
@@ -167,11 +167,9 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                             "Tạo thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                             e.Error.Message);
+                            e.Error.Message);
                 }
             }
         }
-
-
     }
 }

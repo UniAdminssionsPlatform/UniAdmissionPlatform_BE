@@ -1,12 +1,14 @@
 ﻿
 using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
+using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
 using UniAdmissionPlatform.BusinessTier.Responses;
@@ -21,6 +23,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task CreateUniversityEvent(int universityId, int eventId);
         Task<EventByUniIdBaseViewModel> GetEventByUniId(int universityId);
+
+        Task<PageResult<EventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string sort, int page,
+            int limit);
     }
 
     public partial class UniversityEventService
@@ -50,6 +55,28 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     $"Không tìm thấy sự kiện nào theo university với id ={eventByUni}");
             }
             return eventByUni;
+        }
+        
+        private const int LimitPaging = 50;
+        private const int DefaultPaging = 10;
+        public async Task<PageResult<EventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().Where(ue => ue.UniversityId == universityId)
+                .ProjectTo<EventByUniIdBaseViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<EventByUniIdBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
         }
     }
 }
