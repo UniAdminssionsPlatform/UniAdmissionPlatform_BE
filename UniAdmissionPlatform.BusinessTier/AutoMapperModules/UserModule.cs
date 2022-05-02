@@ -61,6 +61,24 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
                     }));
+            
+            mc.CreateMap<RegisterForUniversityManagerRequest, User>()
+                .ForMember(u => u.Account, opt => opt.MapFrom(
+                    src => new Account
+                    {
+                        FirstName = src.FirstName,
+                        MiddleName = src.MiddleName,
+                        LastName = src.LastName,
+                        Address = src.Address,
+                        PhoneNumber = src.PhoneNumber,
+                        ProfileImageUrl = src.ProfileImageUrl,
+                        Religion = src.Religion,
+                        IdCard = src.IdCard,
+                        PlaceOfBirth = src.PlaceOfBirth,
+                        Nationality = src.Nationality,
+                        DateOfBirth = src.DateOfBirth,
+                        GenderId = src.GenderId,
+                    }));
         }
     }
 }

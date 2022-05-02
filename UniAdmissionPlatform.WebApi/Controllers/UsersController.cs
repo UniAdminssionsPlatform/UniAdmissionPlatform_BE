@@ -27,13 +27,15 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IAuthService _authService;
         private readonly IAccountService _accountService;
         private readonly IHighSchoolService _highSchoolService;
+        private readonly IUniversityService _universityService;
 
-        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService, IHighSchoolService highSchoolService)
+        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService, IHighSchoolService highSchoolService, IUniversityService universityService)
         {
             _userService = userService;
             _authService = authService;
             _accountService = accountService;
             _highSchoolService = highSchoolService;
+            _universityService = universityService;
         }
         
         /// <summary>
@@ -202,7 +204,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "User" })]
         [Route("~/api/v{version:apiVersion}/[controller]/register-school-manager")]
-        public async Task<IActionResult> RegisterForStudent([FromBody] RegisterForSchoolManagerRequest registerForSchoolManagerRequest)
+        public async Task<IActionResult> RegisterForHighSchoolManager([FromBody] RegisterForSchoolManagerRequest registerForSchoolManagerRequest)
         {
             var userId = _authService.GetUserId(HttpContext);
 
@@ -210,6 +212,46 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 var highSchool = await _highSchoolService.GetHighSchoolByManagerCode(registerForSchoolManagerRequest.HighSchoolManagerCode);
                 var id = await _userService.CreateHighSchoolManagerAccount(userId, highSchool.Id, registerForSchoolManagerRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new {id},"Đăng ký thành công. Vui lòng chờ xác thực."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Register for university manager
+        /// </summary>
+        /// <response code="200">
+        /// Register for university manager successfully
+        /// </response>
+        /// <response code="400">
+        /// Register for university manager fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "User" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/register-school-manager")]
+        public async Task<IActionResult> RegisterForUniversityManager([FromBody] RegisterForUniversityManagerRequest registerForUniversityManagerRequest)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+
+            try
+            {
+                var university = await _universityService.GetUniversityNameByCode(registerForUniversityManagerRequest.UniversityCode);
+                var id = await _userService.CreateUniversityManagerAccount(userId, university.Id, registerForUniversityManagerRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new {id},"Đăng ký thành công. Vui lòng chờ xác thực."));
             }
             catch (ErrorResponse e)
