@@ -15,6 +15,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.User;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Responses.User;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
@@ -243,7 +244,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "User" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/register-school-manager")]
+        [Route("~/api/v{version:apiVersion}/[controller]/register-university-manager")]
         public async Task<IActionResult> RegisterForUniversityManager([FromBody] RegisterForUniversityManagerRequest registerForUniversityManagerRequest)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -253,6 +254,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 var university = await _universityService.GetUniversityNameByCode(registerForUniversityManagerRequest.UniversityCode);
                 var id = await _userService.CreateUniversityManagerAccount(userId, university.Id, registerForUniversityManagerRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new {id},"Đăng ký thành công. Vui lòng chờ xác thực."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        
+        /// <summary>
+        /// Get list users
+        /// </summary>
+        /// <response code="200">
+        /// Get list users successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list users fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin - User" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        public async Task<IActionResult> GetUsers(UserBaseViewModel filter, string sort, int page, int limit)
+        {
+            try
+            {
+                var users = await _userService.GetUsers(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<UserBaseViewModel>>.OkWithDetail(users, "Đạt được thành công."));
             }
             catch (ErrorResponse e)
             {

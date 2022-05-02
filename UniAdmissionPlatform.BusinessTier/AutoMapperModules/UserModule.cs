@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using UniAdmissionPlatform.BusinessTier.Requests.User;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
@@ -79,6 +80,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
                     }));
+
+            mc.CreateMap<User, UserBaseViewModel>();
         }
     }
 }

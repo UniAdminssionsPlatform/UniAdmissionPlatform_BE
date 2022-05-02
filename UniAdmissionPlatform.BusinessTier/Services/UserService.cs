@@ -1,22 +1,26 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
+using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Entities;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Account;
 using UniAdmissionPlatform.BusinessTier.Requests.User;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Responses.User;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
 using UniAdmissionPlatform.DataTier.Models;
 using IConfigurationProvider = AutoMapper.IConfigurationProvider;
@@ -25,6 +29,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IUserService
     {
+        Task<PageResult<UserBaseViewModel>> GetUsers(UserBaseViewModel filter, string sort, int page, int limit);
         Task<LoginResponse> Login(string uid);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
         Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
@@ -47,6 +52,28 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             _configuration = configuration;
             _mapper = mapper.ConfigurationProvider;
+        }
+
+        private const int LimitPaging = 50;
+        private const int DefaultPaging = 10;
+
+        public async Task<PageResult<UserBaseViewModel>> GetUsers(UserBaseViewModel filter, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().ProjectTo<UserBaseViewModel>(_mapper)
+                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<UserBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
         }
 
         public async Task<LoginResponse> Login(string uid)
