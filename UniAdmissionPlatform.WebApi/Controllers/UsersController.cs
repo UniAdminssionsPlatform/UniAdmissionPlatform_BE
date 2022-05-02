@@ -15,6 +15,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.User;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Responses.User;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
@@ -220,6 +221,24 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
                     case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers(UserBaseViewModel filter, string sort, int page, int limit)
+        {
+            try
+            {
+                var users = await _userService.GetUsers(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<UserBaseViewModel>>.OkWithDetail(users, "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }
