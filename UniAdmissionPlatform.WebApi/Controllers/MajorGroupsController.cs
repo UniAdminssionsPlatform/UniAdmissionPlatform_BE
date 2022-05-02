@@ -37,7 +37,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Major Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/major-groups")]
         public async Task<IActionResult> GetAllMajorGroup([FromQuery] MajorGroupBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -69,7 +69,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Major Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/major-groups/{id:int}")]
         public async Task<IActionResult> GetMajorGroupById(int id)
         {
             try
@@ -105,7 +105,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/admin/major-groups")]
         [HttpPost]
         public async Task<IActionResult> GetMajorGroupById([FromBody] CreateMajorGroupRequest createMajorGroupRequest)
         {
@@ -140,7 +140,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/admin/major-groups/{id:int}")]
         [HttpPut]
         public async Task<IActionResult> UpdateMajorGroup(int id, UpdateMajorGroupRequest updateMajorGroupRequest)
         {
@@ -177,7 +177,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/admin/major-groups/{id:int}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteMajorGroupById(int id)
         {

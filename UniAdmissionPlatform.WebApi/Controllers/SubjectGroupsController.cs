@@ -37,7 +37,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/subject-groups/{id:int}")]
         public async Task<IActionResult> GetSubjectGroupById(int id)
         {
             try
@@ -71,7 +71,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/subject-groups")]
         public async Task<IActionResult> GetAllSubjectGroups([FromQuery] SubjectGroupBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -105,7 +105,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/admin/subject-groups")]
         public async Task<IActionResult> CreateSubjectGroup(
             [FromBody] CreateSubjectGroupRequest createSubjectGroupRequest)
         {
@@ -139,7 +139,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/admin/subject-groups/{id:int}")]
         [HttpPut]
         public async Task<IActionResult> UpdateSubjectGroup(int id,
             [FromBody] UpdateSubjectGroupRequest updateSubjectGroupRequest)
@@ -177,7 +177,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/admin/subject-groups/{id:int}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteSubjectGroup(int id)
         {

@@ -38,7 +38,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Universities" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/get-by-code")]
+        [Route("~/api/v{version:apiVersion}/[controller]/get-by-manager-code")]
         public async Task<IActionResult> GetUniversityByCode(string universityCode)
         {
             try

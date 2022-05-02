@@ -38,7 +38,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "EventTypes" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/event-types")]
         public async Task<IActionResult> GetListEventType([FromQuery] EventTypeBaseViewModel filter, string sort,
             int page, int limit)
         {
