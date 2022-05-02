@@ -288,24 +288,24 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Get list events by university id
+        /// Get list events for specific university 
         /// </summary>
         /// <response code="200">
-        /// Get list events by university id successfully
+        /// Get list events for specific university successfully
         /// </response>
         /// <response code="400">
-        /// Get list events by university id fail
+        /// Get list events for specific university fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/list-events")]
-        public async Task<IActionResult> GetListEventsByUniId(int universityId, string sort, int page, int limit)
+        public async Task<IActionResult> GetListEventsByUniId(int universityId, string eventName, string eventHostName,int? eventTypeId, int? statusEvent, string sort, int page, int limit)
         {
             try
-            {
-                var listEvent = await _universityEventService.GetListEventsByUniId(universityId, sort, page, limit);
-                return Ok(MyResponse<PageResult<EventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
+            { 
+                var listEvent = await _universityEventService.GetListEventsByUniId(universityId,eventName,  eventHostName, eventTypeId, statusEvent, sort, page, limit);
+                return Ok(MyResponse<PageResult<ListEventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

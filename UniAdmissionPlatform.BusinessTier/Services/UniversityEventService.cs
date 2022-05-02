@@ -24,8 +24,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task CreateUniversityEvent(int universityId, int eventId);
         Task<EventByUniIdBaseViewModel> GetEventByUniId(int universityId);
 
-        Task<PageResult<EventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string sort, int page,
-            int limit);
+        Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId,string eventName, string eventHostName,int? eventTypeId, int? statusEvent, string sort, int page, int limit);
     }
 
     public partial class UniversityEventService
@@ -59,10 +58,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
-        public async Task<PageResult<EventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string sort, int page, int limit)
+        public async Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId,string eventName, string eventHostName, int? eventTypeId, int? statusEvent, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(ue => ue.UniversityId == universityId)
-                .ProjectTo<EventByUniIdBaseViewModel>(_mapper)
+            var (total, queryable) = Get().Where(ue => ue.UniversityId == universityId
+                                                       && (eventName == null || ue.Event.Name.Contains(eventName)) 
+                                                       && (eventHostName == null || ue.Event.HostName.Contains(eventHostName))
+                                                       && (eventTypeId == null || ue.Event.EventTypeId == eventTypeId)
+                                                       && (statusEvent == null || ue.Event.Status == statusEvent))
+                .ProjectTo<ListEventByUniIdBaseViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             
             if (sort != null)
@@ -70,7 +73,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
             
-            return new PageResult<EventByUniIdBaseViewModel>
+            return new PageResult<ListEventByUniIdBaseViewModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

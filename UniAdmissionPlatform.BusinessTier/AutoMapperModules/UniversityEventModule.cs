@@ -13,6 +13,12 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                     opt => opt.MapFrom(src => src.Event))
                 .ForMember(des => des.UniversityId, 
                     opt => opt.MapFrom(src => src.UniversityId));
+
+            mc.CreateMap<UniversityEvent, ListEventByUniIdBaseViewModel>()
+                .ForMember(des => des.Event,
+                    opt => opt.MapFrom(src => src.Event))
+                .ForMember(des => des.UniversityId, 
+                    opt => opt.MapFrom(src => src.UniversityId));
         }
     }
 }
