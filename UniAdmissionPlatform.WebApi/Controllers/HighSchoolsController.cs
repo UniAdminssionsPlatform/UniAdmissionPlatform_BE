@@ -40,7 +40,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "High Schools" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/get-by-code")]
+        [Route("~/api/v{version:apiVersion}/high-schools/get-by-code")]
         public async Task<IActionResult> GetHighSchoolByCode(string highSchoolCode)
         {
             try
@@ -74,7 +74,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "High Schools" })]
-        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/get-by-code")]
+        [Route("~/api/v{version:apiVersion}/high-schools/get-by-manager-code")]
         public async Task<IActionResult> GetHighSchoolByManagerCode(string highSchoolManagerCode)
         {
             try
@@ -110,7 +110,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "High Schools" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/high-schools")]
         public async Task<IActionResult> GetAllHighSchools([FromQuery] GetHighSchoolBaseViewModel filter, string sort,
             int page, int limit)
         {
@@ -142,7 +142,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "High Schools" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{highSchoolId:int}/event-slot")]
+        [Route("~/api/v{version:apiVersion}/high-schools/{highSchoolId:int}/event-slot")]
         public async Task<IActionResult> GetEventsInfoByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
             try

@@ -107,7 +107,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/student/[controller]")]
         public async Task<IActionResult> CreateParticipationForStudent([FromBody] CreateParticipationRequestForStudent createParticipationRequestForStudent)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -142,7 +142,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/student/[controller]/{id:int}")]
         public async Task<IActionResult> UpdateParticipationForStudent(int id,
             UpdateParticipationRequestForStudent updateParticipationRequestForStudent)
         {
@@ -181,7 +181,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        [Route("~/api/v{version:apiVersion}/student/[controller]/{id:int}")]
         public async Task<IActionResult> DeleteParticipationForStudent(int id)
         {
             var userId = _authService.GetUserId(HttpContext);

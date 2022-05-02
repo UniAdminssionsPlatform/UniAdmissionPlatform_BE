@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
-using UniAdmissionPlatform.BusinessTier.Requests.StudentCertificaiton;
+using UniAdmissionPlatform.BusinessTier.Requests.StudentCertification;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;

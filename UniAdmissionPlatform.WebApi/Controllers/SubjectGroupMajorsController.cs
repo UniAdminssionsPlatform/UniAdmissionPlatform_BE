@@ -38,7 +38,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Subject Group Majors" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/subject-group-majors")]
         public async Task<IActionResult> GetSubjectGroupMajors([FromQuery] SubjectGroupMajorBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -71,7 +71,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Group Majors" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/admin/subject-group-majors")]
         public async Task<IActionResult> CreateSubjectGroupMajor(CreateSubjectGroupMajorRequest createSubjectGroupMajorRequest)
         {
             try
@@ -107,7 +107,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Group Majors" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [Route("~/api/v{version:apiVersion}/admin/subject-group-majors")]
         public async Task<IActionResult> DeleteSubjectGroupMajor([FromQuery] int subjectGroupId, [FromQuery] int majorId)
         {
             try

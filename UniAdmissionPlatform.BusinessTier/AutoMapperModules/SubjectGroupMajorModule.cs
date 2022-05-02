@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using UniAdmissionPlatform.BusinessTier.Requests.StudentCertificaiton;
 using UniAdmissionPlatform.BusinessTier.Requests.SubjectGroupMajor;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.Models;

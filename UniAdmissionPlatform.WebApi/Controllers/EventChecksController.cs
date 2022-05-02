@@ -44,7 +44,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
-        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{eventCheckId:int}")]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}")]
         public async Task<IActionResult> ApproveEventToSlot(int eventCheckId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);

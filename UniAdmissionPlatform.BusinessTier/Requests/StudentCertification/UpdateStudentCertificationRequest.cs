@@ -1,8 +1,7 @@
-﻿namespace UniAdmissionPlatform.BusinessTier.Requests.StudentCertificaiton
+﻿namespace UniAdmissionPlatform.BusinessTier.Requests.StudentCertification
 {
-    public class CreateStudentCertificationRequest
+    public class UpdateStudentCertificationRequest
     {
-        public int? CertificationId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
