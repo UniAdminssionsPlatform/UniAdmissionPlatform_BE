@@ -28,4 +28,9 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.User
     {
         public string HighSchoolManagerCode { get; set; }
     }
+    
+    public class RegisterForUniversityManagerRequest : RegisterRequest
+    {
+        public string UniversityCode { get; set; }
+    }
 }

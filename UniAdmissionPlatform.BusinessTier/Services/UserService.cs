@@ -33,10 +33,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<LoginResponse> Login(string uid);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
         Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
-
         Task<int> CreateHighSchoolManagerAccount(int userId, int highSchoolId,
             RegisterForSchoolManagerRequest registerForSchoolManagerRequest);
-
+        Task<int> CreateUniversityManagerAccount(int userId, int universityId,
+            RegisterForUniversityManagerRequest registerForUniversityManagerRequest);
         Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
             RegisterForStudentRequest registerForStudentRequest);
     }
@@ -264,6 +264,25 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             user.Account = userInRequest.Account;
             user.Account.RoleId = "schoolAdmin";
             user.Account.HighSchoolId = highSchoolId;
+            user.Status = (int)UserStatus.Pending;
+            await UpdateAsyn(user);
+            return user.Id;
+        }
+        
+        public async Task<int> CreateUniversityManagerAccount(int userId, int universityId,
+            RegisterForUniversityManagerRequest registerForUniversityManagerRequest)
+        {
+            var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
+            if (user.Status != (int)UserStatus.New)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
+            }
+
+            var mapper = _mapper.CreateMapper();
+            var userInRequest = mapper.Map<User>(registerForUniversityManagerRequest);
+            user.Account = userInRequest.Account;
+            user.Account.RoleId = "schoolAdmin";
+            user.Account.UniversityId = universityId;
             user.Status = (int)UserStatus.Pending;
             await UpdateAsyn(user);
             return user.Id;
