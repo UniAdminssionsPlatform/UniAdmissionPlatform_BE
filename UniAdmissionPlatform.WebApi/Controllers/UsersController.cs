@@ -183,7 +183,46 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }
-                
+            }
+        }
+        
+        /// <summary>
+        /// Register for school manager
+        /// </summary>
+        /// <response code="200">
+        /// Register for school manager successfully
+        /// </response>
+        /// <response code="400">
+        /// Register for school manager fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "User" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/register-school-manager")]
+        public async Task<IActionResult> RegisterForStudent([FromBody] RegisterForSchoolManagerRequest registerForSchoolManagerRequest)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+
+            try
+            {
+                var highSchool = await _highSchoolService.GetHighSchoolByManagerCode(registerForSchoolManagerRequest.HighSchoolManagerCode);
+                var id = await _userService.CreateHighSchoolManagerAccount(userId, highSchool.Id, registerForSchoolManagerRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new {id},"Đăng ký thành công. Vui lòng chờ xác thực."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Đăng ký thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
             }
         }
     }

@@ -28,7 +28,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<LoginResponse> Login(string uid);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
         Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
-        Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId, RegisterForStudentRequest registerForStudentRequest);
+
+        Task<int> CreateHighSchoolManagerAccount(int userId, int highSchoolId,
+            RegisterForSchoolManagerRequest registerForSchoolManagerRequest);
+
+        Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
+            RegisterForStudentRequest registerForStudentRequest);
     }
 
     public partial class UserService
@@ -52,9 +57,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 return user.Status switch
                 {
                     (int)UserStatus.New => GenerateJwtTokenForNewUser(user),
-                    (int)UserStatus.Lock => throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        "Tài khoản này đã bị khóa"),
+                    (int)UserStatus.Pending => throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        "Tài khoản này đang đợi được duyệt."),
                     (int)UserStatus.Active => GenerateJwtTokenForActiveUser(user),
+                    (int)UserStatus.Lock => throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        "Tài khoản này đã bị khóa."),
                     _ => null
                 };
 
@@ -180,15 +187,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             return user;
         }
-        
+
         public async Task<int> CreateAccount(CreateAccountRequest createAccountRequest)
         {
             var mapper = _mapper.CreateMapper();
             var uapAccount = mapper.Map<Account>(createAccountRequest);
             var user = new User
             {
-                Account = uapAccount, 
-                Uid = "", 
+                Account = uapAccount,
+                Uid = "",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -197,10 +204,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return user.Id;
         }
 
-        public async Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId, RegisterForStudentRequest registerForStudentRequest)
+        public async Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
+            RegisterForStudentRequest registerForStudentRequest)
         {
             var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
-            if (user.Status != (int) UserStatus.New)
+            if (user.Status != (int)UserStatus.New)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
             }
@@ -215,6 +223,25 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return GenerateJwtTokenForActiveUser(user);
         }
 
+        public async Task<int> CreateHighSchoolManagerAccount(int userId, int highSchoolId,
+            RegisterForSchoolManagerRequest registerForSchoolManagerRequest)
+        {
+            var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
+            if (user.Status != (int)UserStatus.New)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
+            }
+
+            var mapper = _mapper.CreateMapper();
+            var userInRequest = mapper.Map<User>(registerForSchoolManagerRequest);
+            user.Account = userInRequest.Account;
+            user.Account.RoleId = "schoolAdmin";
+            user.Account.HighSchoolId = highSchoolId;
+            user.Status = (int)UserStatus.Pending;
+            await UpdateAsyn(user);
+            return user.Id;
+        }
+
         public async Task ValidateStatus(int userId, UserStatus userStatus)
         {
             var user = await FirstOrDefaultAsyn(u => u.Id == userId);
@@ -223,7 +250,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy người dùng.");
             }
 
-            if (user.Status != (int) userStatus)
+            if (user.Status != (int)userStatus)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
             }
