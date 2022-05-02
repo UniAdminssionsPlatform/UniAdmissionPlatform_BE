@@ -37,6 +37,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigStudentCertificationMapperModule();
                     mc.ConfigParticipationMapperModule();
                     mc.ConfigSubjectGroupMajorMapperModule();
+                    mc.ConfigMajorDepartmentModuleMapperModule();
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);
