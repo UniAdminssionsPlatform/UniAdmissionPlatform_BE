@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         
         private const int LimitPaging = 50;
-        private const int DefaultPaging = 10;
+        private const int DefaultPaging = 300;
 
         public async Task<PageResult<NationalityBaseViewModel>> GetAllNationalities(NationalityBaseViewModel filter, string sort, int page, int limit)
         {
