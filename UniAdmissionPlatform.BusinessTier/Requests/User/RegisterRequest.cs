@@ -14,9 +14,9 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.User
         public string IdCard { get; set; }
         public string PlaceOfBirth { get; set; }
         public string Nationality { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public int? GenderId { get; set; }
-        public int? WardId { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int GenderId { get; set; }
+        public int WardId { get; set; }
     }
 
     public class RegisterForStudentRequest : RegisterRequest
