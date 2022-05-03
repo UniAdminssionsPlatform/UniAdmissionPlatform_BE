@@ -25,6 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         Nationality = src.Nationality,
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
+                        WardId = src.WardId,
                     }));
             
             mc.CreateMap<RegisterForStudentRequest, User>()
@@ -43,6 +44,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         Nationality = src.Nationality,
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
+                        WardId = src.WardId,
                     }));
             
             mc.CreateMap<RegisterForSchoolManagerRequest, User>()
@@ -61,6 +63,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         Nationality = src.Nationality,
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
+                        WardId = src.WardId,
                     }));
             
             mc.CreateMap<RegisterForUniversityManagerRequest, User>()
@@ -79,6 +82,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                         Nationality = src.Nationality,
                         DateOfBirth = src.DateOfBirth,
                         GenderId = src.GenderId,
+                        WardId = src.WardId,
                     }));
 
             mc.CreateMap<User, UserBaseViewModel>();
