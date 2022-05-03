@@ -47,15 +47,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             var slot = mapper.Map<Slot>(createSlotRequest);
 
-            if (slot.EndTime != null && slot.StartTime >= slot.EndTime)
+            if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
             }
             
-            if (await Get().Where(s => s.StartTime <= slot.StartTime && s.EndTime >= slot.StartTime // start time nam trong thang slot khac
-                                      || slot.EndTime != null && s.StartTime <= slot.EndTime && s.EndTime >= slot.EndTime // end time nam trong thang slot khac
-                                      || slot.EndTime != null && s.StartTime <= slot.StartTime && s.EndTime >= slot.EndTime // ca slot lan end time deu nam trong slot khac
+            if (await Get().Where(s => s.StartDate <= slot.StartDate && s.EndDate >= slot.StartDate // start time nam trong thang slot khac
+                                      || slot.EndDate != null && s.StartDate <= slot.EndDate && s.EndDate >= slot.EndDate // end time nam trong thang slot khac
+                                      || slot.EndDate != null && s.StartDate <= slot.StartDate && s.EndDate >= slot.EndDate // ca slot lan end time deu nam trong slot khac
                                       ).AnyAsync())
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
@@ -76,14 +76,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var query = Get().Where(s => s.HighSchoolId == highSchoolId);
 
-            if (filter.StartTime != null)
+            if (filter.StartDate != null)
             {
-                query = query.Where(s => s.StartTime >= filter.StartTime);
+                query = query.Where(s => s.StartDate >= filter.StartDate);
             }
 
-            if (filter.EndTime != null)
+            if (filter.EndDate != null)
             {
-                query = query.Where(s => s.EndTime <= filter.EndTime);
+                query = query.Where(s => s.EndDate <= filter.EndDate);
             }
 
             if (filter.Status != null)
@@ -111,14 +111,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 query = query.Where(s => s.HighSchoolId == filter.HighSchoolId);
             }
 
-            if (filter.StartTime != null)
+            if (filter.StartDate != null)
             {
-                query = query.Where(s => s.StartTime >= filter.StartTime);
+                query = query.Where(s => s.StartDate >= filter.StartDate);
             }
 
-            if (filter.EndTime != null)
+            if (filter.EndDate != null)
             {
-                query = query.Where(s => s.EndTime <= filter.EndTime);
+                query = query.Where(s => s.EndDate <= filter.EndDate);
             }
 
             if (filter.Status != null)
