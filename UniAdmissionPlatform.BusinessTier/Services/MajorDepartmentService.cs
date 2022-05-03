@@ -73,7 +73,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var majorDepartment = await FirstOrDefaultAsyn(md => md.Id == majorDepartmentId && md.DeletedAt == null);
             if (majorDepartment == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm phòng ban chuyên ngành học id:{majorDepartmentId}.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy phòng ban chuyên ngành học id:{majorDepartmentId}.");
             }
             var mapper = _mapper.CreateMapper();
             majorDepartment = mapper.Map(updateMajorDepartmentRequest,majorDepartment);
@@ -86,7 +86,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var majorDepartment = await FirstOrDefaultAsyn(md => md.Id == majorDepartmentId && md.DeletedAt == null);
             if (majorDepartment == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm phòng ban chuyên ngành học id:{majorDepartmentId}.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy phòng ban chuyên ngành học id:{majorDepartmentId}.");
             }
             majorDepartment.UpdatedAt = DateTime.Now;
             majorDepartment.DeletedAt = DateTime.Now;
