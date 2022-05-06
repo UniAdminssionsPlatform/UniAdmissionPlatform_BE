@@ -14,6 +14,8 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public string ThumbnailUrl { get; set; }
 
         public virtual ICollection<Major> Majors { get; set; }
     }
