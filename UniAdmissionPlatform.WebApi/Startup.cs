@@ -119,7 +119,7 @@ namespace UniAdmissionPlatform.WebApi
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
             });
 
-            // app.UseHangfireDashboard();
+            app.UseHangfireDashboard();
             
             app.UseSwaggerUI(c =>
             {
