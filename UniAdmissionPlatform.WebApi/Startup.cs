@@ -72,7 +72,7 @@ namespace UniAdmissionPlatform.WebApi
                     )
                 ));
             
-            services.AddHangfireServer();
+            // services.AddHangfireServer();
 
             services.InitFirebase();
 
@@ -131,8 +131,10 @@ namespace UniAdmissionPlatform.WebApi
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("UniAdmissionPlatform.WebApi.Resources.Swagger.index.html");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1");
             });
+            
             app.UseDeveloperExceptionPage();
             app.UseRouting();
+            
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
