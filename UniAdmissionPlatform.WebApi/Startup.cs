@@ -72,7 +72,7 @@ namespace UniAdmissionPlatform.WebApi
                     )
                 ));
             
-            // services.AddHangfireServer();
+            services.AddHangfireServer(options => options.WorkerCount = 1);
 
             services.InitFirebase();
 
