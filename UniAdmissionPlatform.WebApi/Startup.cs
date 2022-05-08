@@ -50,6 +50,8 @@ namespace UniAdmissionPlatform.WebApi
             
             services.AddSingleton<ICasbinService, CasbinService>();
 
+            services.InitEmailService();
+
             services.ConfigureJsonFormatServices();
 
             services.AddHangfire(configuration => configuration
@@ -72,7 +74,7 @@ namespace UniAdmissionPlatform.WebApi
                     )
                 ));
             
-            // services.AddHangfireServer(options => options.WorkerCount = 1);
+            services.AddHangfireServer(options => options.WorkerCount = 1);
 
             services.InitFirebase();
 
