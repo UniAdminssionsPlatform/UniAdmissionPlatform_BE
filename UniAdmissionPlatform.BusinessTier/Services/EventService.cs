@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
@@ -13,6 +14,7 @@ using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
 using UniAdmissionPlatform.BusinessTier.Responses;
+using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
 using UniAdmissionPlatform.DataTier.Models;
@@ -168,16 +170,21 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event của bạn đã được book ở slot này.");
             }
 
-            uniEvent.EventChecks.Add(new EventCheck
+            var eventCheck = new EventCheck
             {
                 SlotId = bookSlotForUniAdminRequest.SlotId,
                 EventId = bookSlotForUniAdminRequest.EventId,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Status = (int) EventCheckStatus.Pending,
-            });
+            };
+
+            uniEvent.EventChecks.Add(eventCheck);
 
             await UpdateAsyn(uniEvent);
+
+            BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
+                mailBookingService.SendMailForNewBookingToSchoolAdmin(eventCheck.Id));
         }
     }
 }
