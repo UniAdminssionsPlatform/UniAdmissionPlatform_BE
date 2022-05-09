@@ -12,6 +12,7 @@
         <PackageReference Include="Hangfire.AspNetCore" Version="1.7.28" />
         <PackageReference Include="Hangfire.Core" Version="1.7.28" />
         <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
+        <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.8" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.15" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.15" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
@@ -19,6 +20,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.15" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Razor.Templating.Core" Version="1.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.0" />
@@ -35,11 +37,22 @@
       <None Update="Resources\Casbin\rbac_model.conf">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Resources\MjjmlTemplate\NewBookingRequestToSchoolAdmin.mjml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="Resources\Swagger\index.html" />
       <None Remove="Resources\index.html" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\NewBookingRequestToSchoolAdmin.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\EmailBooking" />
     </ItemGroup>
 
     <PropertyGroup>
