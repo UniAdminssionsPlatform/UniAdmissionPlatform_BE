@@ -245,6 +245,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             user.Account = userInRequest.Account;
             user.Account.RoleId = "student";
             user.Account.HighSchoolId = highSchoolId;
+
+            user.Account.Student = new Student
+            {
+                //todo:
+                Status = 0,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+            };
+            
             user.Status = (int)UserStatus.Active;
             await UpdateAsyn(user);
             return GenerateJwtTokenForActiveUser(user);
