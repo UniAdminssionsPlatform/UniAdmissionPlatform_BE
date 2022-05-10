@@ -506,7 +506,7 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.HasIndex(e => e.DeletedAt, "ix_news_deleted_at");
 
-                entity.Property(e => e.FullDescription).IsRequired();
+                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
