@@ -11,7 +11,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string ShortDescription { get; set; }
         [String]
-        public string FullDescription { get; set; }
+        public string Description { get; set; }
         [String]
         public string ThumbnailUrl { get; set; }
         public DateTime? CreateDate { get; set; }
