@@ -44,7 +44,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
-        [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}")]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}/approve")]
         public async Task<IActionResult> ApproveEventToSlot(int eventCheckId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -62,6 +62,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         "Duyệt sự kiện không thành công. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Duyệt sự kiện không thành công. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// /// <summary>
+        /// Change event check status to reject
+        /// </summary>
+        /// <response code="200">
+        /// Reject a event with id successfully
+        /// </response>
+        /// <response code="400">
+        /// Reject fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}/reject")]
+        public async Task<IActionResult> RejectEventToSlot(int eventCheckId)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+
+            try
+            {
+                await _eventCheckService.RejectEventToSlot(highSchoolId, eventCheckId);
+                return Ok(MyResponse<object>.OkWithMessage("Từ chối thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Từ chối sự kiện không thành công. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Từ chối sự kiện không thành công. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
