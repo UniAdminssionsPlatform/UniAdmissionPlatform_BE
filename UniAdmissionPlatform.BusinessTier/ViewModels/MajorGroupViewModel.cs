@@ -7,5 +7,9 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? Id { get; set; }
         [String]
         public string Name { get; set; }
+        [String]
+        public string Description { get; set; }
+        [String]
+        public string ThumbnailUrl { get; set; }
     }
 }

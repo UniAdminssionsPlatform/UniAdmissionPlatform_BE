@@ -89,6 +89,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             majorGroup.Name = updateMajorGroupRequest.Name;
+            majorGroup.Description = updateMajorGroupRequest.Description;
+            majorGroup.ThumbnailUrl = updateMajorGroupRequest.ThumbnailUrl;
 
             await UpdateAsyn(majorGroup);
         }

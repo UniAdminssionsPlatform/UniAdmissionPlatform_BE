@@ -50,29 +50,31 @@ namespace UniAdmissionPlatform.WebApi
             
             services.AddSingleton<ICasbinService, CasbinService>();
 
+            services.InitEmailService();
+
             services.ConfigureJsonFormatServices();
 
-            // services.AddHangfire(configuration => configuration
-            //     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-            //     .UseSimpleAssemblyNameTypeSerializer()
-            //     .UseRecommendedSerializerSettings()
-            //     .UseStorage(
-            //         new MySqlStorage(
-            //             Configuration.GetConnectionString("HangFire"),
-            //             new MySqlStorageOptions
-            //             {
-            //                 QueuePollInterval = TimeSpan.FromSeconds(10),
-            //                 JobExpirationCheckInterval = TimeSpan.FromHours(1),
-            //                 CountersAggregateInterval = TimeSpan.FromMinutes(5),
-            //                 PrepareSchemaIfNecessary = true,
-            //                 DashboardJobListLimit = 25000,
-            //                 TransactionTimeout = TimeSpan.FromMinutes(1),
-            //                 TablesPrefix = "Hangfire",
-            //             }
-            //         )
-            //     ));
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseStorage(
+                    new MySqlStorage(
+                        Configuration.GetConnectionString("HangFire"),
+                        new MySqlStorageOptions
+                        {
+                            QueuePollInterval = TimeSpan.FromSeconds(10),
+                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                            PrepareSchemaIfNecessary = true,
+                            DashboardJobListLimit = 25000,
+                            TransactionTimeout = TimeSpan.FromMinutes(1),
+                            TablesPrefix = "Hangfire",
+                        }
+                    )
+                ));
             
-            // services.AddHangfireServer();
+            services.AddHangfireServer(options => options.WorkerCount = 1);
 
             services.InitFirebase();
 
@@ -119,7 +121,7 @@ namespace UniAdmissionPlatform.WebApi
                 c.RouteTemplate = "/swagger/{documentName}/swagger.json";
             });
 
-            // app.UseHangfireDashboard();
+            app.UseHangfireDashboard();
             
             app.UseSwaggerUI(c =>
             {
@@ -131,8 +133,10 @@ namespace UniAdmissionPlatform.WebApi
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("UniAdmissionPlatform.WebApi.Resources.Swagger.index.html");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "UniAdmissionPlatform.WebApi v1");
             });
+            
             app.UseDeveloperExceptionPage();
             app.UseRouting();
+            
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
@@ -147,10 +151,10 @@ namespace UniAdmissionPlatform.WebApi
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
-                // endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
-                // {
-                //     IgnoreAntiforgeryToken = true
-                // });
+                endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
+                {
+                    IgnoreAntiforgeryToken = true
+                });
             });
         }
     }
