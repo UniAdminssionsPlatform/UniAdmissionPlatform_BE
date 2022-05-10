@@ -31,7 +31,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? DeletedAt { get; set; }
         public int EventTypeId { get; set; }
         public string Address { get; set; }
-        public int DistrictId { get; set; }
+        public int? DistrictId { get; set; }
         public string MeetingUrl { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
