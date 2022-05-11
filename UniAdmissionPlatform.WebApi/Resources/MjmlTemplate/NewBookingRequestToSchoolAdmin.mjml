@@ -1,39 +1,101 @@
 ﻿<mjml>
-    <mj-body>
-        <mj-section>
-            <mj-column>
-                <mj-image width="100px" src="https://cdn.worldvectorlogo.com/logos/bilibili-logo-blue.svg"/>
-                <mj-divider border-color="#F45E43"/>
+    <mj-head>
+        <mj-title>Discount Light</mj-title>
+        <mj-preview>Pre-header Text</mj-preview>
+        <mj-attributes>
+            <mj-all font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-all>
+            <mj-text font-weight="400" font-size="16px" color="#000000" line-height="24px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-text>
+        </mj-attributes>
+        <mj-style inline="inline">
+            .body-section {
+                -webkit-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+                -moz-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+                box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+            }
+        </mj-style>
+        <mj-style inline="inline">
+            .text-link {
+                color: #5e6ebf
+            }
+        </mj-style>
+        <mj-style inline="inline">
+            .footer-link {
+                color: #888888
+            }
+        </mj-style>
+    </mj-head>
+    <mj-body background-color="#E7E7E7" width="600px">
+        <mj-section background-color="#1f2e78">
+            <mj-column width="100%">
             </mj-column>
         </mj-section>
-        <mj-section>
-            <mj-column>
-                <mj-text font-size="20px" color="#F45E43" font-family="helvetica">Xin chào @Model.Name!</mj-text>
-                <mj-text font-size="20px" color="#F45E43" font-family="helvetica">Bạn vừa nhận được cuộc đặt lịch vào lúc @Model.BookingTime.</mj-text>
-                <mj-text font-size="20px" color="#F45E43" font-family="helvetica">Với sự kiện có sự tham gia của các trường đại học:</mj-text>
-                <mj-text font-size="20px" color="#F45E43" font-family="helvetica">- Trường @Model.NameOfUniversity</mj-text>
-                <mj-text font-size="20px" color="#F45E43" font-family="helvetica">Bấm vào liên kết dưới đây để có thêm chi tiết:</mj-text>
-                <mj-button background-color="#F45E43" padding-left="20px" color="#FAFAFA" href="@Model.BookingDetailUrl" font-family="Arial, sans-serif" padding="20px 0 0 0" font-weight="bold" font-size="16px">
-                    Xem chi tiết
-                </mj-button>
-                <mj-divider border-color="#F45E43" padding-top="20px"/>
-            </mj-column>
-        </mj-section>
-        <mj-section>
-            <mj-column>
-                <mj-text align="center" color="#14141491" font-size="14px" font-family="Arial, sans-serif" padding-top="40px">
-                    Best, <br /> The Uni Admission Platform Team <br>
-                    Cảm ơn qúy khách đã tin tưởng chúng tôi.
-                </mj-text>
-            </mj-column>
-            <mj-column>
-                <mj-text align="center" color="#14141491" font-size="14px" font-family="Arial, sans-serif" padding-top="40px">
-                    Email Liên hệ: uniadmissionplatform@gmail.com <br>
-                    Số điện thoại: 0357918074 <br>
-                    Trang chủ: <a href="http://uniadmissionplatformwebapi-dev.ap-southeast-1.elasticbeanstalk.com/">Link</a>
-                </mj-text>
-            </mj-column>
-        </mj-section>
-        
+        <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">
+            <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
+                <mj-column width="100%">
+                    <mj-text color="#212b35" font-weight="bold" font-size="20px">
+                        Thư mời tham dự sự kiện tuyển sinh
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px">
+                        Xin chào Model.Name !,
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px">
+                        Bạn vừa nhận được cuộc đặt lịch vào lúc Model.BookingTime
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px">
+                        Với sự kiện có sự tham gia của các trường đại học :
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px">
+                        <ul>
+                            <li style="padding-bottom: 20px"><strong>FPT :</strong> Trường đại học FPT.</li>
+                            <li style="padding-bottom: 20px"><strong>HUTECH :</strong> Trường đại học công nghệ TPHCM </li>
+                            <li><strong>UEH :</strong> Trường đại học kinh tế TPHCM</li>
+                        </ul>
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px" padding-bottom="30px">
+                        Bấm vào nút bên dưới để biết thêm chi tiết
+                    </mj-text>
+                    <mj-button background-color="#5e6ebf" align="center" color="#ffffff" font-size="17px" font-weight="bold" href="https://google.com" width="300px">
+                        Xem chi tiết
+                    </mj-button>
+                </mj-column>
+            </mj-section>
+            <mj-section background-color="#ffffff" padding="0 15px 0 15px">
+                <mj-column width="100%">
+                    <mj-text color="#212b35" font-weight="bold" font-size="20px" padding-bottom="0">
+                        Hãy xem qua nhé!
+                    </mj-text>
+                    <mj-text color="#637381" font-size="16px">
+                        Chúng tôi rất mong nhận được hồi âm của bạn.
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+            <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
+                <mj-column width="50%">
+                    <mj-text color="#212b35" font-size="12px" text-transform="uppercase" font-weight="bold" padding-bottom="0">
+                        Best,
+                    </mj-text>
+                    <mj-text color="#637381" font-size="14px" padding-top="0">
+                        The Uni Admission Platform Team
+                        <br />
+                        Cảm ơn quý khách đã tin tưởng chúng tôi
+                    </mj-text>
+                </mj-column>
+                <mj-column width="50%">
+                    <mj-text color="#212b35" font-size="12px" text-transform="uppercase" font-weight="bold" padding-bottom="0">
+                        Email liên hệ:
+                    </mj-text>
+                    <mj-text color="#637381" font-size="14px" padding-top="0">
+                        uniadmissionplatform@gmail.com
+                        <br />
+                        Số điện thoại : 0357918074
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+            <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
+                <mj-column width="100%">
+                    <mj-image alt="" />
+                </mj-column>
+            </mj-section>
+        </mj-wrapper>
     </mj-body>
 </mjml>
