@@ -21,17 +21,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface ISlotService
     {
-        Task<int> CreateSlot(int highSchoolId, CreateSlotRequest createSlotRequest);
-        Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page, int limit);
+        Task CreateSlots(int highSchoolId, List<CreateSlotRequest> createSlotsRequest);
+
+        Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page,
+            int limit);
+
         Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit);
 
         Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus);
         Task CloseSlot(int highSchoolId, int slotId);
         Task UpdateFullSlotStatus(int id);
         Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest);
-
     }
-    
+
     public partial class SlotService
     {
         private readonly IConfigurationProvider _mapper;
@@ -41,7 +43,62 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             _mapper = mapper.ConfigurationProvider;
         }
-        
+
+        public async Task CreateSlots(int highSchoolId, List<CreateSlotRequest> createSlotsRequest)
+        {
+            var mapper = _mapper.CreateMapper();
+            var slots = mapper.Map<List<Slot>>(createSlotsRequest);
+
+            var slotsInDb = await Get().Where(s => s.EndDate >= DateTime.Now).ToListAsync();
+
+            for (int i = 0; i < slots.Count; i++)
+            {
+                var slot = slots[i];
+                if (slot.StartDate < DateTime.Now.AddMinutes(5))
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        $"Slot thứ {i} phải có thời gian bắt đầu phải lớn hơn hiện tại 5 phút.");
+                }
+                
+                if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        $"Slot thứ {i} phải có thời gian kết thúc phải lớn hơn thời gian bắt đầu");
+                }
+
+                if (slots.Any(s => s.HighSchoolId == highSchoolId
+                                   && (s.StartDate <= slot.StartDate &&
+                                       s.EndDate >= slot.StartDate // start time nam trong thang slot khac
+                                       || slot.EndDate != null && s.StartDate <= slot.EndDate &&
+                                       s.EndDate >= slot.EndDate // end time nam trong thang slot khac
+                                       || slot.EndDate != null && s.StartDate <= slot.StartDate &&
+                                       s.EndDate >= slot.EndDate)))
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        $"Slot thứ {i} mà bạn tạo bị trùng lịch với các slot khác!");
+                }
+                
+
+                if (slotsInDb.Any(s => s.HighSchoolId == highSchoolId
+                                       && (
+                                           s.StartDate <= slot.StartDate &&
+                                           s.EndDate > slot.StartDate // start time nam trong thang slot khac
+                                           || slot.EndDate != null && s.StartDate <= slot.EndDate &&
+                                           s.EndDate >= slot.EndDate // end time nam trong thang slot khac
+                                           || slot.EndDate != null && s.StartDate <= slot.StartDate &&
+                                           s.EndDate >= slot.EndDate)))
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        "Slot mà bạn tạo bị trùng lịch với slot khác trong hệ thống!");
+                }
+                
+                slot.HighSchoolId = highSchoolId;
+                slot.Status = (int)SlotStatus.Open;
+            }
+
+            await AddRangeAsyn(slots);
+        }
+
         public async Task<int> CreateSlot(int highSchoolId, CreateSlotRequest createSlotRequest)
         {
             var mapper = _mapper.CreateMapper();
@@ -52,27 +109,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
             }
-            
-            if (await Get().Where(s => s.StartDate <= slot.StartDate && s.EndDate >= slot.StartDate // start time nam trong thang slot khac
-                                      || slot.EndDate != null && s.StartDate <= slot.EndDate && s.EndDate >= slot.EndDate // end time nam trong thang slot khac
-                                      || slot.EndDate != null && s.StartDate <= slot.StartDate && s.EndDate >= slot.EndDate // ca slot lan end time deu nam trong slot khac
-                                      ).AnyAsync())
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    "Slot bị trùng lịch với slot khác!");
-            }
-            
-            
+
+
+
+
             slot.HighSchoolId = highSchoolId;
             slot.Status = (int)SlotStatus.Open;
 
             await CreateAsyn(slot);
             return slot.Id;
         }
-        
+
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
-        public async Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter, int page, int limit)
+
+        public async Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId,
+            SlotFilterForSchoolAdmin filter, int page, int limit)
         {
             var query = Get().Where(s => s.HighSchoolId == highSchoolId);
 
@@ -91,8 +143,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 query = query.Where(s => s.Status == filter.Status);
             }
 
-            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-            
+            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+
             return new PageResult<SlotViewModel>
             {
                 List = await queryable.ToListAsync(),
@@ -101,8 +154,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
-        
-        public async Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page, int limit)
+
+        public async Task<PageResult<SlotViewModel>> GetSlotForAdminUni(SlotFilterForUniAdmin filter, int page,
+            int limit)
         {
             var query = Get();
 
@@ -126,8 +180,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 query = query.Where(s => s.Status == filter.Status);
             }
 
-            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-            
+            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+
             return new PageResult<SlotViewModel>
             {
                 List = await queryable.ToListAsync(),
@@ -139,7 +194,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus)
         {
-            return await Get(s => s.Id == slotId && s.Status == (int) slotStatus).AnyAsync();
+            return await Get(s => s.Id == slotId && s.Status == (int)slotStatus).AnyAsync();
         }
 
         public async Task CloseSlot(int highSchoolId, int slotId)
@@ -155,7 +210,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này không thuộc về bạn.");
-                
             }
 
             if (slot.Status == (int)SlotStatus.Close)
@@ -170,10 +224,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 eventCheck.Status = (int)EventCheckStatus.Reject;
                 //todo: send notification to university
             }
-            
+
             await UpdateAsyn(slot);
         }
-        
+
         public async Task UpdateFullSlotStatus(int id)
         {
             var fullSlot = await Get().Where(s => s.Id == id).FirstOrDefaultAsync();
@@ -181,13 +235,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy slot với id = {id}");
             }
-            
+
             if (fullSlot.Status == (int)SlotStatus.Full)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này đã bị đầy.");
             }
-            
+
             if (fullSlot.Status == (int)SlotStatus.Close)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
@@ -197,7 +251,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             fullSlot.Status = (int)SlotStatus.Full;
             await UpdateAsyn(fullSlot);
         }
-        
+
         public async Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest)
         {
             var slot = await Get().Where(s => s.Id == slotId).FirstOrDefaultAsync();
@@ -210,15 +264,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đóng!");
             }
-            
+
             if (slot.Status == (int)SlotStatus.Full)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đầy!");
             }
 
             var mapper = _mapper.CreateMapper();
-            slot = mapper.Map(updateSlotRequest,slot);
-            
+            slot = mapper.Map(updateSlotRequest, slot);
+
             await UpdateAsyn(slot);
         }
     }

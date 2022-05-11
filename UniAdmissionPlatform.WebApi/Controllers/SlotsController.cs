@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -62,13 +63,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Create a new slot
+        /// Create new slots
         /// </summary>
         /// <response code="200">
-        /// Create a new slot successfully
+        /// Create new slots successfully
         /// </response>
         /// <response code="400">
-        /// Create a new slot fail
+        /// Create new slots fail
         /// </response>
         /// /// <response code="401">
         /// No Login
@@ -77,13 +78,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/")]
-        public async Task<IActionResult> CreateSlot([FromBody] CreateSlotRequest createSlotRequest)
+        public async Task<IActionResult> CreateSlot([FromBody] List<CreateSlotRequest> createSlotRequest)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
             try
             {
-                var slotId = await _slotService.CreateSlot(highSchoolId, createSlotRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new { slotId }, "Tạo slot thành công!"));
+                await _slotService.CreateSlots(highSchoolId, createSlotRequest);
+                return Ok(MyResponse<object>.OkWithMessage("Tạo slots thành công!"));
             }
             catch (ErrorResponse e)
             {
