@@ -13,11 +13,9 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Event
         public string TargetStudent { get; set; }
         public int EventTypeId { get; set; }
         public string Address { get; set; }
-        public int? ProvinceId { get; set; }
+        public int? DistrictId { get; set; }
         public string MeetingUrl { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public int DistrictId { get; set; }
-        
     }
 }
