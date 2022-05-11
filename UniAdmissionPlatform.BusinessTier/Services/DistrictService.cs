@@ -8,12 +8,14 @@ using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
 using System.Linq.Dynamic.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IDistrictService
     {
         Task<PageResult<DistrictViewModel>> GetAllDistrict(DistrictViewModel filter, string sort, int page, int limit);
+        Task<DistrictViewModel> GetDistrictById(int id);
     }
     public partial class DistrictService
     {
@@ -46,6 +48,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+
+        public async Task<DistrictViewModel> GetDistrictById(int id)
+        {
+            var district = await FirstOrDefaultAsyn(d => d.Id == id);
+            if (district == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không thể tìm thấy quận huyện có id = {id}");
+            }
+
+            return _mapper.CreateMapper().Map<DistrictViewModel>(district);
         }
     }
 }

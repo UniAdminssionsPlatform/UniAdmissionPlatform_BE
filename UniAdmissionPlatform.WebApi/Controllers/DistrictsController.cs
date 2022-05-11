@@ -52,5 +52,27 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "District" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]
+        public async Task<IActionResult> GetDistrictById(int id)
+        {
+            try
+            {
+                var district = await _districtService.GetDistrictById(id);
+                return Ok(MyResponse<DistrictViewModel>.OkWithDetail(district, "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+
     }
 }
