@@ -49,7 +49,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             var slots = mapper.Map<List<Slot>>(createSlotsRequest);
 
-            var slotsInDb = await Get().Where(s => s.EndDate >= DateTime.Now).ToListAsync();
+            var slotsInDb = await Get().Where(s => s.EndDate >= DateTime.Now && s.HighSchoolId == highSchoolId).ToListAsync();
 
             for (int i = 0; i < slots.Count; i++)
             {
@@ -66,27 +66,25 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                         $"Slot thứ {i} phải có thời gian kết thúc phải lớn hơn thời gian bắt đầu");
                 }
 
-                if (slots.Any(s => s.HighSchoolId == highSchoolId
-                                   && (s.StartDate <= slot.StartDate &&
+                if (slots.Any(s =>s.StartDate <= slot.StartDate &&
                                        s.EndDate >= slot.StartDate // start time nam trong thang slot khac
                                        || slot.EndDate != null && s.StartDate <= slot.EndDate &&
                                        s.EndDate >= slot.EndDate // end time nam trong thang slot khac
                                        || slot.EndDate != null && s.StartDate <= slot.StartDate &&
-                                       s.EndDate >= slot.EndDate)))
+                                       s.EndDate >= slot.EndDate))
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
                         $"Slot thứ {i} mà bạn tạo bị trùng lịch với các slot khác!");
                 }
                 
 
-                if (slotsInDb.Any(s => s.HighSchoolId == highSchoolId
-                                       && (
+                if (slotsInDb.Any(s => 
                                            s.StartDate <= slot.StartDate &&
                                            s.EndDate > slot.StartDate // start time nam trong thang slot khac
                                            || slot.EndDate != null && s.StartDate <= slot.EndDate &&
                                            s.EndDate >= slot.EndDate // end time nam trong thang slot khac
                                            || slot.EndDate != null && s.StartDate <= slot.StartDate &&
-                                           s.EndDate >= slot.EndDate)))
+                                           s.EndDate >= slot.EndDate))
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
                         "Slot mà bạn tạo bị trùng lịch với slot khác trong hệ thống!");
