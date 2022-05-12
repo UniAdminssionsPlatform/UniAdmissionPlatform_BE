@@ -57,13 +57,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 if (slot.StartDate < DateTime.Now.AddMinutes(5))
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        $"Slot thứ {i} phải có thời gian bắt đầu phải lớn hơn hiện tại 5 phút.");
+                        $"Slot thứ {i + 1} phải có thời gian bắt đầu phải lớn hơn hiện tại 5 phút.");
                 }
                 
                 if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        $"Slot thứ {i} phải có thời gian kết thúc phải lớn hơn thời gian bắt đầu");
+                        $"Slot thứ {i + 1} phải có thời gian kết thúc phải lớn hơn thời gian bắt đầu");
                 }
 
                 for (int j = 0; j < slots.Count; j++)
