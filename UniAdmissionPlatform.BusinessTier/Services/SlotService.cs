@@ -148,12 +148,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 query = query.Where(s => s.Status == filter.Status);
             }
 
-            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper)
+            var (total, queryable) = query
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             return new PageResult<SlotViewModel>
             {
-                List = await queryable.ToListAsync(),
+                List = _mapper.CreateMapper().Map<List<SlotViewModel>>(await queryable.ToListAsync()),
                 Page = page == 0 ? 1 : page,
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
@@ -185,12 +185,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 query = query.Where(s => s.Status == filter.Status);
             }
 
-            var (total, queryable) = query.ProjectTo<SlotViewModel>(_mapper)
+            var (total, queryable) = query
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
 
             return new PageResult<SlotViewModel>
             {
-                List = await queryable.ToListAsync(),
+                List = _mapper.CreateMapper().Map<List<SlotViewModel>>(await queryable.ToListAsync()),
                 Page = page == 0 ? 1 : page,
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
