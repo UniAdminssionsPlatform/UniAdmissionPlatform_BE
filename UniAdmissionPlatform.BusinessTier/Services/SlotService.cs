@@ -66,15 +66,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                         $"Slot thứ {i} phải có thời gian kết thúc phải lớn hơn thời gian bắt đầu");
                 }
 
-                if (slots.Any(s =>s.StartDate <= slot.StartDate &&
-                                       s.EndDate >= slot.StartDate // start time nam trong thang slot khac
-                                       || slot.EndDate != null && s.StartDate <= slot.EndDate &&
-                                       s.EndDate >= slot.EndDate // end time nam trong thang slot khac
-                                       || slot.EndDate != null && s.StartDate <= slot.StartDate &&
-                                       s.EndDate >= slot.EndDate))
+                for (int j = 0; j < slots.Count; j++)
                 {
-                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        $"Slot thứ {i} mà bạn tạo bị trùng lịch với các slot khác!");
+                    if (j != i)
+                    {
+                        var s = slots[j];
+                        if (s.StartDate <= slot.StartDate &&
+                             s.EndDate >= slot.StartDate // start time nam trong thang slot khac
+                             || slot.EndDate != null && s.StartDate <= slot.EndDate &&
+                             s.EndDate >= slot.EndDate // end time nam trong thang slot khac
+                             || slot.EndDate != null && s.StartDate <= slot.StartDate &&
+                             s.EndDate >= slot.EndDate)
+                        {
+                            throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                                $"Slot thứ {i + 1} mà bạn tạo bị trùng lịch với các slot khác!");
+                        }
+                    }
                 }
                 
 
@@ -87,7 +94,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                                            s.EndDate >= slot.EndDate))
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        "Slot mà bạn tạo bị trùng lịch với slot khác trong hệ thống!");
+                        $"Slot thứ {i+1} mà bạn tạo bị trùng lịch với slot khác trong hệ thống!");
                 }
                 
                 slot.HighSchoolId = highSchoolId;
