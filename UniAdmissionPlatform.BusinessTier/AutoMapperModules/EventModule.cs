@@ -20,6 +20,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<int?, int>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<bool?, bool>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<DateTime?, DateTime>().ConvertUsing((src, des) => src ?? des);
+            mc.CreateMap<Event, EventWithStatusInSlotViewModel>();
         }
     }
 }

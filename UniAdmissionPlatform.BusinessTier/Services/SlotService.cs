@@ -32,6 +32,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task CloseSlot(int highSchoolId, int slotId);
         Task UpdateFullSlotStatus(int id);
         Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest);
+        Task<SlotWithEventsViewModel> GetEventsBySlotId(int id);
     }
 
     public partial class SlotService
@@ -279,6 +280,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             slot = mapper.Map(updateSlotRequest, slot);
 
             await UpdateAsyn(slot);
+        }
+
+        public async Task<SlotWithEventsViewModel> GetEventsBySlotId(int id)
+        {
+            var slot = await Get().Where(s => s.Id == id).ProjectTo<SlotWithEventsViewModel>(_mapper).FirstOrDefaultAsync();
+            if (slot == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không thể tìm thấy slot có id = {id}");
+            }
+
+            return slot;
         }
     }
 }

@@ -239,5 +239,40 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// Get slot with events by id
+        /// </summary>
+        /// <response code="200">
+        /// Get slot with events by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get slot with events by id fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Slots" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}/events")]
+        public async Task<IActionResult> GetListEventBySlotId(int id)
+        {
+            try
+            {
+                var eventsBySlotId =  await _slotService.GetEventsBySlotId(id);
+                return Ok(MyResponse<SlotWithEventsViewModel>.OkWithDetail(eventsBySlotId, "Đạt được thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Đạt được thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+
+        }
     }
 }

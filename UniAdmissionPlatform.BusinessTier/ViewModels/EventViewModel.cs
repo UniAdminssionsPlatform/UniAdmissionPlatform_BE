@@ -28,6 +28,12 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string MeetingUrl { get; set; }
         public int? DistrictId { get; set; }
     }
+
+    public class EventWithStatusInSlotViewModel 
+    {
+        public EventBaseViewModel Event { get; set; }
+        public int? StatusInSlot { get; set; }
+    }
     
     public class EventBySlotBaseViewModel
     {

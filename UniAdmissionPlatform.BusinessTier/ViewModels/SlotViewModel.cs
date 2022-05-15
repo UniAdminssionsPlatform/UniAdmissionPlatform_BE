@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
@@ -23,5 +24,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public DateTime? EndDate { get; set; }
         public int? HighSchoolId { get; set; }
         public int? Status { get; set; }
+    }
+
+    public class SlotWithEventsViewModel : SlotViewModel
+    {
+        public List<EventWithStatusInSlotViewModel> Events { get; set; }
     }
 }
