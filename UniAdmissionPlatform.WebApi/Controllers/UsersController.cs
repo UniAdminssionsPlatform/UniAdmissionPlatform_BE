@@ -286,7 +286,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - User" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
-        public async Task<IActionResult> GetUsers(UserBaseViewModel filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetUsers([FromQuery] UserBaseViewModel filter, string sort, int page, int limit)
         {
             try
             {
