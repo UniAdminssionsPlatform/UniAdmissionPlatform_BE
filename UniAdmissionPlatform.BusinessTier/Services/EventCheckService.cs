@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Threading.Tasks;
@@ -101,10 +102,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             eventCheck.Status = (int)EventCheckStatus.Approved;
+            eventCheck.UpdatedAt = DateTime.Now;
             await UpdateAsyn(eventCheck);
 
             BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
-                mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheckId));
+                mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheck.Id));
         }
         
         public async Task RejectEventToSlot(int highSchoolId, int eventCheckId)
