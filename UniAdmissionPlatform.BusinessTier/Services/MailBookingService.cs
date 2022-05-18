@@ -13,6 +13,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
     public interface IMailBookingService
     {
         Task SendMailForNewBookingToSchoolAdmin(int eventCheckId);
+        Task SendEmailForApprovedEventToUniAdmin(int eventCheckId);
     }
 
     public class MailBookingService : IMailBookingService
@@ -79,6 +80,56 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     Subject = $"Cuộc đặt lịch mới ID = {eventChecks.Id}"
                 };
 
+                await _mailService.SendHtmlEmailAsync(mailRequest);
+            }
+        }
+
+        public async Task SendEmailForApprovedEventToUniAdmin(int eventCheckId)
+        {
+            var eventChecks = await _eventCheckService.Get()
+                .Where(ev => ev.Id == eventCheckId)
+                .Include(ec => ec.Slot).ThenInclude(s => s.HighSchool)
+                .Include(ec => ec.Event).ThenInclude(e => e.UniversityEvents).ThenInclude(ue => ue.University)
+                .FirstOrDefaultAsync();
+
+            if (eventChecks == null)
+            {
+                throw new Exception("Fail at sending mail for new approved event to uni admin");
+            }
+
+            var university = eventChecks.Event.UniversityEvents.First();
+
+            var accounts = await _accountService.Get().Where(a => a.UniversityId == university.UniversityId && a.RoleId == "uniAdmin").ToListAsync();
+            
+            var approvedTime = eventChecks.UpdatedAt;
+
+            var slotStartDate = eventChecks.Slot.StartDate;
+
+            var slotEndDate = eventChecks.Slot.EndDate;
+            
+            foreach (var account in accounts)
+            {
+                var model = new ApprovedEventToUniAdminModel
+                {
+                    NameOfUniAdmin = 
+                        (account.FirstName ?? "")
+                        + (" " + account.MiddleName ?? "")
+                        + (" " + account.LastName ?? ""),
+                    ApprovedTime = approvedTime,
+                    BookingDetailUrl = "",
+                    SlotEndDate = slotEndDate,
+                    SlotStartDate = slotStartDate,
+                    NameOfHighSchool = eventChecks.Slot.HighSchool.Name
+                };
+                
+                var mailRequest = new MailRequest
+                {
+                    //todo: add field email to account table
+                    ToEmail = "bacnvse141019@fpt.edu.vn",
+                    HtmlBody = await RazorTemplateEngine.RenderAsync("~/Views/ApprovedEventToUniAdmin.cshtml", model),
+                    Subject = $"Cuộc đặt lịch được chấp nhận ID = {eventChecks.Id}"
+                };
+                
                 await _mailService.SendHtmlEmailAsync(mailRequest);
             }
         }
