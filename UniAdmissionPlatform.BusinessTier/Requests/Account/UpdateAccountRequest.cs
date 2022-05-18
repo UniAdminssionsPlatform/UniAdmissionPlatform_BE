@@ -21,6 +21,7 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Account
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
         public int WardId { get; set; }
+        public string EmailContact { get; set; }
     }
     
     public class UpdateProfileRequest
@@ -38,5 +39,6 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Account
         public DateTime DateOfBirth { get; set; }
         public int? GenderId { get; set; }
         public int WardId { get; set; }
+        public string EmailContact { get; set; }
     }
 }

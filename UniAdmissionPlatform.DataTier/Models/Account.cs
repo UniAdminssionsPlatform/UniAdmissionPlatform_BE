@@ -25,6 +25,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int? UniversityId { get; set; }
         public int? OrganizationId { get; set; }
         public int WardId { get; set; }
+        public string EmailContact { get; set; }
 
         public virtual Gender Gender { get; set; }
         public virtual HighSchool HighSchool { get; set; }
