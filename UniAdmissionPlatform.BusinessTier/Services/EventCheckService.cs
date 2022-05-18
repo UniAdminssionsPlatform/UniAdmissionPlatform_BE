@@ -4,12 +4,14 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
+using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
 using UniAdmissionPlatform.DataTier.Models;
@@ -100,6 +102,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             eventCheck.Status = (int)EventCheckStatus.Approved;
             await UpdateAsyn(eventCheck);
+
+            BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
+                mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheckId));
         }
         
         public async Task RejectEventToSlot(int highSchoolId, int eventCheckId)
