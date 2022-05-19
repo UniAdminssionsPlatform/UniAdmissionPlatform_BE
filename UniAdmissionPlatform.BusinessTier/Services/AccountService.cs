@@ -32,6 +32,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UploadAvatar(int accountId, string avatarUrl);
         Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest);
         Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
+        Task<AccountStudentByIdViewModelWithHighSchool> GetStudentAccountById(int studentId);
     }
     public partial class AccountService
     {
@@ -223,6 +224,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     }
                     break;
             }
+        }
+        
+        public async Task<AccountStudentByIdViewModelWithHighSchool> GetStudentAccountById(int studentId)
+        {
+            
+            var studentAccount = await Get()
+                .Where(a => a.Id == studentId)
+                .Include(a => a.IdNavigation)
+                .ProjectTo<AccountStudentByIdViewModelWithHighSchool>(_mapper).FirstOrDefaultAsync();
+            if (studentAccount == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {studentId}.");
+            }
+            return studentAccount;
         }
     }
 }
