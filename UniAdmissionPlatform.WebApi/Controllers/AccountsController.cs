@@ -65,6 +65,39 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
+        /// Get a student account by id
+        /// </summary>
+        /// <response code="200">
+        /// Get a student account successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a student account fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Account" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
+        public async Task<IActionResult> GetCertificationById(int studentId)
+        {
+            try
+            {
+                var studentAccountById = await _accountService.GetStudentAccountById(studentId);
+                return Ok(MyResponse<AccountStudentByIdViewModelWithHighSchool>.OkWithDetail(studentAccountById, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
         /// Get list university accounts
         /// </summary>
         /// <response code="200">
