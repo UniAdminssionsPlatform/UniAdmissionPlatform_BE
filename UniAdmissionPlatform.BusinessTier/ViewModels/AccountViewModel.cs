@@ -35,6 +35,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? OrganizationId { get; set; }
         public int? WardId { get; set; }
         public string EmailContact { get; set; }
+        public int? Status { get; set; }
     }
 
     public class AccountViewModelWithHighSchool : AccountBaseViewModel
