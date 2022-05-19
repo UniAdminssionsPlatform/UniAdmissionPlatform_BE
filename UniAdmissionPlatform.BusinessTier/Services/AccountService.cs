@@ -52,7 +52,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var mapper = _mapper.CreateMapper();
             var filter = mapper.Map<AccountViewModelWithHighSchool>(accountBaseViewModel);
-            var (total, queryable) = Get().Where(a => a.HighSchoolId != null).ProjectTo<AccountViewModelWithHighSchool>(_mapper).DynamicFilter(filter)
+            var (total, queryable) = Get().Include(a => a.IdNavigation)
+                .Where(a => a.HighSchoolId != null)
+                .ProjectTo<AccountViewModelWithHighSchool>(_mapper).DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             
             if (sort != null)

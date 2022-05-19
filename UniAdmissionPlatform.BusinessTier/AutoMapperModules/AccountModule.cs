@@ -15,7 +15,9 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<UpdateAccountRequestForAdmin, Account>().ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
             mc.CreateMap<Account, AccountViewModelWithHighSchool>()
                 .ForMember(des => des.HighSchoolBaseViewModel, opt => opt.MapFrom(
-                    src => src.HighSchool));
+                    src => src.HighSchool))
+                .ForMember(des => des.Status, opt => opt.MapFrom(
+                    src => src.IdNavigation.Status));
             mc.CreateMap<AccountBaseViewModel, AccountViewModelWithHighSchool>();
             mc.CreateMap<Account, AccountViewModelWithUniversity>()
                 .ForMember(des => des.UniversityBaseViewModel, opt => opt.MapFrom(
