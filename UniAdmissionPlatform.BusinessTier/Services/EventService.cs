@@ -196,9 +196,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 e =>
                     e.DeletedAt == null &&
                     e.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId)
-                     && (fromDate == null || e.StartTime >= fromDate
+                     && (fromDate == null || e.StartTime >= fromDate)
                          && (toDate == null || e.EndTime == null || e.EndTime <= toDate)
-                     ));
+                     );
 
             if (sort != null)
             {
