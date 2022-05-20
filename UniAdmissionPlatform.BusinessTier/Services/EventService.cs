@@ -30,6 +30,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             int page, int limit);
         Task<EventBaseViewModel> GetEventByID(int Id);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
+
+        Task<List<EventBaseViewModel>> GetListEventsForUniAdmin(int universityId, DateTime? fromDate, DateTime? toDate,
+            string sort);
     }
     
     public partial class EventService
@@ -185,6 +188,24 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
                 mailBookingService.SendMailForNewBookingToSchoolAdmin(eventCheck.Id));
+        }
+
+        public async Task<List<EventBaseViewModel>> GetListEventsForUniAdmin(int universityId, DateTime? fromDate, DateTime? toDate, string sort)
+        {
+            var queryable = Get().Where(
+                e =>
+                    e.DeletedAt == null &&
+                    e.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId)
+                     && (fromDate == null || e.StartTime >= fromDate
+                         && (toDate == null || e.EndTime == null || e.EndTime <= toDate)
+                     ));
+
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return await queryable.ProjectTo<EventBaseViewModel>(_mapper).ToListAsync();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -251,6 +253,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
         /// <summary>
         /// Get a event by university id
         /// </summary>
@@ -299,13 +302,34 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
-        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/list-events")]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/list-event")]
         public async Task<IActionResult> GetListEventsByUniId(int universityId, string eventName, string eventHostName,int? eventTypeId, int? statusEvent, string sort, int page, int limit)
         {
             try
             { 
                 var listEvent = await _universityEventService.GetListEventsByUniId(universityId,eventName,  eventHostName, eventTypeId, statusEvent, sort, page, limit);
                 return Ok(MyResponse<PageResult<ListEventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Cannot create, because server is error");
+                }
+            }
+        }
+        
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/events")]
+        public async Task<IActionResult> GetEventsByUniId(int universityId, DateTime? fromDate, DateTime? toDate, string sort)
+        {
+            try
+            {
+                var listEvent = await _eventService.GetListEventsForUniAdmin(universityId, fromDate, toDate, sort);
+                return Ok(MyResponse<List<EventBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
