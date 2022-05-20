@@ -51,7 +51,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                var accounts = await _accountService.GetAll(filter, page, limit, sort);
+                var accounts = await _accountService.GetAllStudents(filter, page, limit, sort);
                 return Ok(MyResponse<PageResult<AccountViewModelWithHighSchool>>.OkWithData(accounts));
             }
             catch (ErrorResponse e)

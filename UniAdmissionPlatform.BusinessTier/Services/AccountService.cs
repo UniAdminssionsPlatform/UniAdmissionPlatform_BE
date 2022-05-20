@@ -29,6 +29,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<AccountBaseViewModel>> GetAllAccounts(
             AccountBaseViewModel filter, string sort, int page, int limit);
 
+        Task<PageResult<AccountViewModelWithHighSchool>> GetAllStudents(AccountBaseViewModel accountBaseViewModel,
+            int page, int limit, string sort);
+
         Task UploadAvatar(int accountId, string avatarUrl);
         Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest);
         Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
@@ -55,6 +58,29 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var filter = mapper.Map<AccountViewModelWithHighSchool>(accountBaseViewModel);
             var (total, queryable) = Get().Include(a => a.IdNavigation)
                 .Where(a => a.HighSchoolId != null)
+                .ProjectTo<AccountViewModelWithHighSchool>(_mapper).DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<AccountViewModelWithHighSchool>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<AccountViewModelWithHighSchool>> GetAllStudents(AccountBaseViewModel accountBaseViewModel, int page, int limit, string sort)
+        {
+            var mapper = _mapper.CreateMapper();
+            var filter = mapper.Map<AccountViewModelWithHighSchool>(accountBaseViewModel);
+            var (total, queryable) = Get().Include(a => a.IdNavigation)
+                .Where(a => a.HighSchoolId != null && a.Student != null)
                 .ProjectTo<AccountViewModelWithHighSchool>(_mapper).DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             
