@@ -11,5 +11,6 @@
         public long ExpiresAt { get; set; }
         public long BufferTime { get; set; }
         public bool NeedRegister { get; set; }
+        public string EmailContact { get; set; }
     }
 }

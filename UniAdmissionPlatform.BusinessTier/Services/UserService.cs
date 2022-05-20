@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IUserService
     {
         Task<PageResult<UserBaseViewModel>> GetUsers(UserBaseViewModel filter, string sort, int page, int limit);
-        Task<LoginResponse> Login(string uid);
+        Task<LoginResponse> Login(string uid, string email = null);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
         Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
         Task<int> CreateHighSchoolManagerAccount(int userId, int highSchoolId,
@@ -76,14 +76,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
 
-        public async Task<LoginResponse> Login(string uid)
+        public async Task<LoginResponse> Login(string uid, string email = null)
         {
             var user = await Get().Where(u => u.Uid == uid).Include(u => u.Account).FirstOrDefaultAsync();
 
             if (user != null)
                 return user.Status switch
                 {
-                    (int)UserStatus.New => GenerateJwtTokenForNewUser(user),
+                    (int)UserStatus.New => GenerateJwtTokenForNewUser(user, email),
                     (int)UserStatus.Pending => throw new ErrorResponse(StatusCodes.Status400BadRequest,
                         "Tài khoản này đang đợi được duyệt."),
                     (int)UserStatus.Active => GenerateJwtTokenForActiveUser(user),
@@ -94,7 +94,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
 
             var newUser = await InsertNewUser(uid);
-            return GenerateJwtTokenForNewUser(newUser);
+            return GenerateJwtTokenForNewUser(newUser, email);
         }
 
         public async Task<LoginResponse> Register(int id, RegisterRequest registerRequest)
@@ -162,7 +162,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
 
-        private LoginResponse GenerateJwtTokenForNewUser(User user)
+        private LoginResponse GenerateJwtTokenForNewUser(User user, string email = null)
         {
             var customClaims = new CustomClaims
             {
@@ -197,6 +197,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 ).TotalSeconds) * 1000,
                 NeedRegister = true,
+                EmailContact = email ?? ""
             };
         }
 

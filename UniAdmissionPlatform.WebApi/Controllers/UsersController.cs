@@ -7,6 +7,8 @@ using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -56,11 +58,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             var decodedToken = await FirebaseAuth.DefaultInstance
                 .VerifyIdTokenAsync(loginRequest.FirebaseToken);
+            var decodedTokenClaim = (JArray) ((JObject) ((JObject) decodedToken.Claims["firebase"])?["identities"])?["email"];
+            var email = (string) decodedTokenClaim?[0];
             var uid = decodedToken.Uid;
 
             try
             {
-                var loginResponse = await _userService.Login(uid);
+                var loginResponse = await _userService.Login(uid, email);
                 return Ok(MyResponse<LoginResponse>.OkWithDetail(loginResponse, "Đăng nhập thành công"));
             }
             catch (ErrorResponse e)
