@@ -310,5 +310,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+
+        /// <summary>
+        /// Switch status of student
+        /// </summary>
+        /// <response code="200">
+        /// Switch status of student successfully
+        /// </response>
+        /// <response code="400">
+        /// Switch status of student fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - User" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
+        public async Task<IActionResult> SwitchStatusStudentAccount(int studentId)
+        {
+            try
+            {
+                var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+                await _userService.SwitchStatusStudentAccount(studentId, highSchoolId);
+                return Ok(MyResponse<object>.OkWithMessage("Chuyển đổi thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Chuyển đổi thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
     }
 }

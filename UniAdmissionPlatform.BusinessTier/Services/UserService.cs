@@ -39,6 +39,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             RegisterForUniversityManagerRequest registerForUniversityManagerRequest);
         Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
             RegisterForStudentRequest registerForStudentRequest);
+        Task SwitchStatusStudentAccount(int studentId, int highSchoolId = 0);
     }
 
     public partial class UserService
@@ -310,6 +311,24 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
             }
+        }
+        
+        public async Task SwitchStatusStudentAccount(int studentId, int highSchoolId = 0)
+        {
+            var user = await Get().Where(u => u.Id == studentId && u.Status != (int)UserStatus.New && u.Account.Student != null).Include(u => u.Account).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tồn tại học sinh này.");
+            }
+            
+            if (highSchoolId != 0 && highSchoolId != user.Account.HighSchoolId)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Bạn không thể quản lý học sinh này.");
+            }
+
+            user.Status = (int)(user.Status == (int)UserStatus.Active ? UserStatus.Lock : UserStatus.Active);
+
+            await UpdateAsyn(user);
         }
     }
 }
