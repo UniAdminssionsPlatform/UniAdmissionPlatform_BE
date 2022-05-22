@@ -45,7 +45,6 @@ namespace UniAdmissionPlatform.WebApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
-
             services.ConfigureSwaggerServices();
             
             services.AddSingleton<ICasbinService, CasbinService>();
@@ -84,6 +83,8 @@ namespace UniAdmissionPlatform.WebApi
 
             services.ConfigureFilterServices();
 
+            services.AddHealthChecks();
+
             services.InitializerDI();
 
             services.ConfigureAutoMapperServices();
@@ -112,6 +113,7 @@ namespace UniAdmissionPlatform.WebApi
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseForwardedHeaders();
+
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -139,9 +141,9 @@ namespace UniAdmissionPlatform.WebApi
             
             app.UseMiddleware<JwtMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
-
             app.ConfigureSwagger(provider);
-            
+            app.UseHealthChecks("/healthz");
+
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
