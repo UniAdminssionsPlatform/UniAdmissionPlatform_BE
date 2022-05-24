@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.ViewModels;
 
 namespace UniAdmissionPlatform.UnitTest
 {
@@ -12,7 +13,7 @@ namespace UniAdmissionPlatform.UnitTest
         public void TestMethod1()
         {
             var accountService = TestAssemblyInitialize.ServiceProvider.GetService<IAccountService>();
-            Console.WriteLine(accountService!.Count());
+            accountService!.GetAllAccounts(new AccountBaseViewModel(), null, 1, 10);
         }
     }
 }
