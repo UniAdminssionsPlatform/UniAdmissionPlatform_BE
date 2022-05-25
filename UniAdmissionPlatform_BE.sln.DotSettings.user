@@ -1,2 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a46a6017_002Db710_002D4ba4_002Dbba0_002D590240111684/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestMethod1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.UnitTest1&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountServiceGetAllAccountTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.GetAllAccountsTest.TestNormalCase&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.UpdateAccountTest.TestNormalCase&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.UpdateAccountTest.NotFoundAccountIdExceptionCase&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.UpdateAccountTest.ThisAccountOnlyBelongToAHighSchoolExceptionCase&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.UpdateAccountTest.ThisAccountOnlyBelongToAUniversityExceptionCase&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::C8046977-DFF0-4DAE-A924-839DC2E73A3D::net5.0::UniAdmissionPlatform.UnitTest.AccountService.UpdateAccountTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Participations/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
