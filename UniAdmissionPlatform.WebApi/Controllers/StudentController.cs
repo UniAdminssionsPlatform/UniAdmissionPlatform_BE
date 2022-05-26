@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.StudentCertification;
+using UniAdmissionPlatform.BusinessTier.Requests.StudentRecordItem;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
@@ -17,12 +18,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IStudentCertificationService _studentStudentCertificationService;
         private readonly IAuthService _authService;
+        private readonly IStudentRecordItemService _studentRecordItemService;
         
 
-        public StudentController(IStudentCertificationService studentStudentCertificationService, IAuthService authService)
+        public StudentController(IStudentCertificationService studentStudentCertificationService, IAuthService authService,IStudentRecordItemService studentRecordItemService)
         {
             _studentStudentCertificationService = studentStudentCertificationService;
             _authService = authService;
+            _studentRecordItemService = studentRecordItemService;
         }
 
         /// <summary>
@@ -170,5 +173,150 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Get list student record items
+        /// </summary>
+        /// <response code="200">
+        /// Get list student record items successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list student record items fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
+        public async Task<IActionResult> GetAllStudentRecordItem([FromQuery] StudentRecordItemBaseViewModel filter, string sort, int page, int limit)
+        {
+            try
+            {
+                var allStudentRecordItem = await _studentRecordItemService.GetAllStudentRecordItem(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<StudentRecordItemBaseViewModel>>.OkWithDetail(allStudentRecordItem, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get student record items by iD
+        /// </summary>
+        /// <response code="200">
+        /// Get student record items by iD successfully
+        /// </response>
+        /// <response code="400">
+        /// Get student record items by iD fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        public async Task<IActionResult> GetStudentRecordItemById(int studentRecordItemId)
+        {
+            try
+            {
+                var studentRecordItemById = await _studentRecordItemService.GetStudentRecordItemById(studentRecordItemId);
+                return Ok(MyResponse<StudentRecordItemBaseViewModel>.OkWithDetail(studentRecordItemById, "Truy cập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Create a new student record item
+        /// </summary>
+        /// <response code="200">
+        /// Create a new student record item successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new student record item fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
+        public async Task<IActionResult> CreateStudentRecordItem([FromBody] CreateStudentRecordItemRequest createStudentRecordItemRequest)
+        {
+            try
+            {
+                var studentRecordItem = await _studentRecordItemService.CreateStudentRecordItem(createStudentRecordItemRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new {studentRecordItem}, $"Tạo thông tin điểm thành công với id = {studentRecordItem}"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Update a student record item
+        /// </summary>
+        /// <response code="200">
+        /// Update a student record item successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a student record item fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        public async Task<IActionResult> UpdateStudentRecordItem(int studentRecordItemId, [FromBody] UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
+        {
+            try
+            {
+                await _studentRecordItemService.UpdateStudentRecordItem(studentRecordItemId, updateStudentRecordItemRequest);
+                return Ok(MyResponse<object>.OkWithMessage($"Cập nhập thành công thông tin điểm id = {studentRecordItemId}."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
     }
 }

@@ -41,6 +41,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigNationalityMapperModule();
                     mc.ConfigUniversityProgramModuleMapperModule();
                     mc.ConfigSchoolRecordMapperModule();
+                    mc.ConfigStudentRecordItemMapperModule();
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);
