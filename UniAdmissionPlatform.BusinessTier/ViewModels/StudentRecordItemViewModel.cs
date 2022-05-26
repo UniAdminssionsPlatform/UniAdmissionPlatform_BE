@@ -12,7 +12,6 @@
     {
         public SubjectBaseViewModel Subject { get; set; }
     }
-}
     public partial class StudentRecordItemBaseViewModel
     {
         public int? Id { get; set; }
