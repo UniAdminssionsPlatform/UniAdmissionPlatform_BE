@@ -58,13 +58,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
-        /// Create a new tag
+        /// Update a new tag
         /// </summary>
         /// <response code="200">
-        /// Create a new tag successfully
+        /// Update a new tag successfully
         /// </response>
         /// <response code="400">
-        /// Create a new tag fail
+        /// Update a new tag fail
         /// </response>
         /// /// <response code="401">
         /// No Login
