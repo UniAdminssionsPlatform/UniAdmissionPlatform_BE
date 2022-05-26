@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
@@ -9,5 +10,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? StudentId { get; set; }
         public int? SchoolYearId { get; set; }
         public float? TotalScore { get; set; }
+    }
+
+    public class SchoolRecordWithStudentRecordItemModel: SchoolRecordBaseViewModel
+    {
+        public List<StudentRecordItemWithSubjectModel> StudentRecordItems { get; set; }
     }
 }

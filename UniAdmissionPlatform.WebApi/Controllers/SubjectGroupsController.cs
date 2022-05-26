@@ -9,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.SubjectGroup;
 using UniAdmissionPlatform.BusinessTier.Responses;
+using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
 
@@ -19,10 +20,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class SubjectGroupsController : ControllerBase
     {
         private readonly ISubjectGroupService _subjectGroupService;
+        private readonly IAuthService _authService;
 
-        public SubjectGroupsController(ISubjectGroupService subjectGroupService)
+        public SubjectGroupsController(ISubjectGroupService subjectGroupService, IAuthService authService)
         {
             _subjectGroupService = subjectGroupService;
+            _authService = authService;
         }
 
         /// <summary>
@@ -193,6 +196,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa khối thi thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get scores by subject group id
+        /// </summary>
+        /// <response code="200">
+        /// Get scores by subject group id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get scores by subject group id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Subject Groups" })]
+        [Route("~/api/v{version:apiVersion}/student/subject-groups/{id:int}/get-score")]
+        public IActionResult GetScoreOfStudent(int id, int schoolYearId)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            try
+            {
+                var schoolRecord = _subjectGroupService.GetScoreOfStudent(id, schoolYearId, userId);
+                return Ok(schoolRecord);
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             e.Error.Message);
