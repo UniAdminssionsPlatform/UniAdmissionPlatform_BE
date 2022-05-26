@@ -29,13 +29,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Get subject group
+        /// Get subject group by id
         /// </summary>
         /// <response code="200">
-        /// Get subject group successfully
+        /// Get subject group by id successfully
         /// </response>
         /// <response code="400">
-        /// Get subject group fail
+        /// Get subject group by id fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
@@ -167,13 +167,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Update subject group
+        /// Delete subject group
         /// </summary>
         /// <response code="200">
-        /// Update subject group successfully
+        /// Delete subject group successfully
         /// </response>
         /// <response code="400">
-        /// Update subject group fail
+        /// Delete subject group fail
         /// </response>
         /// <response code="401">
         /// No Login
@@ -196,6 +196,40 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa khối thi thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get list subject by subject group id
+        /// </summary>
+        /// <response code="200">
+        /// Get list subject by subject group idp successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list subject by subject group id fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Subjects" })]
+        [Route("~/api/v{version:apiVersion}/subjects/{subjectGroupId:int}/list-subjects")]
+        public async Task<IActionResult> GetSubjectBySubjectGroup(int subjectGroupId)
+        {
+            try
+            {
+                var subjectGroup = await _subjectGroupService.GetSubjectBySubjectGroup(subjectGroupId);
+                return Ok(MyResponse<SubjectGroupWithSubject>.OkWithDetail(subjectGroup, "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             e.Error.Message);

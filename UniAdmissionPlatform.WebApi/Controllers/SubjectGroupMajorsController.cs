@@ -57,13 +57,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Get subject group
+        /// Create subject group
         /// </summary>
         /// <response code="200">
-        /// Get subject group successfully
+        /// Create subject group successfully
         /// </response>
         /// <response code="400">
-        /// Get subject group fail
+        /// Create subject group fail
         /// </response>
         /// <response code="401">
         /// No Login
@@ -93,13 +93,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Get subject group
+        /// Delete subject group
         /// </summary>
         /// <response code="200">
-        /// Get subject group successfully
+        /// Delete subject group successfully
         /// </response>
         /// <response code="400">
-        /// Get subject group fail
+        /// Delete subject group fail
         /// </response>
         /// <response code="401">
         /// No Login

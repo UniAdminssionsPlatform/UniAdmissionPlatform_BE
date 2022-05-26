@@ -27,10 +27,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateSubjectGroup(int id, UpdateSubjectGroupRequest updateSubjectGroupRequest);
 
         Task DeleteSubjectGroup(int id);
+        Task<SubjectGroupWithSubject> GetSubjectBySubjectGroup(int subjectGroupId);
 
         SchoolRecordBaseViewModel GetScoreOfStudent(int id, int schoolYearId, int studentId);
     }
-
     public partial class SubjectGroupService
     {
         private readonly IConfigurationProvider _mapper;
@@ -61,6 +61,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<SubjectGroupBaseViewModel>> GetAllSubjectGroups(SubjectGroupBaseViewModel filter,
             string sort, int page, int limit)
         {
+
             var (total, queryable) = Get()
                 .ProjectTo<SubjectGroupBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
@@ -135,6 +136,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             return _mapper.CreateMapper().Map<SchoolRecordWithStudentRecordItemModel>(schoolRecord);
+        }
+        
+        public async Task<SubjectGroupWithSubject> GetSubjectBySubjectGroup(int subjectGroupId)
+        {
+            var subject = await Get().Where(s => s.Id == subjectGroupId)
+                .Include(s => s.SubjectGroupSubjects)
+                .ThenInclude(s => s.Subject).FirstOrDefaultAsync();
+            if (subject == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy môn học theo tổ hợp môn id = {subjectGroupId}.");
+            }
+            
+            return _mapper.CreateMapper().Map<SubjectGroupWithSubject>(subject);
         }
     }
 }
