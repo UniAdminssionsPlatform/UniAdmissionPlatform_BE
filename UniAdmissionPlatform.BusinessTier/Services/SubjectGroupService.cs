@@ -26,6 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateSubjectGroup(int id, UpdateSubjectGroupRequest updateSubjectGroupRequest);
 
         Task DeleteSubjectGroup(int id);
+        Task<SubjectGroupWithSubject> GetSubjectBySubjectGroup(int subjectGroupId);
     }
     public partial class SubjectGroupService
     {
@@ -107,6 +108,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             await DeleteAsyn(subjectGroup);
+        }
+        
+        public async Task<SubjectGroupWithSubject> GetSubjectBySubjectGroup(int subjectGroupId)
+        {
+            var subject = await Get().Where(s => s.Id == subjectGroupId)
+                .Include(s => s.SubjectGroupSubjects)
+                .ThenInclude(s => s.Subject).FirstOrDefaultAsync();
+            if (subject == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy môn học theo tổ hợp môn id = {subjectGroupId}.");
+            }
+            
+            return _mapper.CreateMapper().Map<SubjectGroupWithSubject>(subject);
         }
     }
 }

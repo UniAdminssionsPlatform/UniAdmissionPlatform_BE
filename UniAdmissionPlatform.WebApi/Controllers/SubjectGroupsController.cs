@@ -199,6 +199,40 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Get list subject by subject group id
+        /// </summary>
+        /// <response code="200">
+        /// Get list subject by subject group idp successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list subject by subject group id fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Subjects" })]
+        [Route("~/api/v{version:apiVersion}/subjects/{subjectGroupId:int}/list-subjects")]
+        public async Task<IActionResult> GetSubjectBySubjectGroup(int subjectGroupId)
+        {
+            try
+            {
+                var subjectGroup = await _subjectGroupService.GetSubjectBySubjectGroup(subjectGroupId);
+                return Ok(MyResponse<SubjectGroupWithSubject>.OkWithDetail(subjectGroup, "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
 
     }
 }
