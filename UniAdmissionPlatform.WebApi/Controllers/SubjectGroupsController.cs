@@ -26,13 +26,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Get subject group
+        /// Get subject group by id
         /// </summary>
         /// <response code="200">
-        /// Get subject group successfully
+        /// Get subject group by id successfully
         /// </response>
         /// <response code="400">
-        /// Get subject group fail
+        /// Get subject group by id fail
         /// </response>
         /// <returns></returns>
         [HttpGet]
@@ -164,13 +164,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Update subject group
+        /// Delete subject group
         /// </summary>
         /// <response code="200">
-        /// Update subject group successfully
+        /// Delete subject group successfully
         /// </response>
         /// <response code="400">
-        /// Update subject group fail
+        /// Delete subject group fail
         /// </response>
         /// <response code="401">
         /// No Login
