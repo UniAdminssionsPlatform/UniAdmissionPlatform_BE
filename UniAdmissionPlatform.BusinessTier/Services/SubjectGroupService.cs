@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -121,19 +123,36 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public SchoolRecordBaseViewModel GetScoreOfStudent(int id, int schoolYearId, int studentId)
         {
-            var subjectGroupSubjects = Get().Include(sg => sg.SubjectGroupSubjects).ThenInclude(sgs => sgs.Subject).FirstOrDefault(sg => sg.Id == id);
-            if (subjectGroupSubjects == null)
+            var subjectGroup = Get().Include(sg => sg.SubjectGroupSubjects).ThenInclude(sgs => sgs.Subject).FirstOrDefault(sg => sg.Id == id);
+            if (subjectGroup == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, "Không tìm thấy khối thi.");
             }
 
             var schoolRecord = _schoolRecordRepository.Get().Include(sr => sr.StudentRecordItems.Where(sri =>
-                    subjectGroupSubjects.SubjectGroupSubjects.Select(sgs => sgs.SubjectId).Contains(sri.SubjectId)))
+                    subjectGroup.SubjectGroupSubjects.Select(sgs => sgs.SubjectId).Contains(sri.SubjectId)))
                 .FirstOrDefault(sr => sr.SchoolYearId == schoolYearId && sr.StudentId == studentId);
+            
             if (schoolRecord == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, "Không tìm thấy học bạ.");
+                schoolRecord = new SchoolRecord();
+                schoolRecord.StudentRecordItems = new List<StudentRecordItem>();
             }
+
+            // var subjectIds = schoolRecord.StudentRecordItems.Select(sri => sri.SubjectId).ToList();
+
+            foreach (var subjectId in subjectGroup.SubjectGroupSubjects.Select(sgs => sgs.SubjectId))
+            {
+                if (schoolRecord.StudentRecordItems.All(sri => sri.SubjectId != subjectId))
+                {
+                    Console.WriteLine("debug");
+                    schoolRecord.StudentRecordItems.Add(new StudentRecordItem
+                    {
+                        Subject = subjectGroup.SubjectGroupSubjects.First(sgs => sgs.SubjectId == subjectId).Subject
+                    });
+                }
+            }
+
 
             return _mapper.CreateMapper().Map<SchoolRecordWithStudentRecordItemModel>(schoolRecord);
         }
