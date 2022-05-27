@@ -22,6 +22,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateStudentCertification(int studentId, CreateStudentCertificationRequest createStudentCertificationRequest);
         Task UpdateStudentCertification(int studentId, int certificationId, UpdateStudentCertificationRequest updateStudentCertificationRequest);
         Task DeleteStudentCertificationById(int studentId, int certificationId);
+        Task<StudentCertificationBaseViewModel> GetStudentCertificationById(int certificationId, int studentId = 0);
     }
     public partial class StudentCertificationService
     {
@@ -86,6 +87,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chứng chỉ id:{certificationId} của học sinh id:{studentId}.");
             }
             await UpdateAsyn(stuCertification);
+        }
+
+        public async Task<StudentCertificationBaseViewModel> GetStudentCertificationById(int certificationId, int studentId = 0)
+        {
+            var stuCertification = await Get().ProjectTo<StudentCertificationBaseViewModel>(_mapper).FirstOrDefaultAsync(sc => 
+                sc.CertificationId == certificationId
+                && (studentId == 0 || sc.StudentId == studentId));
+
+            if (stuCertification == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy chứng chỉ này.");
+            }
+
+            return stuCertification;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -63,7 +64,43 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
+        /// <summary>
+        /// Get student certification by id
+        /// </summary>
+        /// <response code="200">
+        /// Get student certification by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get student certification by id fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/certifications/{certificationId:int}")]
+        public async Task<IActionResult> GetStudentCertificationByCertificationIdForStudent(int certificationId)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+
+            try
+            {
+                var studentCertification = await _studentStudentCertificationService.GetStudentCertificationById(certificationId, userId);
+                return Ok(MyResponse<StudentCertificationBaseViewModel>.OkWithDetail(studentCertification,
+                    "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
 
         /// <summary>
         /// Create a new student certification
