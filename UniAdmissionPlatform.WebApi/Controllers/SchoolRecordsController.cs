@@ -17,12 +17,15 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly ISchoolRecordService _schoolRecordService;
         private readonly IAuthService _authService;
+        private readonly ISchoolYearService _schoolYearService;
+
         
 
-        public SchoolRecordsController(ISchoolRecordService schoolRecordService, IAuthService authService)
+        public SchoolRecordsController(ISchoolRecordService schoolRecordService, IAuthService authService, ISchoolYearService schoolYearService)
         {
             _schoolRecordService = schoolRecordService;
             _authService = authService;
+            _schoolYearService = schoolYearService;
         }
 
         /// <summary>
@@ -168,6 +171,78 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         "Xóa thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "xóa thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get list school years
+        /// </summary>
+        /// <response code="200">
+        /// Get list school years successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list school years fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - School Years" })]
+        [Route("~/api/v{version:apiVersion}/student/school-years")]
+        public async Task<IActionResult> GetAllSchoolYears([FromQuery] SchoolYearBaseViewModel filter, string sort, int page, int limit)
+        {
+            try
+            {
+                var allSchoolRecord = await _schoolYearService.GetAllSchoolYears(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<SchoolYearBaseViewModel>>.OkWithDetail(allSchoolRecord, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get school years by id
+        /// </summary>
+        /// <response code="200">
+        /// Get school years by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get school years by id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - School Years" })]
+        [Route("~/api/v{version:apiVersion}/student/school-years/{schoolYearId:int}")]
+        public async Task<IActionResult> GetSchoolYearById(int schoolYearId)
+        {
+            try
+            {
+                var schoolYearById = await _schoolYearService.GetSchoolYearById(schoolYearId);
+                return Ok(MyResponse<SchoolYearBaseViewModel>.OkWithDetail(schoolYearById, "Tìm kiếm thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
