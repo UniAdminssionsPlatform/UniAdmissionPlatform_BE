@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -247,5 +248,53 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// Get excel template for import school records
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("~/api/v{version:apiVersion}/school-records/import-excel-template")]
+        public IActionResult GetImportSchoolRecordExcel()
+        {
+            var file = _schoolRecordService.GetImportSchoolRecordExcel();
+            return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "school-record");
+        }
+
+        /// <summary>
+        /// Import school record
+        /// </summary>
+        /// <response code="200">
+        /// Import school record successfully
+        /// </response>
+        /// <response code="400">
+        /// Import school record fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Student - School Records" })]
+        [Route("~/api/v{version:apiVersion}/student/school-records/{schoolYearId:int}/import-excel-template")]
+        public async Task<IActionResult> ImportSchoolRecordExcel(IFormFile file)
+        {
+            try
+            {
+                var userId = _authService.GetUserId(HttpContext);
+                await _schoolRecordService.ImportSchoolRecord(userId, 6, file);
+                return Ok();
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+
     }
 }
