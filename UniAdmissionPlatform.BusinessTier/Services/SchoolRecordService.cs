@@ -128,8 +128,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             cells[2, 2, 62, 2].Style.Numberformat.Format = "0.0";
             
-            worksheet.Column(1).AutoFit();
-            worksheet.Column(2).AutoFit();
+            // worksheet.Column(1).AutoFit();
+            // worksheet.Column(2).AutoFit();
 
 
             return package.GetAsByteArray();
