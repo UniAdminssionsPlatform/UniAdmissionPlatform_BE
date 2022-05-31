@@ -57,12 +57,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 UniversityId = universityId,
             });
 
-            var checkDate = DateTime.Now.AddDays(7);
-            if (uniEvent.StartTime <= checkDate)
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
-            }
+            // var checkDate = DateTime.Now.AddDays(7);
+            // if (uniEvent.StartTime <= checkDate)
+            // {
+            //     throw new ErrorResponse(StatusCodes.Status400BadRequest,
+            //         "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
+            // }
             
             if (uniEvent.StartTime >= uniEvent.EndTime)
             {
