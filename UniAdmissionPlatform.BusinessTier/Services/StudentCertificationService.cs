@@ -86,7 +86,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chứng chỉ id:{certificationId} của học sinh id:{studentId}.");
             }
-            await UpdateAsyn(stuCertification);
+            await DeleteAsyn(stuCertification);
         }
 
         public async Task<StudentCertificationBaseViewModel> GetStudentCertificationById(int certificationId, int studentId = 0)
