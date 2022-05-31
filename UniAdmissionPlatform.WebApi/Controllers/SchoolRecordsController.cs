@@ -277,13 +277,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-records/{schoolYearId:int}/import-excel-template")]
-        public async Task<IActionResult> ImportSchoolRecordExcel(IFormFile file)
+        public async Task<IActionResult> ImportSchoolRecordExcel(int schoolYearId, IFormFile file)
         {
             try
             {
                 var userId = _authService.GetUserId(HttpContext);
-                await _schoolRecordService.ImportSchoolRecord(userId, 6, file);
-                return Ok();
+                var schoolRecordId = await _schoolRecordService.ImportSchoolRecord(userId, schoolYearId, file);
+                return Ok(MyResponse<object>.OkWithDetail(new {schoolRecordId}, "Thành công."));
             }
             catch (ErrorResponse e)
             {

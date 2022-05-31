@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateSchoolRecord(int schoolRecordId, int studentId, UpdateSchoolRecordRequest updateSchoolRecordRequest);
         Task DeleteSchoolRecordById(int schoolRecordId, int studentId);
         byte[] GetImportSchoolRecordExcel();
-        Task ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file);
+        Task<int> ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file);
     }
 
     public partial class SchoolRecordService
@@ -136,7 +136,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         }
         
 
-        public async Task ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file)
+        public async Task<int> ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file)
         {
             var schoolRecord = await FirstOrDefaultAsyn(sr => sr.StudentId == studentId && sr.SchoolYearId == schoolYearId);
             if (schoolRecord != null)
@@ -187,6 +187,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, stringBuilder.ToString());
             }
             await CreateAsyn(newSchoolRecord);
+
+            return newSchoolRecord.Id;
         }
 
         private Dictionary<string, double> ReadPointFromExcel(ExcelWorksheet worksheet)
