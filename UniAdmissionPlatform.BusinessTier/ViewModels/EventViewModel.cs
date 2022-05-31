@@ -27,7 +27,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string MeetingUrl { get; set; }
         public int? DistrictId { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
     }
 

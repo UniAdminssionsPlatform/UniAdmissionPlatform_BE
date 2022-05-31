@@ -43,12 +43,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]")]
-        public async Task<IActionResult> GetSlotsForHighSchoolAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, int page, int limit)
+        public async Task<IActionResult> GetSlotsForHighSchoolAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, bool isPaging, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
             try
             {
-                var slots = await _slotService.GetSlotForSchoolUni(highSchoolId, slotFilterForSchoolAdmin, page, limit);
+                var slots = await _slotService.GetSlotForSchoolUni(highSchoolId, slotFilterForSchoolAdmin, isPaging,page, limit);
                 return Ok(MyResponse<PageResult<SlotViewModel>>.OkWithDetail(slots, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
@@ -150,11 +150,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
-        public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, int page, int limit)
+        public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, bool isPaging, int page, int limit)
         {
             try
             {
-                var slots = await _slotService.GetSlotForAdminUni(slotFilterForUniAdmin, page, limit);
+                var slots = await _slotService.GetSlotForAdminUni(slotFilterForUniAdmin,isPaging, page, limit);
                 return Ok(MyResponse<PageResult<SlotViewModel>>.OkWithDetail(slots, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
