@@ -162,14 +162,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 if (point is < 0 or > 10)
                 {
-                    stringBuilder.Append($"Điểm không hợp lệ ({point}) cho môn {subjectName}.\n");
+                    stringBuilder.Append($"Điểm không hợp lệ ({point}) cho môn {subjectName}.").Append(Environment.NewLine);
                 };
                 
                 var subject = await _subjectRepository.FirstOrDefaultAsync(s => s.Name == subjectName);
 
                 if (subject == null)
                 {
-                    stringBuilder.Append($"Tên môn không hợp lệ ({subjectName})");
+                    stringBuilder.Append($"Tên môn không hợp lệ ({subjectName})").Append(Environment.NewLine);
                 }
 
                 else
