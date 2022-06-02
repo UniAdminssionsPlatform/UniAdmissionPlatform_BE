@@ -30,7 +30,26 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                 .ForMember(des => des.StatusInSlot, opt =>
                     opt.MapFrom(src => src.Status));
 
-
+            mc.CreateMap<EventCheck, SlotWithEventCheckStatusModel>()
+                .ForMember(des => des.Id, opt =>
+                    opt.MapFrom(src => src.Slot.Id))
+                .ForMember(des => des.StartDate, opt =>
+                    opt.MapFrom(src => src.Slot.StartDate))
+                .ForMember(des => des.EndDate, opt =>
+                    opt.MapFrom(src => src.Slot.EndDate))
+                .ForMember(des => des.HighSchoolId, opt =>
+                    opt.MapFrom(src => src.Slot.HighSchoolId))
+                .ForMember(des => des.EventCheckStatus, opt =>
+                    opt.MapFrom(src => src.Status))
+                .ForMember(des => des.Status, opt =>
+                    opt.MapFrom(src => src.Slot.Status));
+            mc.CreateMap<EventCheck, EventCheckWithEventAndSlotModel>()
+                .ForMember(des => des.Event,
+                    opt => opt.MapFrom(
+                        src => src.Event))
+                .ForMember(des => des.Slot,
+                    opt => opt.MapFrom(
+                        src => src.Slot));
         }
     }
 }

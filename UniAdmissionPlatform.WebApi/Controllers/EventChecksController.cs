@@ -135,5 +135,28 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+
+        /// /// <summary>
+        /// Get list event check
+        /// </summary>
+        /// <response code="200">
+        /// Get list event check successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list event check fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Event checks" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/event-checks")]
+        public async Task<IActionResult> GetAllEventCheckForUniAdmin([FromQuery] EventCheckWithEventAndSlotModel filter, string sort,int page, int limit)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            var eventCheckForUniAdmin = await _eventCheckService.GetEventCheckForUniAdmin(universityId, filter, sort, page, limit);
+            return Ok(MyResponse<PageResult<EventCheckWithEventAndSlotModel>>.OkWithDetail(eventCheckForUniAdmin, "Đạt được thành công"));
+        }
     }
 }

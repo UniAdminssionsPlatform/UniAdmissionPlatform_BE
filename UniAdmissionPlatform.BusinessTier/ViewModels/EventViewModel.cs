@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
@@ -29,6 +30,11 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? DistrictId { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+    }
+
+    public class EventWithSlotModel : EventBaseViewModel
+    {
+        public List<SlotWithEventCheckStatusModel> Slots { get; set; }
     }
 
     public class EventWithStatusInSlotViewModel 

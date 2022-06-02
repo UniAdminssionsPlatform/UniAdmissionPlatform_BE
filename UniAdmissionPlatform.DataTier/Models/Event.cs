@@ -33,7 +33,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string Address { get; set; }
         public int? DistrictId { get; set; }
         public string MeetingUrl { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
         public virtual District District { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
@@ -26,6 +27,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task RejectEventToSlot(int highSchoolId, int eventCheckId);
         Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page,
             int limit);
+
+        Task<PageResult<EventCheckWithEventAndSlotModel>> GetEventCheckForUniAdmin(int universityId, EventCheckWithEventAndSlotModel filter, string sort, int page, int limit);
     }
 
     public partial class EventCheckService
@@ -205,6 +208,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             return new PageResult<EventWithSlotViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+
+        public async Task<PageResult<EventCheckWithEventAndSlotModel>> GetEventCheckForUniAdmin(int universityId, EventCheckWithEventAndSlotModel filter, string sort, int page, int limit)
+        {
+            var (total, queryable) =  Get().Where(ev => ev.DeletedAt == null && ev.Event.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId))
+                .ProjectTo<EventCheckWithEventAndSlotModel>(_mapper)
+                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+                
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<EventCheckWithEventAndSlotModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

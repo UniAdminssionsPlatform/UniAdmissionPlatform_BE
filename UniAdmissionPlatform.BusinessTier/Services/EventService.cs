@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest);
         Task UpdateEvent(int id, UpdateEventRequest updateEventRequest);
         Task DeleteEvent(int id);
-        Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort,
+        Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
             int page, int limit);
         Task<EventBaseViewModel> GetEventByID(int Id);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
@@ -64,7 +64,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             //         "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
             // }
             
-            if (uniEvent.StartTime >= uniEvent.EndTime)
+            if (uniEvent.StartTime != null && uniEvent.EndTime != null && uniEvent.StartTime >= uniEvent.EndTime)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Ngày kết thúc sự kiện phải lớn hơn ngày diễn ra sự kiện!");
@@ -120,9 +120,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
         
-        public async Task<PageResult<EventBaseViewModel>> GetAllEvents(EventBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper)
+            var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper)
                 .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
         
             if (sort != null)
@@ -130,7 +130,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
             
-            return new PageResult<EventBaseViewModel>
+            return new PageResult<EventWithSlotModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

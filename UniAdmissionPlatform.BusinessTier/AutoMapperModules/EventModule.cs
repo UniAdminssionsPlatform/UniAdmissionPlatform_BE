@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using AutoMapper;
 using UniAdmissionPlatform.BusinessTier.Requests.Event;
@@ -21,6 +22,10 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<bool?, bool>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<DateTime?, DateTime>().ConvertUsing((src, des) => src ?? des);
             mc.CreateMap<Event, EventWithStatusInSlotViewModel>();
+            mc.CreateMap<Event, EventWithSlotModel>()
+                .ForMember(des => des.Slots,
+                    opt => opt.MapFrom(
+                        src => src.EventChecks));
         }
     }
 }

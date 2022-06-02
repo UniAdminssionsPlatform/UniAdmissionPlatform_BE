@@ -120,13 +120,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Events" })]
         [Route("~/api/v{version:apiVersion}/[controller]")]
         
-        public async Task<IActionResult> GetListEvent([FromQuery] EventBaseViewModel filter, string sort,
+        public async Task<IActionResult> GetListEvent([FromQuery] EventWithSlotModel filter, string sort,
             int page, int limit)
         {
             try
             {
                 var events = await _eventService.GetAllEvents(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<EventBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
+                return Ok(MyResponse<PageResult<EventWithSlotModel>>.OkWithDetail(events, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
