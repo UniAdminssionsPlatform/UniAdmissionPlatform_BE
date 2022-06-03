@@ -1,3 +1,4 @@
+using System.Linq;
 using AutoMapper;
 using UniAdmissionPlatform.BusinessTier.Requests.SchoolRecord;
 using UniAdmissionPlatform.BusinessTier.Requests.StudentCertification;
@@ -11,7 +12,14 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         public static void ConfigSchoolRecordMapperModule(this IMapperConfigurationExpression mc)
         {
             mc.CreateMap<SchoolRecord, SchoolRecordBaseViewModel>();
-            mc.CreateMap<CreateSchoolRecordRequest, SchoolRecord>();
+            mc.CreateMap<CreateSchoolRecordRequest, SchoolRecord>()
+                .ForMember(des => des.StudentRecordItems,
+                    opt => opt.MapFrom(
+                        src => src.RecordItems.Select(ri => new StudentRecordItem
+                        {
+                            Score = ri.Score,
+                            SubjectId = ri.SubjectId ?? 0
+                        })));
             mc.CreateMap<UpdateSchoolRecordRequest, SchoolRecord>()
                 .ForAllMembers(opt => opt
                 .Condition((src,des,srcMember)=> srcMember != null));

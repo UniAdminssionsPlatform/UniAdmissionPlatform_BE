@@ -1,9 +1,12 @@
-﻿using System.Linq.Dynamic.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Constants;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.Subject;
@@ -21,6 +24,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateSubject(CreateSubjectRequest createSubjectRequest);
         Task UpdateSubject(int subjectId, UpdateSubjectRequest updateSubjectRequest);
         Task DeleteSubjectById(int subjectId);
+
+        Task<List<SubjectBaseViewModel>> GetBaseSubjects();
     }
     public partial class SubjectService
     {
@@ -93,6 +98,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy môn học id = {subjectId}.");
             }
             await DeleteAsyn(subject);
+        }
+
+        public async Task<List<SubjectBaseViewModel>> GetBaseSubjects()
+        {
+            var strings = SubjectModule.BaseSubjectIds.Split(',');
+            var subjectBaseViewModels = await Get().Where(s => strings.ToList().Select(int.Parse).Contains(s.Id)).ProjectTo<SubjectBaseViewModel>(_mapper).ToListAsync();
+            return subjectBaseViewModels;
         }
     }
 }

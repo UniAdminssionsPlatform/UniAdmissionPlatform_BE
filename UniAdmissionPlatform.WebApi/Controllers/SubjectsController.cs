@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -183,6 +185,36 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     case StatusCodes.Status400BadRequest:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
                             "Xóa thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get list base subjects
+        /// </summary>
+        /// <response code="200">
+        /// Get list base subjects successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list base subjects fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Subjects" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/base-subjects")]
+        public async Task<IActionResult> GetBaseSubject()
+        {
+            try
+            {
+                var baseSubjects = await _subjectService.GetBaseSubjects();
+                return Ok(MyResponse<List<SubjectBaseViewModel>>.OkWithDetail(baseSubjects, "Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }

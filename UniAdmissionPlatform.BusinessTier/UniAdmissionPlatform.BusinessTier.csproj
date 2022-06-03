@@ -27,7 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commons\Constants" />
       <Folder Include="Repositories" />
       <Folder Include="Requests\Province" />
     </ItemGroup>
