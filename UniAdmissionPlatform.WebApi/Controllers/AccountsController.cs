@@ -77,7 +77,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Account" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
-        public async Task<IActionResult> GetCertificationById(int studentId)
+        public async Task<IActionResult> GetStudentAccountById(int studentId)
         {
             try
             {
