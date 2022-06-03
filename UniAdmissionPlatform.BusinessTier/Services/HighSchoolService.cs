@@ -20,6 +20,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<HighSchoolCodeViewModel> GetHighSchoolByCode(string highSchoolCode);
         Task<HighSchoolManagerCodeViewModel> GetHighSchoolByManagerCode(string highSchoolManagerCode);
         Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit);
+        Task<GetHighSchoolBaseViewModel> GetHighSchoolProfileById(int highSchoolId);
     }
     public partial class HighSchoolService
     {
@@ -80,6 +81,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<GetHighSchoolBaseViewModel> GetHighSchoolProfileById(int highSchoolId)
+        {
+            
+            var highSchoolProfile = await Get()
+                .Where(a => a.Id == highSchoolId)
+                .ProjectTo<GetHighSchoolBaseViewModel>(_mapper).FirstOrDefaultAsync();
+            if (highSchoolProfile == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {highSchoolId}.");
+            }
+            return highSchoolProfile;
         }
     }
 }
