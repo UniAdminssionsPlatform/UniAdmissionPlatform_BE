@@ -25,6 +25,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<EventByUniIdBaseViewModel> GetEventByUniId(int universityId);
 
         Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId,string eventName, string eventHostName,int? eventTypeId, int? statusEvent, string sort, int page, int limit);
+
+        Task<PageResult<ListEventByUniIdBaseViewModel>> GetListOnGoingEventsByUniId(int universityId, string sort,
+            int page, int limit);
     }
 
     public partial class UniversityEventService
@@ -65,6 +68,27 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                                                        && (eventHostName == null || ue.Event.HostName.Contains(eventHostName))
                                                        && (eventTypeId == null || ue.Event.EventTypeId == eventTypeId)
                                                        && (statusEvent == null || ue.Event.Status == statusEvent))
+                .ProjectTo<ListEventByUniIdBaseViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<ListEventByUniIdBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<ListEventByUniIdBaseViewModel>> GetListOnGoingEventsByUniId(int universityId, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().Where(ue => ue.UniversityId == universityId
+                                                       && (ue.Event.Status == (int) EventStatus.OnGoing))
                 .ProjectTo<ListEventByUniIdBaseViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             

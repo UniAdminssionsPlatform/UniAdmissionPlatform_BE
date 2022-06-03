@@ -341,5 +341,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Get a on going event by university id
+        /// </summary>
+        /// <response code="200">
+        /// Get a on going event by university id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get a on going event by university id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/{universityId:int}/list-events")]
+        public async Task<IActionResult> GetListOnGoingEventsByUniId(int universityId, string sort, int page, int limit)
+        {
+            try
+            { 
+                var listEvent = await _universityEventService.GetListOnGoingEventsByUniId(universityId, sort, page, limit);
+                return Ok(MyResponse<PageResult<ListEventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
