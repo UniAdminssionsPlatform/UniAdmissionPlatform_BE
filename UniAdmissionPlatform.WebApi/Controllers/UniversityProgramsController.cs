@@ -77,12 +77,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "University Programs" })]
         [Route("~/api/v{version:apiVersion}/university-programs")]
-        public async Task<IActionResult> GetAllUniversityProgram([FromQuery] UniversityProgramBaseViewModel filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetAllUniversityProgram([FromQuery] UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit)
         {
             try
             {
-                var allUniversityProgram = await _universityProgramService.GetAllUniversityProgram(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<UniversityProgramBaseViewModel>>.OkWithDetail(allUniversityProgram, $"Đạt được thành công"));
+                var allUniversityProgram = await _universityProgramService.GetAllUniversityProgramWithDetail(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>.OkWithDetail(allUniversityProgram, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
@@ -96,6 +96,43 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Get list university programs by university id
+        /// </summary>
+        /// <response code="200">
+        /// Get list university programs by university id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list university programs by university id fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University Programs" })]
+        [Route("~/api/v{version:apiVersion}/universities/{universityId:int}/university-programs")]
+        public async Task<IActionResult> GetAllUniversityProgramByUniversityId(int universityId, string sort, int page, int limit)
+        {
+            try
+            {
+                var allUniversityProgram = await _universityProgramService.GetAllUniversityProgramWithDetailByUniversityId(universityId, sort, page, limit);
+                return Ok(MyResponse<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>.OkWithDetail(allUniversityProgram, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+
         
 
         /// <summary>

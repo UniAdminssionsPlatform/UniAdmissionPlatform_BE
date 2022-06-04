@@ -24,6 +24,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateUniversityProgram(CreateUniversityProgramRequest createUniversityProgramRequest);
         Task UpdateUniversityProgram(int universityProgramId, UpdateUniversityProgramRequest updateUniversityProgramRequest);
         Task DeleteUniversityProgramById(int universityProgramId);
+
+        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(
+            UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit);
+
+        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>
+            GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit);
     }
     public partial class UniversityProgramService
     {
@@ -106,6 +112,44 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             majorDepartment.UpdatedAt = DateTime.Now;
             majorDepartment.DeletedAt = DateTime.Now;
             await UpdateAsyn(majorDepartment);
+        }
+        
+        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get()
+                .ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper)
+                .DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+
+        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().Where(up => up.MajorDepartment.UniversityId == universityId).ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);;
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
         }
     }
 }

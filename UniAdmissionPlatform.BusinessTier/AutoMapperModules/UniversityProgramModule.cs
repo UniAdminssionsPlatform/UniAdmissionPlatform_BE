@@ -14,6 +14,13 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<UpdateUniversityProgramRequest, UniversityProgram>()
                 .ForAllMembers(opt => opt
                     .Condition((src,des,srcMember)=> srcMember != null));
+            mc.CreateMap<UniversityProgram, UniversityProgramWithMajorDepartmentAndSchoolYearModel>()
+                .ForMember(des => des.MajorDepartment,
+                    opt =>
+                        opt.MapFrom(src => src.MajorDepartment))
+                .ForMember(des => des.SchoolYear,
+                    opt =>
+                        opt.MapFrom(src => src.SchoolYear));
         }
     }
 }

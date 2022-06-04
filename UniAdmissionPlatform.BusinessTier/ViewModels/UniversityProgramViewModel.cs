@@ -9,5 +9,12 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? MajorDepartmentId { get; set; }
         [String]
         public string Description { get; set; }
+        public int? SchoolYearDescription { get; set; }
+    }
+
+    public class UniversityProgramWithMajorDepartmentAndSchoolYearModel : UniversityProgramBaseViewModel
+    {
+        public MajorDepartmentWithMajorAndUniversity MajorDepartment { get; set; }
+        public SchoolYearBaseViewModel SchoolYear { get; set; }
     }
 }

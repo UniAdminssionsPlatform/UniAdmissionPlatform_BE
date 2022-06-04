@@ -33,15 +33,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task<List<EventBaseViewModel>> GetListEventsForUniAdmin(int universityId, DateTime? fromDate, DateTime? toDate,
             string sort);
+
+        Task CloseEvent();
     }
     
     public partial class EventService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly IEventTypeRepository _eventTypeRepository;
         
-        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper) : base(unitOfWork, 
+        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper, IEventTypeRepository eventTypeRepository) : base(unitOfWork, 
             repository)
         {
+            _eventTypeRepository = eventTypeRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -206,6 +210,23 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             return await queryable.ProjectTo<EventBaseViewModel>(_mapper).ToListAsync();
+        }
+
+        public async Task CloseEvent()
+        {
+            var eventType = await _eventTypeRepository.FirstOrDefaultAsync(et => et.Name == "Offline In High School");
+            if (eventType == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status500InternalServerError, "Server error");
+            }
+
+            var events = Get().Where(e => e.EndTime != null && e.EndTime < DateTime.Now).ToList();
+            foreach (var @event in events)
+            {
+                @event.Status = 2;
+            }
+
+            await SaveAsyn();
         }
     }
 }

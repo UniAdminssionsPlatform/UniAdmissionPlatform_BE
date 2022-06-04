@@ -98,6 +98,40 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
+        /// Get student profile
+        /// </summary>
+        /// <response code="200">
+        /// Get student profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Get student profile fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Account" })]
+        [Route("~/api/v{version:apiVersion}/students/[controller]/profile")]
+        public async Task<IActionResult> GetStudentProfile()
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            try
+            {
+                var studentAccountById = await _accountService.GetStudentAccountById(userId);
+                return Ok(MyResponse<AccountStudentByIdViewModelWithHighSchool>.OkWithDetail(studentAccountById, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
         /// Get list university accounts
         /// </summary>
         /// <response code="200">

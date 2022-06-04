@@ -8,6 +8,11 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Name { get; set; }
         public int? MajorId { get; set; }
         public int? UniversityId { get; set; }
-        
+    }
+
+    public class MajorDepartmentWithMajorAndUniversity
+    {
+        public UniversityBaseViewModel University { get; set; }
+        public MajorBaseViewModel Major { get; set; }
     }
 }
