@@ -5,5 +5,6 @@
         public string Name { get; set; }
         public int? MajorDepartmentId { get; set; }
         public string Description { get; set; }
+        public int SchoolYearId { get; set; }
     }
 }
