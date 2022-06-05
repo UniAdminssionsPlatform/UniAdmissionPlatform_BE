@@ -249,7 +249,6 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.TargetStudent).IsRequired();
 
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.Events)

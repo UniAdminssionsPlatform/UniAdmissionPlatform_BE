@@ -10,7 +10,6 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.Event
         public string ThumbnailUrl { get; set; }
         public string FileUrl { get; set; }
         public string HostName { get; set; }
-        public string TargetStudent { get; set; }
         public int EventTypeId { get; set; }
         public string Address { get; set; }
         public int? DistrictId { get; set; }

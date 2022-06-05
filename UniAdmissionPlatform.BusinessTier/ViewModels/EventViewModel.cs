@@ -19,8 +19,6 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? Status { get; set; }
         [String]
         public string HostName { get; set; }
-        [String]
-        public string TargetStudent { get; set; }
         public int? EventTypeId { get; set; }
         [String]
         public string Address { get; set; }

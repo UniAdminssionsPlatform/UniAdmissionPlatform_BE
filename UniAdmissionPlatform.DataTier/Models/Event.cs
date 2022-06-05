@@ -25,7 +25,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string FileUrl { get; set; }
         public int Status { get; set; }
         public string HostName { get; set; }
-        public string TargetStudent { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
