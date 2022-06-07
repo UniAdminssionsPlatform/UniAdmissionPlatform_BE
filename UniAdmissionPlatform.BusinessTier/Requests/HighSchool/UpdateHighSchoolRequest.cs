@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.HighSchool
         public int? DistrictId { get; set; }
         public string HighSchoolCode { get; set; }
         public string HighSchoolManagerCode { get; set; }
+        public string Email { get; set; }
         public string WebsiteUrl { get; set; }
         public string ThumbnailUrl { get; set; }
         public string Description { get; set; }
