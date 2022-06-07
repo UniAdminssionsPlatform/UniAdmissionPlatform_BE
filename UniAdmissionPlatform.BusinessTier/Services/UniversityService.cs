@@ -1,4 +1,5 @@
-﻿using System.Linq.Dynamic.Core;
+﻿using System;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +19,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IUniversityService
     {
-        Task<UniversityCodeViewModel> GetUniversityNameByCode(string highSchoolCode);
+        Task<UniversityCodeViewModel> GetUniversityNameByCode(string universityCode);
         Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit);
         Task<UniversityBaseViewModel> GetUniversityByID(int Id);
 
         Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest);
+        Task UpdateUniversityProfile(int universityId, UpdateUniversityProfileRequest updateUniversityProfileRequest);
     }
     public partial class UniversityService
     {
@@ -102,6 +104,21 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             await CreateAsyn(university);
             return university.Id;
+        }
+        
+        public async Task UpdateUniversityProfile(int universityId, UpdateUniversityProfileRequest updateUniversityProfileRequest)
+        {
+            var universityAccount = await Get().Where(au => au.Id == universityId).FirstOrDefaultAsync();
+            if (universityAccount == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {universityId}");
+            }
+            
+            var mapper = _mapper.CreateMapper();
+            universityAccount = mapper.Map(updateUniversityProfileRequest, universityAccount);
+            universityAccount.UpdatedAt = DateTime.Now;
+            
+            await UpdateAsyn(universityAccount);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<University, UniversityBaseViewModel>();
             mc.CreateMap<University, UniversityCodeViewModel>();
             mc.CreateMap<CreateUniversityRequest, University>();
+            mc.CreateMap<UpdateUniversityProfileRequest, University>()
+                .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
         }
     }
 }
