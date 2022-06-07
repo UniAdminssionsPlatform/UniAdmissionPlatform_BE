@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
+using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.BaseConnect;
@@ -21,6 +23,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<HighSchoolManagerCodeViewModel> GetHighSchoolByManagerCode(string highSchoolManagerCode);
         Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit);
         Task<GetHighSchoolBaseViewModel> GetHighSchoolProfileById(int highSchoolId);
+        Task UpdateHighSchoolProfile(int highSchoolId, UpdateHighSchoolProfileRequest updateHighSchoolProfileRequest);
     }
     public partial class HighSchoolService
     {
@@ -94,6 +97,21 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {highSchoolId}.");
             }
             return highSchoolProfile;
+        }
+        
+        public async Task UpdateHighSchoolProfile(int highSchoolId, UpdateHighSchoolProfileRequest updateHighSchoolProfileRequest)
+        {
+            var highSchoolAccount = await Get().Where(a => a.Id == highSchoolId).FirstOrDefaultAsync();
+            if (highSchoolAccount == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {highSchoolId}");
+            }
+            
+            var mapper = _mapper.CreateMapper();
+            highSchoolAccount = mapper.Map(updateHighSchoolProfileRequest, highSchoolAccount);
+            highSchoolAccount.UpdatedAt = DateTime.Now;
+            
+            await UpdateAsyn(highSchoolAccount);
         }
     }
 }
