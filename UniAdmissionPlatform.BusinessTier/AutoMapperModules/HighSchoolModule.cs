@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.DataTier.Models;
 
@@ -12,6 +13,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<HighSchool, HighSchoolCodeViewModel>();
             mc.CreateMap<HighSchool, HighSchoolManagerCodeViewModel>();
             mc.CreateMap<HighSchool, GetHighSchoolBaseViewModel>();
+            mc.CreateMap<UpdateHighSchoolProfileRequest, HighSchool>()
+                .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
         }
     }
 }

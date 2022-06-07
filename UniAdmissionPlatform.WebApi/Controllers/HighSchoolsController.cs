@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
 using UniAdmissionPlatform.BusinessTier.Responses;
+using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
 
@@ -16,11 +18,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IHighSchoolService _highSchoolService;
         private readonly IEventCheckService _eventCheckService;
+        private readonly IAuthService _authService;
 
-        public HighSchoolsController(IHighSchoolService highSchoolService, IEventCheckService eventCheckService)
+        public HighSchoolsController(IHighSchoolService highSchoolService, IEventCheckService eventCheckService, IAuthService authService)
         {
             _highSchoolService = highSchoolService;
             _eventCheckService = eventCheckService;
+            _authService = authService;
         }
         
         
@@ -189,6 +193,43 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         "Lấy thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Update a high school profile
+        /// </summary>
+        /// <response code="200">
+        /// Update a high school profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Update a high school profile fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Account" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/profile")]
+        public async Task<IActionResult> UpdateHighSchoolProfile([FromBody] UpdateHighSchoolProfileRequest updateHighSchoolProfileRequest)
+        {
+            var id = _authService.GetHighSchoolId(HttpContext);
+            try
+            {
+                await _highSchoolService.UpdateHighSchoolProfile(id, updateHighSchoolProfileRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new{id}, $"Cập nhập tài khoản thành công với ID = {id}"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
