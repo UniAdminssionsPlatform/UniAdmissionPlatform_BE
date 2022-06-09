@@ -160,11 +160,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     var studentRecordItems = mapper.Map<List<StudentRecordItem>>(updateSchoolRecordRequest.RecordItems.UpdateList);
                     foreach (var studentRecordItem in studentRecordItems)
                     {
-                        studentRecordItem.SchoolRecordId = schoolRecordId;
+                        foreach (var schoolRecordStudentRecordItem in schoolRecord.StudentRecordItems)
+                        {
+                            if (schoolRecordStudentRecordItem.Id == studentRecordItem.Id)
+                            {
+                                schoolRecordStudentRecordItem.SubjectId = studentRecordItem.SubjectId;
+                                schoolRecordStudentRecordItem.Score = studentRecordItem.Score;
+                            }
+                        }
                     }
 
-                    await SaveAsyn();
-                }
+                    await UpdateAsyn(schoolRecord);
+                }   
 
                 if (updateSchoolRecordRequest.RecordItems.DeleteList != null)
                 {
