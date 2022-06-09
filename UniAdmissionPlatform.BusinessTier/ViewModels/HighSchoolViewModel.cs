@@ -66,6 +66,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string ShortDescription { get; set; }
         [String]
         public string ProfileImageUrl { get; set; }
+        [String]
+        public string HighSchoolCode { get; set; }
+        [String]
+        public string HighSchoolManagerCode { get; set; }
         public int? DistrictId { get; set; }
     }
     
