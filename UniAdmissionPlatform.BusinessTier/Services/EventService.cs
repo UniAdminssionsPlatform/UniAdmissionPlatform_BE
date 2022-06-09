@@ -73,8 +73,16 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Ngày kết thúc sự kiện phải lớn hơn ngày diễn ra sự kiện!");
             }
-            
-            uniEvent.Status = (int) EventStatus.OnGoing;
+
+            if (uniEvent.EventTypeId == 2)
+            {
+                uniEvent.Status = (int)EventStatus.Init;
+            }
+            else
+            {
+                uniEvent.Status = (int)EventStatus.OnGoing;
+            }
+
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
         }

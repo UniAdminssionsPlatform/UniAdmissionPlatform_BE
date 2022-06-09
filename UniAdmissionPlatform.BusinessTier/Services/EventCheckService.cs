@@ -77,7 +77,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy sự kiện trong cuộc đặt lịch");
             }
 
-            if (uniEvent.Status != (int) EventStatus.OnGoing)
+            if (uniEvent.Status != (int) EventStatus.Init)
             {
                 if (uniEvent.Status == (int) EventStatus.Cancel)
                 {
@@ -106,6 +106,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             eventCheck.Status = (int)EventCheckStatus.Approved;
             eventCheck.UpdatedAt = DateTime.Now;
+            eventCheck.Event.Status = (int)EventStatus.OnGoing;
             await UpdateAsyn(eventCheck);
 
             BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
@@ -148,7 +149,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, "Không thể tìm thấy sự kiện trong cuộc đặt lịch");
             }
 
-            if (uniEvent.Status != (int) EventStatus.OnGoing)
+            if (uniEvent.Status != (int) EventStatus.Init)
             {
                 if (uniEvent.Status == (int) EventStatus.Cancel)
                 {
