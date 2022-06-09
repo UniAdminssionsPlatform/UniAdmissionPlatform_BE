@@ -37,12 +37,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         private readonly IConfigurationProvider _mapper;
         private readonly ISubjectRepository _subjectRepository;
+        private readonly IStudentRecordItemRepository _studentRecordItemRepository;
 
         public SchoolRecordService(IUnitOfWork unitOfWork, ISchoolRecordRepository repository, IMapper mapper,
-            ISubjectRepository subjectRepository) : base(unitOfWork,
+            ISubjectRepository subjectRepository, IStudentRecordItemRepository studentRecordItemRepository) : base(unitOfWork,
             repository)
         {
             _subjectRepository = subjectRepository;
+            _studentRecordItemRepository = studentRecordItemRepository;
             _mapper = mapper.ConfigurationProvider;
         }
 
@@ -83,15 +85,99 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task UpdateSchoolRecord(int schoolRecordId, int studentId,
             UpdateSchoolRecordRequest updateSchoolRecordRequest)
         {
-            var schoolRecord = await FirstOrDefaultAsyn(sr => sr.Id == schoolRecordId && sr.Student.Id == studentId);
+            var schoolRecord = await Get().Include(sr => sr.StudentRecordItems).FirstOrDefaultAsync(sr => sr.Id == schoolRecordId && sr.Student.Id == studentId);
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound,
                     $"Không tìm thấy phiếu điểm(School Record) id:{schoolRecordId}.");
             }
+            
+            if (updateSchoolRecordRequest.RecordItems != null)
+            {
+                if (updateSchoolRecordRequest.RecordItems.NewList != null && updateSchoolRecordRequest.RecordItems.UpdateList != null)
+                {
+                    foreach (var createStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.NewList)
+                    {
+                        foreach (var updateStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.UpdateList)
+                        {
+                            if (createStudentRecordItemBase.SubjectId == updateStudentRecordItemBase.SubjectId)
+                            {
+                                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                                    "Không thể thêm môn học đã tồn tại trong học bạ.");
+                            }
+                        }
+                    }
+                }
+                
+                
+                
+                if (updateSchoolRecordRequest.RecordItems.NewList != null)
+                {
+                    foreach (var schoolRecordStudentRecordItem in schoolRecord.StudentRecordItems)
+                    {
+                        var recordItemsNewList = updateSchoolRecordRequest.RecordItems.NewList;
+                        if (recordItemsNewList.Select(sinl => sinl.SubjectId).Contains(schoolRecordStudentRecordItem.SubjectId))
+                        {
+                            throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                                "Không thể thêm môn học đã tồn tại trong học bạ.");
+                        }
+                    }
+                }
+                
+                
 
+                if (updateSchoolRecordRequest.RecordItems.UpdateList != null)
+                {
+                    foreach (var updateStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.UpdateList)
+                    {
+                        var schoolRecordStudentRecordItems = schoolRecord.StudentRecordItems;
+                        if (!schoolRecordStudentRecordItems.Select(usrr => usrr.Id).Contains(updateStudentRecordItemBase.Id))
+                        {
+                            throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                                "Không thể cập nhập môn học không tồn tại trong học bạ.");
+                        }
+                    }
+                }
+                
+                
+            }
             var mapper = _mapper.CreateMapper();
+            
+            if (updateSchoolRecordRequest.RecordItems != null)
+            {
+                if (updateSchoolRecordRequest.RecordItems.NewList != null)
+                {
+                    var studentRecordItems = mapper.Map<List<StudentRecordItem>>(updateSchoolRecordRequest.RecordItems.NewList);
+                    foreach (var studentRecordItem in studentRecordItems)
+                    {
+                        studentRecordItem.SchoolRecordId = schoolRecordId;
+                    }
+                    await _studentRecordItemRepository.AddRangeAsync(studentRecordItems);
+                }
+
+                if (updateSchoolRecordRequest.RecordItems.UpdateList != null)
+                {
+                    var studentRecordItems = mapper.Map<List<StudentRecordItem>>(updateSchoolRecordRequest.RecordItems.UpdateList);
+                    foreach (var studentRecordItem in studentRecordItems)
+                    {
+                        studentRecordItem.SchoolRecordId = schoolRecordId;
+                    }
+
+                    await SaveAsyn();
+                }
+
+                if (updateSchoolRecordRequest.RecordItems.DeleteList != null)
+                {
+                    var studentRecordItems = _studentRecordItemRepository
+                        .Get(sri => updateSchoolRecordRequest.RecordItems.DeleteList.Contains(sri.Id)).ToList();
+                    
+                    _studentRecordItemRepository.RemoveRange(studentRecordItems);
+                    await SaveAsyn();
+                }
+            }
+            
             schoolRecord = mapper.Map(updateSchoolRecordRequest, schoolRecord);
+
             await UpdateAsyn(schoolRecord);
         }
 

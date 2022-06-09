@@ -26,6 +26,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<SchoolRecord, SchoolRecordWithStudentRecordItemModel>()
             .ForMember(des => des.StudentRecordItems, opt
                 => opt.MapFrom(src => src.StudentRecordItems));
+
+            mc.CreateMap<UpdateSchoolRecordRequest, SchoolRecord>();
         }
     }
 }

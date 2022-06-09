@@ -29,7 +29,6 @@ namespace UniAdmissionPlatform.BusinessTier.Services
             var auth = new FirebaseAuthProvider(new FirebaseConfig(_configuration["Firebase:Api-key"]));
             var a = await auth.SignInWithEmailAndPasswordAsync(_configuration["FirebaseStoreAccount:Username"],
                 _configuration["FirebaseStoreAccount:Password"]);
-            Console.WriteLine(a.FirebaseToken);
 
             //todo: need config more
             var task = new FirebaseStorage(

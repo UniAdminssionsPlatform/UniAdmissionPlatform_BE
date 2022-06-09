@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using UniAdmissionPlatform.BusinessTier.Requests.StudentRecordItem;
 
 namespace UniAdmissionPlatform.BusinessTier.Requests.SchoolRecord
