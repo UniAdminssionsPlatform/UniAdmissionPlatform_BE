@@ -2,6 +2,7 @@
 {
     public enum EventStatus
     {
+        Init,
         OnGoing,
         Cancel,
         Done
