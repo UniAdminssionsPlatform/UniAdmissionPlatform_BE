@@ -57,11 +57,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             for (int i = 0; i < slots.Count; i++)
             {
                 var slot = slots[i];
-                if (slot.StartDate < DateTime.Now.AddMinutes(5))
-                {
-                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                        $"Slot thứ {i + 1} phải có thời gian bắt đầu phải lớn hơn hiện tại 5 phút.");
-                }
 
                 if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
                 {
@@ -98,6 +93,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest,
                         $"Slot thứ {i + 1} mà bạn tạo bị trùng lịch với slot khác trong hệ thống!");
+                }
+
+                if (slot.StartDate == null || slot.StartDate.Value.Date < DateTime.Now.AddDays(7).Date)
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                        $"Slot thứ {i + 1} mà bạn tạo có thời gian bắt đầu lớn hơn 7 ngày so với hiện tại!");
                 }
 
                 slot.HighSchoolId = highSchoolId;

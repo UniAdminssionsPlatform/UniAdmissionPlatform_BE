@@ -272,7 +272,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                             e.Error.Message);
                 }
             }
-
         }
     }
 }

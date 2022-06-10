@@ -23,9 +23,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IEventCheckService
     {
         Task ApproveEventToSlot(int highSchoolId, int eventCheckId);
-        Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId);
+        Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId, int highSchoolId);
         Task RejectEventToSlot(int highSchoolId, int eventCheckId);
         Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page,
+            int limit);
+
+        Task<PageResult<EventWithSlotViewModel>> GetEventsHistoryByHighSchoolId(int highSchoolId, string sort, int page,
             int limit);
 
         Task<PageResult<EventCheckWithEventAndSlotModel>> GetEventCheckForUniAdmin(int universityId, EventCheckWithEventAndSlotModel filter, string sort, int page, int limit);
@@ -180,15 +183,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(eventCheck);
         }
         
-        public async Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId)
+        public async Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId, int highSchoolId)
         {
-            var eventBySlot = await Get().Where(ec => ec.SlotId == slotId && ec.Status == (int)EventCheckStatus.Pending && ec.DeletedAt == null)
+            var eventBySlot = await Get().Where(ec => ec.SlotId == slotId &&  ec.DeletedAt == null)
                 .Include(ec => ec.Event)
                 .ProjectTo<EventBySlotBaseViewModel>(_mapper).FirstOrDefaultAsync();
             if (eventBySlot == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    $"Không tìm thấy sự kiện nào theo slot với slot id ={eventBySlot}");
+                    $"Không tìm thấy sự kiện nào theo slot với slot id = {slotId}");
             }
             return eventBySlot;
         }
@@ -200,6 +203,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
             var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Reject && ec.Slot.HighSchoolId == highSchoolId)
+                .ProjectTo<EventWithSlotViewModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<EventWithSlotViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<EventWithSlotViewModel>> GetEventsHistoryByHighSchoolId(int highSchoolId, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Reject && ec.Slot.HighSchoolId == highSchoolId  && ec.Slot.EndDate < DateTime.Now)
                 .ProjectTo<EventWithSlotViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             

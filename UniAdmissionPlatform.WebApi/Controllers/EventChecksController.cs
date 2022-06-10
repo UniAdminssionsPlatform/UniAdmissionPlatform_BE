@@ -120,10 +120,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-high-school/events/{slotId:int}")]
         public async Task<IActionResult> GetEventBySlotId(int slotId)
         {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
             try
             {
-                var eventBySlotId = await _eventCheckService.GetEventBySlotId(slotId);
+                var eventBySlotId = await _eventCheckService.GetEventBySlotId(slotId, highSchoolId);
                 return Ok(MyResponse<EventBySlotBaseViewModel>.OkWithDetail(eventBySlotId, "Truy cập thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get event history list by high school id
+        /// </summary>
+        /// <response code="200">
+        /// Get event history list by high school id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get event history list by high school id fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Events" })]
+        [Route("~/api/v{version:apiVersion}/events/{highSchoolId:int}/history")]
+        public async Task<IActionResult> GetEventsHistoryByHighSchoolId(int highSchoolId)
+        {
+            try
+            {
+                var eventBySlotId = await _eventCheckService.GetEventsHistoryByHighSchoolId(highSchoolId, null, 1, 10);
+                return Ok(MyResponse<PageResult<EventWithSlotViewModel>>.OkWithDetail(eventBySlotId, "Truy cập thành công!"));
             }
             catch (ErrorResponse e)
             {
