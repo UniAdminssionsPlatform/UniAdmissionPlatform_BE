@@ -163,6 +163,63 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Get list news for university
+        /// </summary>
+        /// <response code="200">
+        /// Get list news for university successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list news for university fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - News" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        public async Task<IActionResult> GetAllNewsForAdminUniversity([FromQuery] NewsWithPublishViewModel filter, string sort, int page, int limit)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                var allNews = await _newsService.GetAllNewsForUniversityAdmin(filter, sort, page, limit, universityId);
+                return Ok(MyResponse<PageResult<NewsWithPublishViewModel>>.OkWithDetail(allNews, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin University - News" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{newsId:int}/set-publish")]
+        public async Task<IActionResult> GetAllNewsForAdminUniversity(int newsId, [FromBody] SetPublishRequest setPublishRequest)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                await _newsService.SetIsPublish(universityId, newsId, setPublishRequest.IsPublish);
+                return Ok(MyResponse<PageResult<NewsWithPublishViewModel>>.OkWithMessage("Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status400BadRequest:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
 
         /// <summary>
         /// Get a news by id

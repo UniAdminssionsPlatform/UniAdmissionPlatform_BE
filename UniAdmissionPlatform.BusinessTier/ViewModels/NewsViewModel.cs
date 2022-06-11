@@ -16,4 +16,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string ThumbnailUrl { get; set; }
         public DateTime? CreateDate { get; set; }
     }
+
+    public class NewsWithPublishViewModel : NewsBaseViewModel
+    {
+        public bool? IsPublish { get; set; }
+    }
+
 }

@@ -24,6 +24,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<int> CreateNews(int universityId, CreateNewsRequest createNewsRequest);
         Task UpdateNews(int newsId, UpdateNewsRequest updateNewsRequest);
         Task DeleteNewsById(int newsId);
+
+        Task<PageResult<NewsWithPublishViewModel>> GetAllNewsForUniversityAdmin(NewsWithPublishViewModel filter,
+            string sort, int page, int limit, int universityId);
+
+        Task SetIsPublish(int universityId, int newsId, bool isPublish);
     }
     public partial class NewsService
     {
@@ -41,6 +46,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(n => n.DeletedAt == null && n.IsPublish)
                 .ProjectTo<NewsBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -56,6 +62,43 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
+        }
+        
+        public async Task<PageResult<NewsWithPublishViewModel>> GetAllNewsForUniversityAdmin(NewsWithPublishViewModel filter, string sort, int page, int limit, int universityId)
+        {
+            var (total, queryable) = Get()
+                .Where(n => n.DeletedAt == null && n.UniversityNews.Select(un => un.UniversityId).Contains(universityId))
+                .ProjectTo<NewsWithPublishViewModel>(_mapper)
+                .DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<NewsWithPublishViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+
+        public async Task SetIsPublish(int universityId, int newsId, bool isPublish)
+        {
+            var news = await Get().FirstOrDefaultAsync(n => n.DeletedAt == null && n.Id == newsId &&
+                                                                           n.UniversityNews.Select(un => un.UniversityId).Contains(universityId));
+
+            if (news == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, $"Không tìm thấy tin tức với id = {newsId}.");
+            }
+
+            news.IsPublish = isPublish;
+            news.UpdatedAt = DateTime.Now;
+
+            await UpdateAsyn(news);
         }
 
         public async Task<NewsBaseViewModel> GetNewsById(int newsId)

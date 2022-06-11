@@ -23,6 +23,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public bool IsPublish { get; set; }
 
         public virtual ICollection<NewsMajor> NewsMajors { get; set; }
         public virtual ICollection<NewsTag> NewsTags { get; set; }
