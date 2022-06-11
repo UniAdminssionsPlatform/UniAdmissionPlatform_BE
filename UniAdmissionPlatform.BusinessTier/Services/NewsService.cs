@@ -33,10 +33,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial class NewsService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly ITagRepository _tagRepository;
 
-        public NewsService(IUnitOfWork unitOfWork, INewsRepository repository, IMapper mapper) : base(unitOfWork,
+        public NewsService(IUnitOfWork unitOfWork, INewsRepository repository, IMapper mapper, ITagRepository tagRepository) : base(unitOfWork,
             repository)
         {
+            _tagRepository = tagRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -116,12 +118,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var news = _mapper.CreateMapper().Map<News>(createNewsRequest);
 
+            var tags = await _tagRepository.Get().Where(t => createNewsRequest.TagIds.Contains(t.Id) && t.DeletedAt == null)
+                .ToListAsync();
+            if (tags.Count != createNewsRequest.TagIds.Count)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Một số tag không khả dụng.");
+            }
+
             var uniNewsUniversityNews = news.UniversityNews = new List<UniversityNews>();
             uniNewsUniversityNews.Add(new UniversityNews
             {
                 UniversityId = universityId,
             });
-            
+
             news.CreateDate = DateTime.Now;
             news.CreatedAt = DateTime.Now;
             news.UpdatedAt = DateTime.Now;
