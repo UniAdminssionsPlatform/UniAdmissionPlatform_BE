@@ -10,7 +10,9 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
     {
         public static void ConfigNewsMapperModule(this IMapperConfigurationExpression mc)
         {
-            mc.CreateMap<News, NewsBaseViewModel>();
+            mc.CreateMap<News, NewsBaseViewModel>()
+                .ForMember(des => des.Tags, opt =>
+                    opt.MapFrom(src => src.NewsTags.Select(nt => nt.Tag)));
             mc.CreateMap<UpdateNewsRequest, News>()
                 .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
             mc.CreateMap<CreateNewsRequest, News>()
@@ -19,7 +21,9 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                     {
                         TagId = ti
                     })));
-            mc.CreateMap<News, NewsWithPublishViewModel>();
+            mc.CreateMap<News, NewsWithPublishViewModel>()
+                .ForMember(des => des.Tags, opt =>
+                    opt.MapFrom(src => src.NewsTags.Select(nt => nt.Tag)));
         }
     }
 }

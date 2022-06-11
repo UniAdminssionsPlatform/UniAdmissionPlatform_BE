@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
@@ -15,6 +16,10 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string ThumbnailUrl { get; set; }
         public DateTime? CreateDate { get; set; }
+        [Skip]
+        public int? TagSearchId { get; set; }
+        [Skip]
+        public List<TagBaseViewModel> Tags { get; set; }
     }
 
     public class NewsWithPublishViewModel : NewsBaseViewModel
