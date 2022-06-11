@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.Reason;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
@@ -83,13 +84,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}/reject")]
-        public async Task<IActionResult> RejectEventToSlot(int eventCheckId)
+        public async Task<IActionResult> RejectEventToSlot(int eventCheckId, [FromBody] CreateReasonRequestBody reason)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
 
             try
             {
-                await _eventCheckService.RejectEventToSlot(highSchoolId, eventCheckId);
+                await _eventCheckService.RejectEventToSlot(highSchoolId, eventCheckId, reason.Reason);
                 return Ok(MyResponse<object>.OkWithMessage("Từ chối thành công"));
             }
             catch (ErrorResponse e)

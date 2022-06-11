@@ -7,6 +7,11 @@ namespace UniAdmissionPlatform.DataTier.Models
 {
     public partial class Certification
     {
+        public Certification()
+        {
+            StudentCertifications = new HashSet<StudentCertification>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -15,6 +20,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
-        public virtual StudentCertification StudentCertification { get; set; }
+        public virtual ICollection<StudentCertification> StudentCertifications { get; set; }
     }
 }

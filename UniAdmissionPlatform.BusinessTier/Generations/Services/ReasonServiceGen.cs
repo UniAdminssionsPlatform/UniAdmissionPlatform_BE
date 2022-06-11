@@ -10,11 +10,11 @@ using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     
-    public partial interface ISchoolRecordService:IBaseService<SchoolRecord>
+    public partial interface IReasonService:IBaseService<Reason>
     {
     }
-    public partial class SchoolRecordService:BaseService<SchoolRecord>,ISchoolRecordService
+    public partial class ReasonService:BaseService<Reason>,IReasonService
     {
-        public SchoolRecordService(IUnitOfWork unitOfWork,ISchoolRecordRepository repository):base(unitOfWork,repository){}
+        public ReasonService(IUnitOfWork unitOfWork,IReasonRepository repository):base(unitOfWork,repository){}
     }
 }

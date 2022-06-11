@@ -15,9 +15,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class SubjectGroupService:BaseService<SubjectGroup>,ISubjectGroupService
     {
-        public SubjectGroupService(IUnitOfWork unitOfWork,ISubjectGroupRepository repository, ISchoolRecordRepository schoolRecordRepository):base(unitOfWork,repository)
-        {
-            _schoolRecordRepository = schoolRecordRepository;
-        }
+        public SubjectGroupService(IUnitOfWork unitOfWork,ISubjectGroupRepository repository):base(unitOfWork,repository){}
     }
 }

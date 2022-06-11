@@ -24,7 +24,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task ApproveEventToSlot(int highSchoolId, int eventCheckId);
         Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId, int highSchoolId);
-        Task RejectEventToSlot(int highSchoolId, int eventCheckId);
+        Task RejectEventToSlot(int highSchoolId, int eventCheckId, string reason);
         Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page,
             int limit);
 
@@ -37,10 +37,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial class EventCheckService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly IReasonRepository _reasonRepository;
         
-        public EventCheckService(IUnitOfWork unitOfWork, IEventCheckRepository repository, IMapper mapper) : base(unitOfWork, 
+        public EventCheckService(IUnitOfWork unitOfWork, IEventCheckRepository repository, IMapper mapper, IReasonRepository reasonRepository) : base(unitOfWork, 
             repository)
         {
+            _reasonRepository = reasonRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -116,11 +118,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheck.Id));
         }
         
-        public async Task RejectEventToSlot(int highSchoolId, int eventCheckId)
+        public async Task RejectEventToSlot(int highSchoolId, int eventCheckId, string reason)
         {
             var eventCheck = await Get(ec => ec.Id == eventCheckId)
                 .Include(ec => ec.Slot)
-                .Include(ec => ec.Event)
+                .Include(ec => ec.Event).ThenInclude(e => e.UniversityEvents)
                 .FirstOrDefaultAsync();
             
             if (eventCheck.Slot.HighSchoolId != highSchoolId)
@@ -135,11 +137,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (eventCheck.Status != (int)EventCheckStatus.Pending)
             {
-                if (eventCheck.Status == (int)EventCheckStatus.Approved)
-                {
-                    throw new ErrorResponse(StatusCodes.Status400BadRequest, "Cuộc đặt lịch này đã được chấp nhận.");
-                }
-                
                 if (eventCheck.Status == (int)EventCheckStatus.Reject)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Cuộc đặt lịch này đã bị từ chối.");
@@ -179,6 +176,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 }
             }
 
+            var reasonEntity = new Reason
+            {
+                ReferenceId = eventCheck.Id,
+                UniversityId = eventCheck.Event.UniversityEvents.FirstOrDefault()?.UniversityId ?? null,
+                HighSchoolId = eventCheck.Slot.HighSchoolId,
+                Detail = reason,
+                Type = (int?)ReasonEnum.HighSchoolRejectUniversity,
+            };
+            
+            await _reasonRepository.CreateAsync(reasonEntity);
+            await unitOfWork.CommitAsync();
+            
             eventCheck.Status = (int)EventCheckStatus.Reject;
             await UpdateAsyn(eventCheck);
         }

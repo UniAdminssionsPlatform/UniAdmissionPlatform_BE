@@ -11,6 +11,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             Accounts = new HashSet<Account>();
             HighSchoolEvents = new HashSet<HighSchoolEvent>();
+            Reasons = new HashSet<Reason>();
             Slots = new HashSet<Slot>();
         }
 
@@ -35,6 +36,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual District District { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
+        public virtual ICollection<Reason> Reasons { get; set; }
         public virtual ICollection<Slot> Slots { get; set; }
     }
 }

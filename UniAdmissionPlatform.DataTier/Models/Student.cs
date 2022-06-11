@@ -11,6 +11,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             Participations = new HashSet<Participation>();
             SchoolRecords = new HashSet<SchoolRecord>();
+            StudentCertifications = new HashSet<StudentCertification>();
         }
 
         public int Id { get; set; }
@@ -20,8 +21,8 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime? DeletedAt { get; set; }
 
         public virtual Account IdNavigation { get; set; }
-        public virtual StudentCertification StudentCertification { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
         public virtual ICollection<SchoolRecord> SchoolRecords { get; set; }
+        public virtual ICollection<StudentCertification> StudentCertifications { get; set; }
     }
 }

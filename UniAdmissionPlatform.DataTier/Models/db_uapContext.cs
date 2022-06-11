@@ -41,6 +41,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<OrganizationType> OrganizationTypes { get; set; }
         public virtual DbSet<Participation> Participations { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
+        public virtual DbSet<Reason> Reasons { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<SchoolRecord> SchoolRecords { get; set; }
@@ -64,7 +65,11 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseMySQL("Server=13.215.17.178,3306;Initial Catalog=db_uap;User ID=admin;Password=adminuap123;Connection Timeout=30;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -90,6 +95,8 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Address)
                     .IsRequired()
                     .HasColumnType("tinytext");
+
+                entity.Property(e => e.EmailContact).HasColumnType("tinytext");
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
@@ -203,7 +210,9 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -235,9 +244,9 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.FileUrl).HasColumnType("tinytext");
-
-                entity.Property(e => e.HostName).IsRequired();
+                entity.Property(e => e.HostName)
+                    .IsRequired()
+                    .HasColumnType("tinytext");
 
                 entity.Property(e => e.MeetingUrl).HasColumnType("tinytext");
 
@@ -249,11 +258,9 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.Events)
                     .HasForeignKey(d => d.DistrictId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Event_District_Id_fk");
 
                 entity.HasOne(d => d.EventType)
@@ -370,9 +377,7 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -390,17 +395,13 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.ProfileImageUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.ProfileImageUrl).IsRequired();
 
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.ThumbnailUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.ThumbnailUrl).IsRequired();
 
                 entity.Property(e => e.WebsiteUrl)
                     .IsRequired()
@@ -487,9 +488,13 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("MajorGroup");
 
+                entity.Property(e => e.Description).IsRequired();
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("tinytext");
+
+                entity.Property(e => e.ThumbnailUrl).IsRequired();
             });
 
             modelBuilder.Entity<Nationality>(entity =>
@@ -510,8 +515,6 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
                     .HasColumnType("tinytext");
-
-                entity.Property(e => e.ThumbnailUrl).HasColumnType("tinytext");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
@@ -574,9 +577,7 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -676,6 +677,25 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasConstraintName("Province_Region_Id_fk");
             });
 
+            modelBuilder.Entity<Reason>(entity =>
+            {
+                entity.ToTable("Reason");
+
+                entity.HasIndex(e => e.HighSchoolId, "RejectReason_HighSchool_Id_fk");
+
+                entity.HasIndex(e => e.UniversityId, "RejectReason_University_Id_fk");
+
+                entity.HasOne(d => d.HighSchool)
+                    .WithMany(p => p.Reasons)
+                    .HasForeignKey(d => d.HighSchoolId)
+                    .HasConstraintName("RejectReason_HighSchool_Id_fk");
+
+                entity.HasOne(d => d.University)
+                    .WithMany(p => p.Reasons)
+                    .HasForeignKey(d => d.UniversityId)
+                    .HasConstraintName("RejectReason_University_Id_fk");
+            });
+
             modelBuilder.Entity<Region>(entity =>
             {
                 entity.ToTable("Region");
@@ -747,9 +767,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.Organization, "Speaker_Organization_Id_fk");
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -791,31 +809,25 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.ToTable("StudentCertification");
 
-                entity.HasIndex(e => e.CertificationId, "StudentCertification_CertificationId_uindex")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.StudentId, "StudentCertification_StudentId_uindex")
-                    .IsUnique();
+                entity.HasIndex(e => e.CertificationId, "StudentCertification_Certification_Id_fk");
 
                 entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.ImageUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.ImageUrl).IsRequired();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("tinytext");
 
                 entity.HasOne(d => d.Certification)
-                    .WithOne(p => p.StudentCertification)
-                    .HasForeignKey<StudentCertification>(d => d.CertificationId)
+                    .WithMany(p => p.StudentCertifications)
+                    .HasForeignKey(d => d.CertificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("StudentCertification_Certification_Id_fk");
 
                 entity.HasOne(d => d.Student)
-                    .WithOne(p => p.StudentCertification)
-                    .HasForeignKey<StudentCertification>(d => d.StudentId)
+                    .WithMany(p => p.StudentCertifications)
+                    .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("StudentCertification_Student_Id_fk");
             });
@@ -940,17 +952,13 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.ProfileImageUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.ProfileImageUrl).IsRequired();
 
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
                     .HasColumnType("tinytext");
 
-                entity.Property(e => e.ThumbnailUrl)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.ThumbnailUrl).IsRequired();
 
                 entity.Property(e => e.UniversityCode)
                     .IsRequired()
@@ -1015,6 +1023,8 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.MajorDepartmentId, "UniversityProgram_MajorDepartment_Id_fk");
 
+                entity.HasIndex(e => e.SchoolYearId, "UniversityProgram_SchoolYear_Id_fk");
+
                 entity.HasIndex(e => e.DeletedAt, "ix_university_program_deleted_at");
 
                 entity.Property(e => e.Description).IsRequired();
@@ -1028,6 +1038,12 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.MajorDepartmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("UniversityProgram_MajorDepartment_Id_fk");
+
+                entity.HasOne(d => d.SchoolYear)
+                    .WithMany(p => p.UniversityPrograms)
+                    .HasForeignKey(d => d.SchoolYearId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("UniversityProgram_SchoolYear_Id_fk");
             });
 
             modelBuilder.Entity<User>(entity =>

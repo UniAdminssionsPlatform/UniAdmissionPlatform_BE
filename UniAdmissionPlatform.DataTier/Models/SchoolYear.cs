@@ -11,6 +11,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             GoalAdmissions = new HashSet<GoalAdmission>();
             SchoolRecords = new HashSet<SchoolRecord>();
+            UniversityPrograms = new HashSet<UniversityProgram>();
         }
 
         public int Id { get; set; }
@@ -18,5 +19,6 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public virtual ICollection<GoalAdmission> GoalAdmissions { get; set; }
         public virtual ICollection<SchoolRecord> SchoolRecords { get; set; }
+        public virtual ICollection<UniversityProgram> UniversityPrograms { get; set; }
     }
 }

@@ -92,6 +92,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IProvinceService, ProvinceService>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
         
+            services.AddScoped<IReasonService, ReasonService>();
+            services.AddScoped<IReasonRepository, ReasonRepository>();
+        
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IRegionRepository, RegionRepository>();
         
