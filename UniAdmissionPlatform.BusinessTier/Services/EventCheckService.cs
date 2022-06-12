@@ -169,11 +169,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Buổi này đã bị đóng.");
                 }
-                
-                if (slot.Status == (int) SlotStatus.Full)
-                {
-                    throw new ErrorResponse(StatusCodes.Status400BadRequest, "Buổi này đã bị đầy lịch.");
-                }
             }
 
             var reasonEntity = new Reason
