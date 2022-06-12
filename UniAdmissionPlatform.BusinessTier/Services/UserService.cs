@@ -239,7 +239,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var user = await Get(u => u.Id == userId).Include(u => u.Account).FirstAsync();
             if (user.Status != (int)UserStatus.New)
             {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp hệ");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái người dùng không hợp lệ");
             }
 
             var mapper = _mapper.CreateMapper();

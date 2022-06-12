@@ -96,7 +96,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             var university = mapper.Map<University>(createUniversityRequest);
 
-            if (await Get().AnyAsync(u => u.UniversityCode == createUniversityRequest.UniversityCode))
+            if (await Get().AnyAsync(u => u.UniversityCode == createUniversityRequest.UniversityCode && u.DeletedAt == null))
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Mã của trường đại học đã tồn tại.");
@@ -111,7 +111,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var universityAccount = await Get().Where(au => au.Id == universityId).FirstOrDefaultAsync();
             if (universityAccount == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {universityId}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy university với id = {universityId}");
             }
             
             var mapper = _mapper.CreateMapper();

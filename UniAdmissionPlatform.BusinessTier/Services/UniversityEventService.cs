@@ -54,7 +54,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             if (eventByUni == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    $"Không tìm thấy sự kiện nào theo university với id ={eventByUni}");
+                    $"Không tìm thấy sự kiện nào theo university với university id ={universityId}");
             }
             return eventByUni;
         }

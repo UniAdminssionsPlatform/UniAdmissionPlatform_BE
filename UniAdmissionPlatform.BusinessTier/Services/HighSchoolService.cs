@@ -94,7 +94,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 .ProjectTo<GetHighSchoolBaseViewModel>(_mapper).FirstOrDefaultAsync();
             if (highSchoolProfile == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {highSchoolId}.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy trường cấp 3 id = {highSchoolId}.");
             }
             return highSchoolProfile;
         }
@@ -104,7 +104,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var highSchoolAccount = await Get().Where(a => a.Id == highSchoolId).FirstOrDefaultAsync();
             if (highSchoolAccount == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản với id = {highSchoolId}");
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy trường cấp 3 id = {highSchoolId}");
             }
             
             var mapper = _mapper.CreateMapper();

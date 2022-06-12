@@ -291,14 +291,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đóng!");
             }
-
-            if (slot.Status == (int) SlotStatus.Full)
-            {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đầy!");
-            }
-
+            
             var mapper = _mapper.CreateMapper();
             slot = mapper.Map(updateSlotRequest, slot);
+            
+            //todo: validate time
 
             await UpdateAsyn(slot);
         }

@@ -145,7 +145,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 if (schoolRecord.StudentRecordItems.All(sri => sri.SubjectId != subjectId))
                 {
-                    Console.WriteLine("debug");
                     schoolRecord.StudentRecordItems.Add(new StudentRecordItem
                     {
                         Subject = subjectGroup.SubjectGroupSubjects.First(sgs => sgs.SubjectId == subjectId).Subject
