@@ -99,12 +99,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             uniEvent = mapper.Map(updateEventRequest,uniEvent);
             
-            var checkDate = DateTime.Now.AddDays(7);
-            if (uniEvent.StartTime <= checkDate)
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    "Ngày diễn ra sự kiện phải lớn hơn ngày hôm nay 7 ngày!");
-            }
             
             if (uniEvent.StartTime >= uniEvent.EndTime)
             {
