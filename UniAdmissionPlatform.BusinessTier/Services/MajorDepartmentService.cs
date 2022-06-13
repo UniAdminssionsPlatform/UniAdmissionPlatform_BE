@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<MajorDepartmentBaseViewModel>> GetAllMajorDepartment(MajorDepartmentBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(m => m.DeletedAt == null)
                 .ProjectTo<MajorDepartmentBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);

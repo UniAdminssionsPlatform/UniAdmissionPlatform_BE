@@ -275,6 +275,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     "Buổi này đã bị đóng.");
             }
 
+            if (fullSlot.EndDate != null && fullSlot.StartDate >= fullSlot.EndDate)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Thời gian kết thúc trong slot phải lớn hơn thời gian bắt đầu");
+            }
+            
             fullSlot.Status = (int) SlotStatus.Full;
             await UpdateAsyn(fullSlot);
         }

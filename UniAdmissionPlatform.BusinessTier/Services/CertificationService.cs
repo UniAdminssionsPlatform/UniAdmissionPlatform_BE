@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -39,6 +40,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<CertificationBaseViewModel>> GetAllCertification(CertificationBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(c => c.DeletedAt == null)
                 .ProjectTo<CertificationBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -58,7 +60,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<CertificationBaseViewModel> GetCertificationById(int certificationId)
         {
-            var certification = await FirstOrDefaultAsyn(s => s.Id == certificationId);
+            var certification = await FirstOrDefaultAsyn(c => c.Id == certificationId && c.DeletedAt == null);
             if (certification == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chứng chỉ id = {certificationId}.");
@@ -78,7 +80,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task UpdateCertification(int certificationId, UpdateCertificationRequest updateCertificationRequest)
         {
-            var certification = await FirstOrDefaultAsyn(s => s.Id == certificationId);
+            var certification = await FirstOrDefaultAsyn(c => c.Id == certificationId && c.DeletedAt == null);
             if (certification == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chứng chỉ id = {certificationId}.");
@@ -91,7 +93,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task DeleteCertificationById(int certificationId)
         {
-            var certification = await FirstOrDefaultAsyn(s => s.Id == certificationId);
+            var certification = await FirstOrDefaultAsyn(c => c.Id == certificationId && c.DeletedAt == null);
             if (certification == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chứng chỉ id = {certificationId}.");
