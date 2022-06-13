@@ -61,6 +61,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<UniversityProgramBaseViewModel>> GetAllUniversityProgram(UniversityProgramBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(up => up.DeletedAt == null)
                 .ProjectTo<UniversityProgramBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -117,6 +118,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(u => u.DeletedAt == null)
                 .ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -136,7 +138,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(up => up.MajorDepartment.UniversityId == universityId).ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);;
+            var (total, queryable) = Get().Where(up => up.MajorDepartment.UniversityId == universityId && up.DeletedAt == null).ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);;
             
             if (sort != null)
             {

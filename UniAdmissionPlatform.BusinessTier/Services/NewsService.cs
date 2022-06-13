@@ -93,8 +93,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task SetIsPublish(int universityId, int newsId, bool isPublish)
         {
-            var news = await Get().FirstOrDefaultAsync(n => n.DeletedAt == null && n.Id == newsId &&
-                                                                           n.UniversityNews.Select(un => un.UniversityId).Contains(universityId));
+            var news = await Get()
+                .FirstOrDefaultAsync(n => n.DeletedAt == null && n.Id == newsId && n.UniversityNews.Select(un => un.UniversityId).Contains(universityId));
 
             if (news == null)
             {
@@ -109,7 +109,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<NewsBaseViewModel> GetNewsById(int newsId)
         {
-            var news = await Get().Where(n => n.Id == newsId).FirstOrDefaultAsync();
+            var news = await Get()
+                .Where(n => n.Id == newsId && n.DeletedAt == null)
+                .FirstOrDefaultAsync();
             if (news == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tin tức id = {newsId}.");
@@ -122,7 +124,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var news = _mapper.CreateMapper().Map<News>(createNewsRequest);
 
-            var tags = await _tagRepository.Get().Where(t => createNewsRequest.TagIds.Contains(t.Id) && t.DeletedAt == null)
+            var tags = await _tagRepository.Get()
+                .Where(t => createNewsRequest.TagIds.Contains(t.Id))
                 .ToListAsync();
             if (tags.Count != createNewsRequest.TagIds.Count)
             {
@@ -145,7 +148,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task UpdateNews(int newsId, UpdateNewsRequest updateNewsRequest)
         {
-            var news = await Get().Where(n => n.Id == newsId && n.DeletedAt == null).FirstOrDefaultAsync();
+            var news = await Get()
+                .Where(n => n.Id == newsId && n.DeletedAt == null)
+                .FirstOrDefaultAsync();
             if (news == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tin tức với id = {newsId}.");

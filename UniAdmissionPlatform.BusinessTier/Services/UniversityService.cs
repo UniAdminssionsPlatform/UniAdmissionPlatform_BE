@@ -39,7 +39,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<UniversityCodeViewModel> GetUniversityNameByCode(string universityCode)
         {
-            var university = await Get().ProjectTo<UniversityCodeViewModel>(_mapper).FirstOrDefaultAsync(u => u.UniversityCode == universityCode);
+            var university = await Get()
+                .Where(u => u.DeletedAt == null)
+                .ProjectTo<UniversityCodeViewModel>(_mapper).FirstOrDefaultAsync(u => u.UniversityCode == universityCode);
             if (university == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound,
@@ -57,7 +59,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             int statusU = 1; //status Active
             var (total, queryable) = Get
-                    (s => s.Status == statusU)
+                    (s => s.Status == statusU && s.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -79,7 +81,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId)
         {
             int statusU = 1; //status Active
-            var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU)
+            var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU && u.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
             if (universityById == null)
@@ -108,7 +110,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task UpdateUniversityProfile(int universityId, UpdateUniversityProfileRequest updateUniversityProfileRequest)
         {
-            var universityAccount = await Get().Where(au => au.Id == universityId).FirstOrDefaultAsync();
+            var universityAccount = await Get().Where(au => au.Id == universityId && au.DeletedAt == null).FirstOrDefaultAsync();
             if (universityAccount == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy university với id = {universityId}");
