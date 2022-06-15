@@ -37,8 +37,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(Tags = new[] { "Tags" })]
-        [Route("~/api/v{version:apiVersion}/[controller]")]
+        [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagRequest createTagRequest)
         {
             try
@@ -48,12 +48,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server is error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
@@ -71,8 +73,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpPut]
-        [SwaggerOperation(Tags = new[] { "Tags" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{tagId:int}")]
+        [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]/{tagId:int}")]
         public async Task<IActionResult> UpdateTag(int tagId, [FromBody] UpdateTagRequest updateTagRequest)
         {
             try
@@ -82,16 +84,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    case StatusCodes.Status404NotFound:
-                        // Business rule
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cập nhập thất bại. " + e.Error.Message);
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Update fail, because server is error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
@@ -121,12 +121,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server is error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tìm kiếm thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
@@ -144,8 +146,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpDelete]
-        [SwaggerOperation(Tags = new[] { "Tags" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{tagId:int}")]
+        [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
+        [Route("~/api/v{version:apiVersion}/admin/[controller]/{tagId:int}")]
         public async Task<IActionResult> DeleteATag(int tagId)
         {
             try
@@ -155,16 +157,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
             catch (ErrorResponse e)
             {
-                switch (e.Error.Code)
+                throw e.Error.Code switch
                 {
-                    case StatusCodes.Status404NotFound:
-                        // Business rule
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Xóa thất bại. " + e.Error.Message);
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Delete fail, because server is error");
-                }
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Xóa thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Xóa thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
         
