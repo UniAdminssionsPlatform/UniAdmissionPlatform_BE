@@ -111,7 +111,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             eventCheck.Status = (int)EventCheckStatus.Approved;
             eventCheck.UpdatedAt = DateTime.Now;
-            eventCheck.Event.Status = (int)EventStatus.OnGoing;
             await UpdateAsyn(eventCheck);
 
             BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>

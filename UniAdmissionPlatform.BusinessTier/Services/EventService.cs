@@ -110,7 +110,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 }
             }
 
-            @event = await FirstOrDefaultAsyn(e => e.Id == eventId);
+            @event = await Get().Include(e => e.EventChecks).FirstOrDefaultAsync(e => e.Id == eventId);
 
             if (isPublish && @event.Status != (int) EventStatus.Init)
             {
@@ -122,9 +122,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái sự kiện không hợp lệ.");
             }
 
-            if (isPublish && @event.EventTypeId != 2)
+            if (isPublish && @event.EventTypeId != 2 && !@event.EventChecks.Any())
             {
-                
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event này chưa được tổ chức tại bất kì trường nào");
             }
 
             @event.Status = (int)EventStatus.OnGoing;
@@ -209,6 +209,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 .Include(e => e.EventChecks)
                 .ThenInclude(ec => ec.Slot)
                 .FirstOrDefaultAsync();
+            if (uniEvent.EventTypeId != 2)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Loại sự kiện không hợp lệ.");
+            }
+            
             if (uniEvent == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
