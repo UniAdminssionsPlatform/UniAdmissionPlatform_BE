@@ -11,8 +11,6 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? GoalAdmissionTypeId { get; set; }
         [String]
         public string TargetStudent { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
+        
     }
 }
