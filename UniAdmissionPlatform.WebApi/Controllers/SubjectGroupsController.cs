@@ -237,43 +237,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
 
-        /// <summary>
-        /// Get scores by subject group id
-        /// </summary>
-        /// <response code="200">
-        /// Get scores by subject group id successfully
-        /// </response>
-        /// <response code="400">
-        /// Get scores by subject group id fail
-        /// </response>
-        /// <response code="401">
-        /// No Login
-        /// </response>
-        /// <returns></returns>
-        [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Student - Subject Groups" })]
-        [Route("~/api/v{version:apiVersion}/student/subject-groups/{id:int}/get-score")]
-        public IActionResult GetScoreOfStudent(int id, int schoolYearId)
-        {
-            var userId = _authService.GetUserId(HttpContext);
-            try
-            {
-                var schoolRecord = _subjectGroupService.GetScoreOfStudent(id, schoolYearId, userId);
-                return Ok(schoolRecord);
-            }
-            catch (ErrorResponse e)
-            {
-                switch (e.Error.Code)
-                {
-                    case StatusCodes.Status404NotFound:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Thất bại. " + e.Error.Message);
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            e.Error.Message);
-                }
-            }
-        }
+        
 
     }
 }

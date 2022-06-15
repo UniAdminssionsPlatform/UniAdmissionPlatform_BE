@@ -295,6 +295,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Get scores by school record id
+        /// </summary>
+        /// <response code="200">
+        /// Get scores by school record id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get scores by school record id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - School Records" })]
+        [Route("~/api/v{version:apiVersion}/student/school-record/{id:int}/get-score")]
+        public async Task<IActionResult> GetScoreOfStudent(int id)
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            try
+            {
+                var schoolRecord = await _schoolRecordService.GetByIdAndStudentId(id, userId);
+                return Ok(MyResponse<SchoolRecordWithStudentRecordItemModel>.OkWithDetail(schoolRecord, "Đạt được thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            e.Error.Message);
+                }
+            }
+        }
 
     }
 }

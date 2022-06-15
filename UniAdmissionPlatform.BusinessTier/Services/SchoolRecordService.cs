@@ -31,6 +31,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteSchoolRecordById(int schoolRecordId, int studentId);
         byte[] GetImportSchoolRecordExcel();
         Task<int> ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file);
+        Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int id, int studentId = 0);
     }
 
     public partial class SchoolRecordService
@@ -75,6 +76,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<int> CreateSchoolRecord(int studentId, CreateSchoolRecordRequest createSchoolRecordRequest)
         {
+            if (Get().Any(sr => sr.StudentId == studentId && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId))
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Đã tồn tại học bạ của năm này.");
+            }
             var schoolRecord = _mapper.CreateMapper().Map<SchoolRecord>(createSchoolRecordRequest);
             schoolRecord.StudentId = studentId;
 
@@ -282,6 +287,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await CreateAsyn(newSchoolRecord);
 
             return newSchoolRecord.Id;
+        }
+
+        public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int id, int studentId = 0)
+        {
+            var schoolRecord = await Get().Where(sr => sr.Id == id && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
+            if (schoolRecord == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không thể tìm thấy học bạ.");
+            }
+
+            return schoolRecord;
         }
 
         private Dictionary<string, double> ReadPointFromExcel(ExcelWorksheet worksheet)

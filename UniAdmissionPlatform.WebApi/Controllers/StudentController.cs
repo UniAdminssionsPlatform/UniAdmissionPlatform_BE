@@ -20,9 +20,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IStudentCertificationService _studentStudentCertificationService;
         private readonly IAuthService _authService;
         private readonly IStudentRecordItemService _studentRecordItemService;
-        
 
-        public StudentController(IStudentCertificationService studentStudentCertificationService, IAuthService authService,IStudentRecordItemService studentRecordItemService)
+
+        public StudentController(IStudentCertificationService studentStudentCertificationService,
+            IAuthService authService, IStudentRecordItemService studentRecordItemService)
         {
             _studentStudentCertificationService = studentStudentCertificationService;
             _authService = authService;
@@ -45,12 +46,15 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications")]
-        public async Task<IActionResult> GetAllStudentCertification([FromQuery] StudentCertificationBaseViewModel filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetAllStudentCertification(
+            [FromQuery] StudentCertificationBaseViewModel filter, string sort, int page, int limit)
         {
             try
             {
-                var allStudentCertification = await _studentStudentCertificationService.GetAllStudentCertification(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<StudentCertificationBaseViewModel>>.OkWithDetail(allStudentCertification, $"Đạt được thành công"));
+                var allStudentCertification =
+                    await _studentStudentCertificationService.GetAllStudentCertification(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<StudentCertificationBaseViewModel>>.OkWithDetail(
+                    allStudentCertification, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
@@ -87,7 +91,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
 
             try
             {
-                var studentCertification = await _studentStudentCertificationService.GetStudentCertificationById(certificationId, userId);
+                var studentCertification =
+                    await _studentStudentCertificationService.GetStudentCertificationById(certificationId, userId);
                 return Ok(MyResponse<StudentCertificationBaseViewModel>.OkWithDetail(studentCertification,
                     "Đạt được thành công."));
             }
@@ -118,13 +123,17 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications")]
-        public async Task<IActionResult> CreateStudentCertification([FromBody] CreateStudentCertificationRequest createStudentCertificationRequest)
+        public async Task<IActionResult> CreateStudentCertification(
+            [FromBody] CreateStudentCertificationRequest createStudentCertificationRequest)
         {
             var studentId = _authService.GetUserId(HttpContext);
             try
             {
-                var studentStudentCertificationId = await _studentStudentCertificationService.CreateStudentCertification(studentId, createStudentCertificationRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new {studentStudentCertificationId}, $"Tạo chứng chỉ thành công với id = {studentStudentCertificationId}"));
+                var studentStudentCertificationId =
+                    await _studentStudentCertificationService.CreateStudentCertification(studentId,
+                        createStudentCertificationRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new { studentStudentCertificationId },
+                    $"Tạo chứng chỉ thành công với id = {studentStudentCertificationId}"));
             }
             catch (ErrorResponse e)
             {
@@ -155,11 +164,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications/{studentId:int}")]
-        public async Task<IActionResult> UpdateStudentCertification(int studentId, int certificationId, [FromBody] UpdateStudentCertificationRequest updateStudentCertificationRequest)
+        public async Task<IActionResult> UpdateStudentCertification(int studentId, int certificationId,
+            [FromBody] UpdateStudentCertificationRequest updateStudentCertificationRequest)
         {
             try
             {
-                await _studentStudentCertificationService.UpdateStudentCertification(studentId, certificationId, updateStudentCertificationRequest);
+                await _studentStudentCertificationService.UpdateStudentCertification(studentId, certificationId,
+                    updateStudentCertificationRequest);
                 return Ok(MyResponse<object>.OkWithMessage($"Cập nhập thành công chứng chỉ id = {certificationId}."));
             }
             catch (ErrorResponse e)
@@ -210,7 +221,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         /// <summary>
         /// Get list student record items
         /// </summary>
@@ -227,12 +238,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
-        public async Task<IActionResult> GetAllStudentRecordItem([FromQuery] StudentRecordItemBaseViewModel filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetAllStudentRecordItem([FromQuery] StudentRecordItemBaseViewModel filter,
+            string sort, int page, int limit)
         {
+            var userId = _authService.GetUserId(HttpContext);
             try
             {
-                var allStudentRecordItem = await _studentRecordItemService.GetAllStudentRecordItem(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<StudentRecordItemBaseViewModel>>.OkWithDetail(allStudentRecordItem, $"Đạt được thành công"));
+                var allStudentRecordItem =
+                    await _studentRecordItemService.GetAllStudentRecordItem(filter, userId, sort, page, limit);
+                return Ok(MyResponse<PageResult<StudentRecordItemBaseViewModel>>.OkWithDetail(allStudentRecordItem,
+                    $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
@@ -246,7 +261,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         /// <summary>
         /// Get student record items by iD
         /// </summary>
@@ -267,8 +282,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                var studentRecordItemById = await _studentRecordItemService.GetStudentRecordItemById(studentRecordItemId);
-                return Ok(MyResponse<StudentRecordItemBaseViewModel>.OkWithDetail(studentRecordItemById, "Truy cập thành công!"));
+                var studentRecordItemById =
+                    await _studentRecordItemService.GetStudentRecordItemById(studentRecordItemId);
+                return Ok(MyResponse<StudentRecordItemBaseViewModel>.OkWithDetail(studentRecordItemById,
+                    "Truy cập thành công!"));
             }
             catch (ErrorResponse e)
             {
@@ -282,7 +299,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         /// <summary>
         /// Create a new student record item
         /// </summary>
@@ -299,13 +316,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
-        public async Task<IActionResult> CreateStudentRecordItem([FromBody] CreateStudentRecordItemRequest createStudentRecordItemRequest)
+        public async Task<IActionResult> CreateStudentRecordItem(
+            [FromBody] CreateStudentRecordItemRequest createStudentRecordItemRequest)
         {
             var userId = _authService.GetUserId(HttpContext);
             try
             {
-                var studentRecordItem = await _studentRecordItemService.CreateStudentRecordItem(createStudentRecordItemRequest, userId);
-                return Ok(MyResponse<object>.OkWithDetail(new {studentRecordItem}, $"Tạo thông tin điểm thành công với id = {studentRecordItem}"));
+                var studentRecordItem =
+                    await _studentRecordItemService.CreateStudentRecordItem(createStudentRecordItemRequest, userId);
+                return Ok(MyResponse<object>.OkWithDetail(new { studentRecordItem },
+                    $"Tạo thông tin điểm thành công với id = {studentRecordItem}"));
             }
             catch (ErrorResponse e)
             {
@@ -319,7 +339,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         /// <summary>
         /// Update a student record item
         /// </summary>
@@ -336,12 +356,15 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
-        public async Task<IActionResult> UpdateStudentRecordItem(int studentRecordItemId, [FromBody] UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
+        public async Task<IActionResult> UpdateStudentRecordItem(int studentRecordItemId,
+            [FromBody] UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
         {
             try
             {
-                await _studentRecordItemService.UpdateStudentRecordItem(studentRecordItemId, updateStudentRecordItemRequest);
-                return Ok(MyResponse<object>.OkWithMessage($"Cập nhập thành công thông tin điểm id = {studentRecordItemId}."));
+                await _studentRecordItemService.UpdateStudentRecordItem(studentRecordItemId,
+                    updateStudentRecordItemRequest);
+                return Ok(MyResponse<object>.OkWithMessage(
+                    $"Cập nhập thành công thông tin điểm id = {studentRecordItemId}."));
             }
             catch (ErrorResponse e)
             {
@@ -355,6 +378,5 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
     }
 }

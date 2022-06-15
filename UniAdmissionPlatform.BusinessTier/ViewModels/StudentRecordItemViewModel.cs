@@ -1,4 +1,6 @@
-﻿namespace UniAdmissionPlatform.BusinessTier.ViewModels
+﻿using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
+
+namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
     public class StudentRecordItemBaseModel
     {

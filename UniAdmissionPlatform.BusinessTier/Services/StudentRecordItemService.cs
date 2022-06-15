@@ -20,7 +20,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IStudentRecordItemService
     {
-        Task<PageResult<StudentRecordItemBaseViewModel>> GetAllStudentRecordItem(StudentRecordItemBaseViewModel filter, string sort, int page, int limit);
+        Task<PageResult<StudentRecordItemBaseViewModel>> GetAllStudentRecordItem(StudentRecordItemBaseViewModel filter,
+            int? studentId, string sort, int page, int limit);
 
         Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest,
             int studentId = 0);
@@ -42,9 +43,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<StudentRecordItemBaseViewModel>> GetAllStudentRecordItem(StudentRecordItemBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<StudentRecordItemBaseViewModel>> GetAllStudentRecordItem(StudentRecordItemBaseViewModel filter, int? studentId,string sort, int page, int limit)
         {
             var (total, queryable) = Get()
+                .Where(sri => studentId == null || sri.SchoolRecord.StudentId == studentId)
                 .ProjectTo<StudentRecordItemBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
