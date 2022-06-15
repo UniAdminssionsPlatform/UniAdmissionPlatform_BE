@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.Internal.Mappers;
 using AutoMapper.QueryableExtensions;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +55,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest)
         {
+            if (createEventRequest.EventTypeId == 1)
+            {
+                var errors = new StringBuilder();
+                if (string.IsNullOrWhiteSpace(createEventRequest.MeetingUrl))
+                {
+                    errors.Append("Sự kiện online phải có link meet.").Append("/n");
+                }
+
+                if (errors.Length != 0)
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest, errors.ToString());
+                }
+            }
             
             var mapper = _mapper.CreateMapper();
             var uniEvent = mapper.Map<Event>(createEventRequest);
@@ -74,11 +89,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Ngày kết thúc sự kiện phải lớn hơn ngày diễn ra sự kiện!");
-            }
-
-            if (uniEvent.EventTypeId == 2)
-            {
-                
             }
             
             
