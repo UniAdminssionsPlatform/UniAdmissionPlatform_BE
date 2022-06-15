@@ -5,6 +5,7 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Google.Apis.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
@@ -20,17 +21,21 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IStudentRecordItemService
     {
         Task<PageResult<StudentRecordItemBaseViewModel>> GetAllStudentRecordItem(StudentRecordItemBaseViewModel filter, string sort, int page, int limit);
-        Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest);
+
+        Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest,
+            int studentId = 0);
         Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest);
         Task<StudentRecordItemBaseViewModel> GetStudentRecordItemById(int studentRecordItemId);
     }
     public partial class StudentRecordItemService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly ISchoolRecordRepository _schoolRecordRepository;
 
-        public StudentRecordItemService(IUnitOfWork unitOfWork, IStudentRecordItemRepository repository, IMapper mapper) : base(unitOfWork,
+        public StudentRecordItemService(IUnitOfWork unitOfWork, IStudentRecordItemRepository repository, IMapper mapper, ISchoolRecordRepository schoolRecordRepository) : base(unitOfWork,
             repository)
         {
+            _schoolRecordRepository = schoolRecordRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -58,8 +63,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         }
         
 
-        public async Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest)
+        public async Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest, int studentId = 0)
         {
+            if (studentId != 0 && !await _schoolRecordRepository.Get()
+                    .Where(sr => sr.StudentId == studentId && sr.Id == createStudentRecordItemRequest.SchoolRecordId)
+                    .AnyAsync())
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy học bạ.");
+            }
+            
             var studentRecordItem = _mapper.CreateMapper().Map<StudentRecordItem>(createStudentRecordItemRequest);
 
             await CreateAsyn(studentRecordItem);

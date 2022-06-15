@@ -301,9 +301,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
         public async Task<IActionResult> CreateStudentRecordItem([FromBody] CreateStudentRecordItemRequest createStudentRecordItemRequest)
         {
+            var userId = _authService.GetUserId(HttpContext);
             try
             {
-                var studentRecordItem = await _studentRecordItemService.CreateStudentRecordItem(createStudentRecordItemRequest);
+                var studentRecordItem = await _studentRecordItemService.CreateStudentRecordItem(createStudentRecordItemRequest, userId);
                 return Ok(MyResponse<object>.OkWithDetail(new {studentRecordItem}, $"Tạo thông tin điểm thành công với id = {studentRecordItem}"));
             }
             catch (ErrorResponse e)
