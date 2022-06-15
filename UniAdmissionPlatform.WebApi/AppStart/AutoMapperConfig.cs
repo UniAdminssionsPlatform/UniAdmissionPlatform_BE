@@ -43,6 +43,8 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigSchoolRecordMapperModule();
                     mc.ConfigStudentRecordItemMapperModule();
                     mc.ConfigSchoolYearMapperModule();
+                    mc.ConfigGoalAdmissionMapperModule();
+                    mc.ConfigGoalAdmissionTypeMapperModule();
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);

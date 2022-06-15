@@ -103,7 +103,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<TagBaseViewModel> GetTagById(int tagId)
         {
-            var tagById = await Get().Where(p => p.Id == tagId)
+            var tagById = await Get().Where(t => t.Id == tagId && t.DeletedAt == null)
                 .ProjectTo<TagBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
             if (tagById == null)
