@@ -9,6 +9,7 @@ using AutoMapper.QueryableExtensions;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -24,6 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IEventService
     {
         Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest);
+        Task PublishEvent(int eventId, bool isPublish, int universityId = 0);
         Task UpdateEvent(int id, UpdateEventRequest updateEventRequest);
         Task DeleteEvent(int id);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
@@ -76,15 +78,48 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (uniEvent.EventTypeId == 2)
             {
-                uniEvent.Status = (int)EventStatus.Init;
+                
             }
-            else
-            {
-                uniEvent.Status = (int)EventStatus.OnGoing;
-            }
+            
+            
+            uniEvent.Status = (int)EventStatus.Init;
 
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
+        }
+
+        public async Task PublishEvent(int eventId, bool isPublish, int universityId = 0)
+        {
+            Event @event = null;
+            if (universityId != 0)
+            {
+                @event = await Get().Where(e => e.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId) && e.Id == eventId).FirstOrDefaultAsync();
+                if (@event == null)
+                {
+                    throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy sự kiện.");
+                }
+            }
+
+            @event = await FirstOrDefaultAsyn(e => e.Id == eventId);
+
+            if (isPublish && @event.Status != (int) EventStatus.Init)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái sự kiện không hợp lệ.");
+            }
+
+            if (!isPublish && @event.Status != (int) EventStatus.OnGoing)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái sự kiện không hợp lệ.");
+            }
+
+            if (isPublish && @event.EventTypeId != 2)
+            {
+                
+            }
+
+            @event.Status = (int)EventStatus.OnGoing;
+
+            await UpdateAsyn(@event);
         }
 
 

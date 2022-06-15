@@ -68,7 +68,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
+        /// <summary>
+        /// Set publish for event
+        /// </summary>
+        /// <response code="200">
+        ///Set publish for event successfully
+        /// </response>
+        /// <response code="400">
+        ///Set publish for event fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/set-publish")]
+        public async Task<IActionResult> SetPublishEventForAdminUniversity(PublishEventRequest publishEventRequest)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                await _eventService.PublishEvent(publishEventRequest.EventId, publishEventRequest.IsPublish, universityId);
+                return Ok(MyResponse<object>.OkWithMessage("Cập nhập sự kiện thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập sự kiện thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+
         /// <summary>
         /// Update a new event
         /// </summary>
