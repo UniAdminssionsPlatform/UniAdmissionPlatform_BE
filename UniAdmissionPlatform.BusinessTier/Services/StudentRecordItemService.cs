@@ -25,7 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task<int> CreateStudentRecordItem(CreateStudentRecordItemRequest createStudentRecordItemRequest,
             int studentId = 0);
-        Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest);
+        Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest, int studentId = 0);
         Task<StudentRecordItemBaseViewModel> GetStudentRecordItemById(int studentRecordItemId);
     }
     public partial class StudentRecordItemService
@@ -80,8 +80,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return studentRecordItem.Id;
         }
 
-        public async Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
+        public async Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest, int studentId)
         {
+            var sr = await _schoolRecordRepository
+                .Get()
+                .Where(sr => sr.Id == updateStudentRecordItemRequest.SchoolRecordId)
+                .FirstOrDefaultAsync();
+            if (sr.StudentId != studentId)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy học bạ.");
+            }
+            
             var studentRecordItem = await FirstOrDefaultAsyn(s => s.Id == studentRecordItemId);
             if (studentRecordItem == null)
             {
