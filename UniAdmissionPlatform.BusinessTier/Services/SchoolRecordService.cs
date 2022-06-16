@@ -290,9 +290,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return newSchoolRecord.Id;
         }
 
-        public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int schoolYear, int studentId = 0)
+        public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int schoolYearId, int studentId = 0)
         {
-            var schoolRecord = await Get().Where(sr => sr.SchoolYear.Year == schoolYear && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
+            var schoolRecord = await Get().Where(sr => sr.SchoolYearId == schoolYearId && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không thể tìm thấy học bạ.");
