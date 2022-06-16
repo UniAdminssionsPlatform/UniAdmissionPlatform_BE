@@ -37,7 +37,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
         
-        private const int LimitPaging = 50;
+        private const int LimitPaging = 500;
         private const int DefaultPaging = 10;
 
         public async Task<PageResult<SubjectBaseViewModel>> GetAllSubject(SubjectBaseViewModel filter, string sort, int page, int limit)
