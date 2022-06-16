@@ -16,7 +16,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
         public static void InitCronJobVoid(this IServiceCollection services)
         {
             services.AddTransient<IRecurringJobService, RecurringJobService>();
-            RecurringJob.AddOrUpdate<IRecurringJobService>("close-event", rjs => rjs.CloseEventAutomatic(), "5 0 0 ? * *	");
+            RecurringJob.AddOrUpdate<IRecurringJobService>("close-event", rjs => rjs.CloseEventAutomatic(), "0 0 0 * * ?	");
         }
     }
 }

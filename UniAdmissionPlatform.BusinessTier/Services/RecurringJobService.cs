@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -23,9 +25,9 @@ namespace UniAdmissionPlatform.BusinessTier.Services
 
         public Task CloseEventAutomatic()
         {
-            var events = _dbUapContext.Events.Where(e => e.EndTime != null && e.EndTime < DateTime.Now).ToList();
+            var events = _dbUapContext.Events.Where(e => e.EndTime != null && e.EndTime < DateTime.Now && e.Status != (int)EventStatus.Done && e.DeletedAt == null).ToList();
             events.ForEach(e => e.Status = (int)EventStatus.Done);
-             return _dbUapContext.SaveChangesAsync();
+            return _dbUapContext.SaveChangesAsync();
         }
     }
 }
