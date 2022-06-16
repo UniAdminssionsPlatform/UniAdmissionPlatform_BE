@@ -359,10 +359,11 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public async Task<IActionResult> UpdateStudentRecordItem(int studentRecordItemId,
             [FromBody] UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
         {
+            var studentId = _authService.GetUserId(HttpContext);
             try
             {
                 await _studentRecordItemService.UpdateStudentRecordItem(studentRecordItemId,
-                    updateStudentRecordItemRequest);
+                    updateStudentRecordItemRequest, studentId);
                 return Ok(MyResponse<object>.OkWithMessage(
                     $"Cập nhập thành công thông tin điểm id = {studentRecordItemId}."));
             }
