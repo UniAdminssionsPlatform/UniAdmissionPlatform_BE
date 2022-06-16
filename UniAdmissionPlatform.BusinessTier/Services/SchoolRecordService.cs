@@ -24,14 +24,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface ISchoolRecordService
     {
         Task<PageResult<SchoolRecordBaseViewModel>> GetAllSchoolRecord(SchoolRecordBaseViewModel filter, string sort,
-            int page, int limit);
+            int page, int limit, int studentId = 0);
 
         Task<int> CreateSchoolRecord(int studentId, CreateSchoolRecordRequest createSchoolRecordRequest);
         Task UpdateSchoolRecord(int schoolRecordId, int studentId, UpdateSchoolRecordRequest updateSchoolRecordRequest);
         Task DeleteSchoolRecordById(int schoolRecordId, int studentId);
         byte[] GetImportSchoolRecordExcel();
         Task<int> ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file);
-        Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int id, int studentId = 0);
+        Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int schoolYear, int studentId = 0);
     }
 
     public partial class SchoolRecordService
@@ -53,9 +53,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int DefaultPaging = 10;
 
         public async Task<PageResult<SchoolRecordBaseViewModel>> GetAllSchoolRecord(SchoolRecordBaseViewModel filter,
-            string sort, int page, int limit)
+            string sort, int page, int limit, int studentId = 0)
         {
             var (total, queryable) = Get()
+                .Where(sr => studentId == 0 || sr.StudentId == studentId)
                 .ProjectTo<SchoolRecordBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -289,9 +290,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return newSchoolRecord.Id;
         }
 
-        public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int id, int studentId = 0)
+        public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int schoolYear, int studentId = 0)
         {
-            var schoolRecord = await Get().Where(sr => sr.Id == id && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
+            var schoolRecord = await Get().Where(sr => sr.SchoolYear.Year == schoolYear && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không thể tìm thấy học bạ.");

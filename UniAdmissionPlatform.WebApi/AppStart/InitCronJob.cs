@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.DataTier.Models;
 using UniAdmissionPlatform.WebApi.Helpers;
@@ -14,7 +15,8 @@ namespace UniAdmissionPlatform.WebApi.AppStart
     {
         public static void InitCronJobVoid(this IServiceCollection services)
         {
-            RecurringJob.AddOrUpdate<IRecurringJobService>("close-event", rjs => rjs.CloseEventAutomatic(), "0 * * ? * *	");
+            services.AddTransient<IRecurringJobService, RecurringJobService>();
+            RecurringJob.AddOrUpdate<IRecurringJobService>("close-event", rjs => rjs.CloseEventAutomatic(), "5 0 0 ? * *	");
         }
     }
 }

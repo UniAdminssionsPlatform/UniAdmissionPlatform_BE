@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Services
 {
@@ -11,18 +14,18 @@ namespace UniAdmissionPlatform.BusinessTier.Services
     }
     public class RecurringJobService : IRecurringJobService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly db_uapContext _dbUapContext;
 
-        public RecurringJobService(IServiceProvider serviceProvider)
+        public RecurringJobService(db_uapContext dbUapContext)
         {
-            _serviceProvider = serviceProvider;
+            _dbUapContext = dbUapContext;
         }
 
         public Task CloseEventAutomatic()
         {
-            using var scope = _serviceProvider.CreateScope();
-            var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
-            return eventService.CloseEvent();
+            var events = _dbUapContext.Events.Where(e => e.EndTime != null && e.EndTime < DateTime.Now).ToList();
+            events.ForEach(e => e.Status = (int)EventStatus.Done);
+             return _dbUapContext.SaveChangesAsync();
         }
     }
 }

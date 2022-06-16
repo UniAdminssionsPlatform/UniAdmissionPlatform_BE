@@ -311,13 +311,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
-        [Route("~/api/v{version:apiVersion}/student/school-record/{id:int}/get-score")]
-        public async Task<IActionResult> GetScoreOfStudent(int id)
+        [Route("~/api/v{version:apiVersion}/student/school-record/get-score")]
+        public async Task<IActionResult> GetScoreOfStudent(int schoolYear)
         {
             var userId = _authService.GetUserId(HttpContext);
             try
             {
-                var schoolRecord = await _schoolRecordService.GetByIdAndStudentId(id, userId);
+                var schoolRecord = await _schoolRecordService.GetByIdAndStudentId(schoolYear, userId);
                 return Ok(MyResponse<SchoolRecordWithStudentRecordItemModel>.OkWithDetail(schoolRecord, "Đạt được thành công."));
             }
             catch (ErrorResponse e)
