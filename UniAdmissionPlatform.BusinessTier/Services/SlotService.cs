@@ -286,7 +286,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest)
         {
-            var checkDate = DateTime.Now.AddDays(7);
             var slot = await Get().Where(s => s.Id == slotId).FirstOrDefaultAsync();
             
             if (slot == null)
@@ -299,11 +298,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đóng!");
             }
             
-            if (slot.StartDate <= checkDate)
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    "Ngày tạo slot phải lớn hơn ngày hôm nay 7 ngày!");
-            }
+            // var checkDate = DateTime.Now.AddDays(7);
+            // if (slot.StartDate <= checkDate)
+            // {
+            //     throw new ErrorResponse(StatusCodes.Status400BadRequest,
+            //         "Ngày tạo slot phải lớn hơn ngày hôm nay 7 ngày!");
+            // }
             
             if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
             {
