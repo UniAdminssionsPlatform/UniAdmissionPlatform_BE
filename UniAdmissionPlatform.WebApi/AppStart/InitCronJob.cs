@@ -17,6 +17,8 @@ namespace UniAdmissionPlatform.WebApi.AppStart
         {
             services.AddTransient<IRecurringJobService, RecurringJobService>();
             RecurringJob.AddOrUpdate<IRecurringJobService>("close-event", rjs => rjs.CloseEventAutomatic(), "0 0 0 * * ?	");
+            RecurringJob.AddOrUpdate<IRecurringJobService>("close-slot", rjs => rjs.CloseSlotAutomatic(), "0 0 0 * * ?	");
+            
         }
     }
 }
