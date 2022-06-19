@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.University;
@@ -57,7 +58,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit)
         {
-            int statusU = 1; //status Active
+            var statusU = (int)UniversityStatus.Active; //status Active
             var (total, queryable) = Get
                     (s => s.Status == statusU && s.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper)
@@ -80,7 +81,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId)
         {
-            int statusU = 1; //status Active
+            var statusU = (int)UniversityStatus.Active; //status Active
             var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU && u.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
