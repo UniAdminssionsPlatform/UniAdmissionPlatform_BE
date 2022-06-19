@@ -14,6 +14,5 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.StudentRecordItem
         public int Id { get; set; }
         [Range(0, 10)]
         public float? Score { get; set; }
-        public int? SubjectId { get; set; }
     }
 }

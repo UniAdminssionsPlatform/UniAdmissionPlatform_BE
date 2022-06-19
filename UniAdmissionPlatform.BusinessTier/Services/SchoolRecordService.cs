@@ -100,23 +100,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             if (updateSchoolRecordRequest.RecordItems != null)
             {
-                if (updateSchoolRecordRequest.RecordItems.NewList != null && updateSchoolRecordRequest.RecordItems.UpdateList != null)
-                {
-                    foreach (var createStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.NewList)
-                    {
-                        foreach (var updateStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.UpdateList)
-                        {
-                            if (createStudentRecordItemBase.SubjectId == updateStudentRecordItemBase.SubjectId)
-                            {
-                                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                                    "Không thể thêm môn học đã tồn tại trong học bạ.");
-                            }
-                        }
-                    }
-                }
-                
-                
-                
                 if (updateSchoolRecordRequest.RecordItems.NewList != null)
                 {
                     foreach (var schoolRecordStudentRecordItem in schoolRecord.StudentRecordItems)
@@ -129,23 +112,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                         }
                     }
                 }
-                
-                
-
-                if (updateSchoolRecordRequest.RecordItems.UpdateList != null)
-                {
-                    foreach (var updateStudentRecordItemBase in updateSchoolRecordRequest.RecordItems.UpdateList)
-                    {
-                        var schoolRecordStudentRecordItems = schoolRecord.StudentRecordItems;
-                        if (!schoolRecordStudentRecordItems.Select(usrr => usrr.Id).Contains(updateStudentRecordItemBase.Id))
-                        {
-                            throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                                "Không thể cập nhập môn học không tồn tại trong học bạ.");
-                        }
-                    }
-                }
-                
-                
             }
             var mapper = _mapper.CreateMapper();
             
@@ -170,7 +136,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                         {
                             if (schoolRecordStudentRecordItem.Id == studentRecordItem.Id)
                             {
-                                schoolRecordStudentRecordItem.SubjectId = studentRecordItem.SubjectId;
                                 schoolRecordStudentRecordItem.Score = studentRecordItem.Score;
                             }
                         }
