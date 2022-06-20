@@ -4,6 +4,6 @@
     {
         Pending,
         Approved,
-        Reject
+        Rejected
     }
 }

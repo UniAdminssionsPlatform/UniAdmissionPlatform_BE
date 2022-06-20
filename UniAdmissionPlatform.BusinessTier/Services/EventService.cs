@@ -224,7 +224,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var ec = uniEvent.EventChecks.FirstOrDefault(ec => ec.SlotId == bookSlotForUniAdminRequest.SlotId);
 
              
-            if (ec != null && ec.Status != (int) EventCheckStatus.Reject)
+            if (ec != null && ec.Status != (int) EventCheckStatus.Rejected)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event của bạn đã được book ở slot này.");
             }

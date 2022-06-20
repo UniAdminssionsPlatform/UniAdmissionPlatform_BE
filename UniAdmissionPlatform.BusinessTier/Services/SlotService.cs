@@ -248,7 +248,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             slot.Status = (int) SlotStatus.Close;
             foreach (var eventCheck in slot.EventChecks)
             {
-                eventCheck.Status = (int) EventCheckStatus.Reject;
+                eventCheck.Status = (int) EventCheckStatus.Rejected;
                 //todo: send notification to university
             }
 
@@ -263,23 +263,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy slot với id = {id}");
             }
 
-            if (fullSlot.Status == (int) SlotStatus.Full)
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest,
-                    "Buổi này đã bị đầy.");
-            }
-
             if (fullSlot.Status == (int) SlotStatus.Close)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này đã bị đóng.");
             }
 
-            if (fullSlot.EndDate != null && fullSlot.StartDate >= fullSlot.EndDate)
-            {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Thời gian kết thúc trong slot phải lớn hơn thời gian bắt đầu");
-            }
-            
             fullSlot.Status = (int) SlotStatus.Full;
             await UpdateAsyn(fullSlot);
         }

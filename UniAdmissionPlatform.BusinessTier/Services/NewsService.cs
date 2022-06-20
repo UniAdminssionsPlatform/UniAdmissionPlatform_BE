@@ -165,12 +165,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task DeleteNewsById(int newsId)
         {
-            var news = await Get().Where(n => n.Id == newsId && n.DeletedAt == null).FirstOrDefaultAsync();
+            var news = await Get()
+                .Where(n => n.Id == newsId && n.DeletedAt == null)
+                .Include(n => n.NewsMajors)
+                .Include(n => n.NewsTags).FirstOrDefaultAsync();
+            
             if (news == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tin tức với id = {newsId}.");
             }
-            news.DeletedAt =DateTime.Now;
+            
+            news.DeletedAt = DateTime.Now;
+            news.NewsTags = new List<NewsTag>();
+            news.NewsMajors = new List<NewsMajor>();
             await UpdateAsyn(news);
         }
     }

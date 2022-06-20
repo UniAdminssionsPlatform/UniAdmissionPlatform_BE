@@ -70,7 +70,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Cuộc đặt lịch này đã được chấp nhận.");
                 }
                 
-                if (eventCheck.Status == (int)EventCheckStatus.Reject)
+                if (eventCheck.Status == (int)EventCheckStatus.Rejected)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Cuộc đặt lịch này đã bị từ chối.");
                 }
@@ -136,7 +136,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (eventCheck.Status != (int)EventCheckStatus.Pending)
             {
-                if (eventCheck.Status == (int)EventCheckStatus.Reject)
+                if (eventCheck.Status == (int)EventCheckStatus.Rejected)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Cuộc đặt lịch này đã bị từ chối.");
                 }
@@ -182,7 +182,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await _reasonRepository.CreateAsync(reasonEntity);
             await unitOfWork.CommitAsync();
             
-            eventCheck.Status = (int)EventCheckStatus.Reject;
+            eventCheck.Status = (int)EventCheckStatus.Rejected;
             await UpdateAsyn(eventCheck);
         }
         
@@ -205,7 +205,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Reject && ec.Slot.HighSchoolId == highSchoolId)
+            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Rejected && ec.Slot.HighSchoolId == highSchoolId)
                 .ProjectTo<EventWithSlotViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             
@@ -225,7 +225,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<PageResult<EventWithSlotViewModel>> GetEventsHistoryByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Reject && ec.Slot.HighSchoolId == highSchoolId  && ec.Slot.EndDate < DateTime.Now)
+            var (total, queryable) = Get().Where(ec => ec.Status != (int) EventCheckStatus.Rejected && ec.Slot.HighSchoolId == highSchoolId  && ec.Slot.EndDate < DateTime.Now)
                 .ProjectTo<EventWithSlotViewModel>(_mapper)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             
