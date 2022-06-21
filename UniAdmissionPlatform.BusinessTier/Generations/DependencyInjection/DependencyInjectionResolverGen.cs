@@ -1,4 +1,4 @@
-
+﻿
 /////////////////////////////////////////////////////////////////
 //
 //              AUTO-GENERATED
@@ -154,6 +154,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
         
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IWardRepository, WardRepository>();
+            
+            services.AddScoped<IFollowService, FollowService>();
+            services.AddScoped<IFollowRepository, FollowRepository>();
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.BusinessTier.Requests.Follow;
 using UniAdmissionPlatform.BusinessTier.Requests.StudentCertification;
 using UniAdmissionPlatform.BusinessTier.Requests.StudentRecordItem;
 using UniAdmissionPlatform.BusinessTier.Responses;
@@ -20,14 +21,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IStudentCertificationService _studentStudentCertificationService;
         private readonly IAuthService _authService;
         private readonly IStudentRecordItemService _studentRecordItemService;
+        private readonly IFollowService _followService;
 
 
         public StudentController(IStudentCertificationService studentStudentCertificationService,
-            IAuthService authService, IStudentRecordItemService studentRecordItemService)
+            IAuthService authService, IStudentRecordItemService studentRecordItemService, IFollowService followService)
         {
             _studentStudentCertificationService = studentStudentCertificationService;
             _authService = authService;
             _studentRecordItemService = studentRecordItemService;
+            _followService = followService;
         }
 
         /// <summary>
@@ -375,6 +378,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                         "Cập nhập thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
                         "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Create a new follow university by id
+        /// </summary>
+        /// <response code="200">
+        /// Create a new follow university by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new follow university by id fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Student - Follow" })]
+        [Route("~/api/v{version:apiVersion}/student/university")]
+        public async Task<IActionResult> CreateFollow([FromBody] CreateFollowRequest createFollowRequest)
+        {
+            var studentId = _authService.GetUserId(HttpContext);
+
+            try
+            {
+                var followId = await _followService.CreateFollow(studentId, createFollowRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new { followId }, $"Theo dõi trường đại học thành công với id = {followId}."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Theo dõi thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Theo dõi thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }

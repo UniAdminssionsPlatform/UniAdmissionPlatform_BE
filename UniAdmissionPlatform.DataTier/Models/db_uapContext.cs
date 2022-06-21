@@ -24,6 +24,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<EventCheck> EventChecks { get; set; }
         public virtual DbSet<EventType> EventTypes { get; set; }
+        public virtual DbSet<Follow> Follows { get; set; }
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<GoalAdmission> GoalAdmissions { get; set; }
         public virtual DbSet<GoalAdmissionType> GoalAdmissionTypes { get; set; }
@@ -302,6 +303,28 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasColumnType("tinytext");
             });
 
+            modelBuilder.Entity<Follow>(entity =>
+            {
+                entity.HasKey(e => new { e.StudentId, e.UniversityId })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("Follow");
+
+                entity.HasIndex(e => e.UniversityId, "Follow_University_Id_fk");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.Follows)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Follow_Student_Id_fk");
+
+                entity.HasOne(d => d.University)
+                    .WithMany(p => p.Follows)
+                    .HasForeignKey(d => d.UniversityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Follow_University_Id_fk");
+            });
+
             modelBuilder.Entity<Gender>(entity =>
             {
                 entity.ToTable("Gender");
@@ -336,7 +359,7 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .WithMany(p => p.GoalAdmissions)
                     .HasForeignKey(d => d.GoalAdmissionTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("GoalAdmission_GoalAdmissionType_Id_fk");
+                    .HasConstraintName("GoalAdmission_FK");
 
                 entity.HasOne(d => d.SchoolYear)
                     .WithMany(p => p.GoalAdmissions)
@@ -511,6 +534,10 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.HasIndex(e => e.DeletedAt, "ix_news_deleted_at");
 
                 entity.Property(e => e.Description).IsRequired();
+
+                entity.Property(e => e.IsPublish)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
