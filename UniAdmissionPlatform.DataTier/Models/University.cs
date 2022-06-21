@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public University()
         {
             Accounts = new HashSet<Account>();
+            Follows = new HashSet<Follow>();
             MajorDepartments = new HashSet<MajorDepartment>();
             Reasons = new HashSet<Reason>();
             UniversityEvents = new HashSet<UniversityEvent>();
@@ -35,6 +36,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public virtual District District { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
+        public virtual ICollection<Follow> Follows { get; set; }
         public virtual ICollection<MajorDepartment> MajorDepartments { get; set; }
         public virtual ICollection<Reason> Reasons { get; set; }
         public virtual ICollection<UniversityEvent> UniversityEvents { get; set; }

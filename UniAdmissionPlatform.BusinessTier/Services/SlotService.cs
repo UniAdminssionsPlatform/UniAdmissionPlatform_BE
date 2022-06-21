@@ -276,6 +276,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest)
         {
             var slot = await Get().Where(s => s.Id == slotId).FirstOrDefaultAsync();
+            
             if (slot == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy slot với id = {slotId}");
@@ -286,6 +287,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Slot {slotId} của bạn đã đóng!");
             }
             
+            // var checkDate = DateTime.Now.AddDays(7);
+            // if (slot.StartDate <= checkDate)
+            // {
+            //     throw new ErrorResponse(StatusCodes.Status400BadRequest,
+            //         "Ngày tạo slot phải lớn hơn ngày hôm nay 7 ngày!");
+            // }
+            
+            if (slot.EndDate != null && slot.StartDate >= slot.EndDate)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Thời gian kết thúc slot phải lớn hơn thời gian bắt đầu slot");
+            }
+
             var mapper = _mapper.CreateMapper();
             slot = mapper.Map(updateSlotRequest, slot);
             

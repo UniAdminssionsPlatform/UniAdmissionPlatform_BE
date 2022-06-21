@@ -58,9 +58,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit)
         {
-            var statusU = (int)UniversityStatus.Active; //status Active
             var (total, queryable) = Get
-                    (s => s.Status == statusU && s.DeletedAt == null)
+                    (s => s.Status == (int)UniversityStatus.Active && s.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -81,8 +80,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId)
         {
-            var statusU = (int)UniversityStatus.Active; //status Active
-            var universityById = await Get().Where(u => u.Id == universityId && u.Status == statusU && u.DeletedAt == null)
+            var universityById = await Get().Where(u => u.Id == universityId && u.Status == (int)UniversityStatus.Active && u.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
             if (universityById == null)
