@@ -45,6 +45,7 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                     mc.ConfigSchoolYearMapperModule();
                     mc.ConfigGoalAdmissionMapperModule();
                     mc.ConfigGoalAdmissionTypeMapperModule();
+                    mc.ConfigFollowMapperModule();
                 });
                 var mapper = mappingConfig.CreateMapper();
                 services.AddSingleton(mapper);
