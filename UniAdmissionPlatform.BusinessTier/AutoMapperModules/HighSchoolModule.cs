@@ -9,6 +9,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
     {
         public static void ConfigHighSchoolMapperModule(this IMapperConfigurationExpression mc)
         {
+            mc.CreateMap<CreateHighSchoolRequest, HighSchool>();
             mc.CreateMap<HighSchool, HighSchoolBaseViewModel>();
             mc.CreateMap<HighSchool, HighSchoolCodeViewModel>();
             mc.CreateMap<HighSchool, HighSchoolManagerCodeViewModel>();

@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
@@ -24,6 +25,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<GetHighSchoolBaseViewModel>> GetAllHighSchools(GetHighSchoolBaseViewModel filter, string sort, int page, int limit);
         Task<GetHighSchoolBaseViewModel> GetHighSchoolProfileById(int highSchoolId);
         Task UpdateHighSchoolProfile(int highSchoolId, UpdateHighSchoolProfileRequest updateHighSchoolProfileRequest);
+        Task<int> CreateHighSchoolProfile(CreateHighSchoolRequest createHighSchoolRequest);
     }
     public partial class HighSchoolService
     {
@@ -112,6 +114,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             highSchoolAccount.UpdatedAt = DateTime.Now;
             
             await UpdateAsyn(highSchoolAccount);
+        }
+        
+        public async Task<int> CreateHighSchoolProfile(CreateHighSchoolRequest createHighSchoolRequest)
+        {
+            var mapper = _mapper.CreateMapper();
+            var highSchool = mapper.Map<HighSchool>(createHighSchoolRequest);
+            
+            highSchool.CreatedAt = DateTime.Now;
+            highSchool.UpdatedAt = DateTime.Now;
+            highSchool.Status = (int)HighSchoolStatus.Active;
+            
+            if (await Get().AnyAsync(h => h.HighSchoolCode == createHighSchoolRequest.HighSchoolCode
+                                          && h.DeletedAt == null))
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Mã của trường cấp 3 đã tồn tại.");
+            }
+            
+            await CreateAsyn(highSchool);
+            return highSchool.Id;
         }
     }
 }
