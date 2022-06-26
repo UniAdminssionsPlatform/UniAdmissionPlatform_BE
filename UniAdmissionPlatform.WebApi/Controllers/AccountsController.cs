@@ -234,40 +234,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
-        /// <summary>
-        /// Get list accounts
-        /// </summary>
-        /// <response code="200">
-        /// Get list accounts successfully
-        /// </response>
-        /// <response code="400">
-        /// Get list accounts fail
-        /// </response>
-        /// /// <response code="401">
-        /// No Login
-        /// </response>
-        /// <returns></returns>
-        [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
-        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
-        public async Task<IActionResult> GetAllAccounts([FromQuery] AccountBaseViewModel filter, string sort,
-            int page, int limit)
-        {
-            try
-            {
-                var events = await _accountService.GetAllAccounts(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<AccountBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
-            }
-            catch (ErrorResponse e)
-            {
-                switch (e.Error.Code)
-                {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server is error");
-                }
-            }
-        }
         
         /// <summary>
         /// Upload a new avatar

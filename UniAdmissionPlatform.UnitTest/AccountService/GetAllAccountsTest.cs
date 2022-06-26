@@ -12,8 +12,8 @@ namespace UniAdmissionPlatform.UnitTest.AccountService
         [TestMethod()]
         public async Task TestNormalCase()
         {
-            var accountService = TestAssemblyInitialize.ServiceProvider.GetService<IAccountService>();
-            await accountService!.GetAllAccounts(new AccountBaseViewModel(), null, 1, 10);
+            var userService = TestAssemblyInitialize.ServiceProvider.GetService<IUserService>();
+            await userService!.GetAllAccounts(new UserAccountBaseViewModel(), null, 1, 10);
         }
     }
 }

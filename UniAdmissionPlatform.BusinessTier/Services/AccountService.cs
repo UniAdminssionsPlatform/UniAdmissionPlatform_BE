@@ -25,13 +25,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             AccountBaseViewModel accountBaseViewModel, int page, int limit, string sort);
         Task<PageResult<AccountViewModelWithUniversity>> GetAllUniAccount(
             AccountBaseViewModel uniAccountUniBaseViewModel, int page, int limit, string sort);
-
-        Task<PageResult<AccountBaseViewModel>> GetAllAccounts(
-            AccountBaseViewModel filter, string sort, int page, int limit);
-
         Task<PageResult<AccountViewModelWithHighSchool>> GetAllStudents(AccountBaseViewModel accountBaseViewModel,
             int page, int limit, string sort);
-
         Task UploadAvatar(int accountId, string avatarUrl);
         Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest);
         Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
@@ -119,24 +114,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
         
-        public async Task<PageResult<AccountBaseViewModel>> GetAllAccounts(AccountBaseViewModel filter, string sort, int page, int limit)
-        {
-            var (total, queryable) = Get().ProjectTo<AccountBaseViewModel>(_mapper)
-                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-        
-            if (sort != null)
-            {
-                queryable = queryable.OrderBy(sort);
-            }
-            
-            return new PageResult<AccountBaseViewModel>
-            {
-                List = await queryable.ToListAsync(),
-                Page = page == 0 ? 1 : page,
-                Limit = limit == 0 ? DefaultPaging : limit,
-                Total = total
-            };
-        }
 
         public async Task UploadAvatar(int accountId, string avatarUrl)
         {
