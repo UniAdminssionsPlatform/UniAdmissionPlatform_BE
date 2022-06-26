@@ -310,5 +310,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Create a new high school profile
+        /// </summary>
+        /// <response code="200">
+        /// Create a new high school profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Create a new high school profile fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPost]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/accounts/high-school")]
+        public async Task<IActionResult> CreateHighSchoolProfile([FromBody] CreateHighSchoolRequest createHighSchoolRequest)
+        {
+            try
+            {
+                var highSchoolId = await _highSchoolService.CreateHighSchoolProfile(createHighSchoolRequest);
+                return Ok(MyResponse<int>.OkWithDetail(highSchoolId, $"Tạo thành công trường cấp 3 có id = {highSchoolId}"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tạo thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
