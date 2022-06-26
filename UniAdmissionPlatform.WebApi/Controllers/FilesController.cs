@@ -52,7 +52,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                FileToolKit.ValidateFileName(file, new[] {".jpg", ".png"}, FileMaxSize);
+                FileToolKit.ValidateFileName(file, new[] {".jpg", ".png"}, FileMaxSize * 10);
             }
             catch (ErrorResponse e)
             {
@@ -83,7 +83,48 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
 
-        private const long FileMaxSize = 10000000;
+        private const long FileMaxSize = 1000000;
 
+        
+        /// <summary>
+        /// Upload a new file doc
+        /// </summary>
+        [HttpPost("upload-file-doc")]
+        [CasbinAuthorize]
+        public async Task<IActionResult> UploadFileDoc([Required] IFormFile file)
+        {
+            try
+            {
+                FileToolKit.ValidateFileName(file, new[] {".doc", ".docm", ".docx", ".pdf", ".xlm", ".xls", ".xlsm", ".xlsx", ".xlt"}, FileMaxSize * 15);
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Tải lên thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message)
+                };
+            }
+
+            try
+            {
+                var lastIndexOf = file.FileName.LastIndexOf(".", StringComparison.Ordinal);
+                var fileUrl = await _firebaseStorageService.UploadFile(
+                    file.FileName[lastIndexOf..file.FileName.Length].ToLower(), "doc", file.OpenReadStream());
+                return Ok(MyResponse<object>.OkWithDetail(new
+                {
+                    fileUrl,
+                }, "Tải lên thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    _ => new GlobalException(ExceptionCode.PrintErrorObjectOut, e.Error.Message)
+                };
+            }
+        }
+        
     }
 }

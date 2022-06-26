@@ -34,6 +34,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateFullSlotStatus(int id);
         Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest);
         Task<SlotWithEventsViewModel> GetEventsBySlotId(int id);
+        Task OpenSlot(int slotId, int highSchoolId = 0);
     }
 
     public partial class SlotService
@@ -224,6 +225,33 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return await Get(s => s.Id == slotId && s.Status == (int) slotStatus).AnyAsync();
         }
 
+
+        public async Task OpenSlot(int slotId, int highSchoolId = 0)
+        {
+            var slot = await Get(s => s.Id == slotId).FirstOrDefaultAsync();
+            if (slot == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
+                    "Không tìm thấy buổi này");
+            }
+            
+            if (highSchoolId != 0 && slot.HighSchoolId != highSchoolId)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Buổi này không thuộc về bạn.");
+            }
+
+            if (slot.EndDate < DateTime.Now)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Buổi này đã kết thúc, không thể mở lại.");
+            }
+
+            slot.Status = (int)SlotStatus.Open;
+
+            await UpdateAsyn(slot);
+        }
+
         public async Task CloseSlot(int highSchoolId, int slotId)
         {
             var slot = await Get(s => s.Id == slotId).Include(s => s.EventChecks).FirstOrDefaultAsync();
@@ -245,12 +273,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     "Buổi này đã bị đóng.");
             }
 
-            slot.Status = (int) SlotStatus.Close;
-            foreach (var eventCheck in slot.EventChecks)
+            if (slot.EventChecks.Any())
             {
-                eventCheck.Status = (int) EventCheckStatus.Rejected;
-                //todo: send notification to university
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Buổi này còn chứa sự kiện.");
             }
+
+            slot.Status = (int) SlotStatus.Close;
 
             await UpdateAsyn(slot);
         }

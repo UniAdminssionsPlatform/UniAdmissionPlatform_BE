@@ -134,6 +134,44 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
+        
+        /// <summary>
+        /// Open a slot
+        /// </summary>
+        /// <response code="200">
+        /// Open a slot successfully
+        /// </response>
+        /// <response code="400">
+        /// Open a slot fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/open-slot")]
+        public async Task<IActionResult> OpenSlot(int slotId)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            try
+            {
+                await _slotService.OpenSlot(slotId, highSchoolId);
+                return Ok(MyResponse<object>.OkWithMessage("Mở buổi thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Mở thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Mở thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
         /// <summary>
         /// Get list slots
         /// </summary>
