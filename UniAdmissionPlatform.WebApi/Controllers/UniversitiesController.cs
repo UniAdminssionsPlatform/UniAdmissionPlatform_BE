@@ -20,12 +20,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IUniversityService _universityService;
         private readonly IProvinceService _provinceService;
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public UniversitiesController(IUniversityService universityService, IProvinceService provinceService, IAuthService authService)
+        public UniversitiesController(IUniversityService universityService, IProvinceService provinceService, IAuthService authService, IUserService userService)
         {
             _universityService = universityService;
             _provinceService = provinceService;
             _authService = authService;
+            _userService = userService;
         }
         
          /// <summary>
@@ -200,6 +202,80 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             {
                 await _universityService.UpdateUniversityProfile(universityId, updateUniversityProfileRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new{universityId}, $"Cập nhập tài khoản thành công với ID = {universityId}"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get list pending manager for university
+        /// </summary>
+        /// <response code="200">
+        /// Get list pending manager for university successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list pending manager for university fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Account" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/accounts/list")]
+        public async Task<IActionResult> GetUniversityManagerStatusPending([FromQuery] UserAccountBaseViewModel filter, string sort, int page, int limit)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                var accountManager = await _userService.GetUniversityManagerStatusPending(filter, sort, page, limit, universityId);
+                return Ok(MyResponse<PageResult<UserAccountBaseViewModel>>.OkWithDetail(accountManager, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Update status to active university manager
+        /// </summary>
+        /// <response code="200">
+        /// Update status to active university manager successfully
+        /// </response>
+        /// <response code="400">
+        /// Update status to active university manager fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin University - Account" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/accounts/switch-status")]
+        public async Task<IActionResult> SetActiveForUniversityAdmin(int userId)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                await _userService.SetActiveForUniversityAdmin(userId, universityId);
+                return Ok(MyResponse<object>.OkWithMessage("Cập nhập trạng thái thành công!"));
             }
             catch (ErrorResponse e)
             {
