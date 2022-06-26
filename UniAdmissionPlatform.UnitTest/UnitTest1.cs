@@ -12,8 +12,8 @@ namespace UniAdmissionPlatform.UnitTest
         [TestMethod()]
         public void TestMethod1()
         {
-            var accountService = TestAssemblyInitialize.ServiceProvider.GetService<IAccountService>();
-            accountService!.GetAllAccounts(new AccountBaseViewModel(), null, 1, 10);
+            var userService = TestAssemblyInitialize.ServiceProvider.GetService<IUserService>();
+            userService!.GetAllAccounts(new UserAccountBaseViewModel(), null, 1, 10);
         }
         
         

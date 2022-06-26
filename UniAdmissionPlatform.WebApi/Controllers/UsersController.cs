@@ -119,39 +119,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
         
-        /// <summary>
-        /// Create a new manager account
-        /// </summary>
-        /// <response code="200">
-        /// Create a new manager account successfully
-        /// </response>
-        /// <response code="400">
-        /// Create a new manager account fail
-        /// </response>
-        /// /// <response code="401">
-        /// No Login
-        /// </response>
-        /// <returns></returns>
-        [HttpPost]
-        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
-        [Route("~/api/v{version:apiVersion}/admin/[controller]")]
-        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest createAccountRequest)
-        {
-            try
-            {
-                var accountId = await _userService.CreateAccount(createAccountRequest);
-                return Ok(MyResponse<int>.OkWithDetail(accountId, $"Tạo thành công Account có id = {accountId}"));
-            }
-            catch (ErrorResponse e)
-            {
-                switch (e.Error.Code)
-                {
-                    default:
-                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                            "Cannot create, because server is error");
-                }
-            }
-        }
 
         /// <summary>
         /// Register for student
@@ -344,6 +311,43 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Get list accounts
+        /// </summary>
+        /// <response code="200">
+        /// Get list accounts successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list accounts fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/list-accounts")]
+        public async Task<IActionResult> GetAllAccounts([FromQuery] UserAccountBaseViewModel filter, string sort,
+            int page, int limit)
+        {
+            try
+            {
+                var events = await _userService.GetAllAccounts(filter, sort, page, limit);
+                return Ok(MyResponse<PageResult<UserAccountBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
             }
         }
     }

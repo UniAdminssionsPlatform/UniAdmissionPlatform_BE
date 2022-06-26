@@ -32,7 +32,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<UserBaseViewModel>> GetUsers(UserBaseViewModel filter, string sort, int page, int limit);
         Task<LoginResponse> Login(string uid, string email = null);
         Task<LoginResponse> Register(int id, RegisterRequest registerRequest);
-        Task<int> CreateAccount(CreateAccountRequest createAccountRequest);
         Task<int> CreateHighSchoolManagerAccount(int userId, int highSchoolId,
             RegisterForSchoolManagerRequest registerForSchoolManagerRequest);
         Task<int> CreateUniversityManagerAccount(int userId, int universityId,
@@ -50,6 +49,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             string sort, int page, int limit, int universityId);
 
         Task SetActiveForUniversityAdmin(int userId, int universityId);
+
+        Task<PageResult<UserAccountBaseViewModel>> GetAllAccounts(UserAccountBaseViewModel filter, string sort,
+            int page, int limit);
     }
 
     public partial class UserService
@@ -226,22 +228,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             return user;
         }
-
-        public async Task<int> CreateAccount(CreateAccountRequest createAccountRequest)
-        {
-            var mapper = _mapper.CreateMapper();
-            var uapAccount = mapper.Map<Account>(createAccountRequest);
-            var user = new User
-            {
-                Account = uapAccount,
-                Uid = "",
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            await CreateAsyn(user);
-            return user.Id;
-        }
+        
 
         public async Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
             RegisterForStudentRequest registerForStudentRequest)
@@ -431,6 +418,27 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             universityAdmin.Status = (int)UserStatus.Active;
         
             await UpdateAsyn(universityAdmin);
+        }
+        public async Task<PageResult<UserAccountBaseViewModel>> GetAllAccounts(UserAccountBaseViewModel filter, string sort, int page, int limit)
+        {
+            var (total, queryable) = Get()
+                .Where(u => u.DeletedAt == null)
+                .ProjectTo<UserAccountBaseViewModel>(_mapper)
+                .DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+        
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<UserAccountBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
         }
     }
 }
