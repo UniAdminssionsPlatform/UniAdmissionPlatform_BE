@@ -31,7 +31,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task<bool> CheckStatusOfSlot(int slotId, SlotStatus slotStatus);
         Task CloseSlot(int highSchoolId, int slotId);
-        Task UpdateFullSlotStatus(int id);
+        Task UpdateFullSlotStatus(int id, int highSchoolId = 0);
         Task UpdateSlot(int slotId, UpdateSlotRequest updateSlotRequest);
         Task<SlotWithEventsViewModel> GetEventsBySlotId(int id);
         Task OpenSlot(int slotId, int highSchoolId = 0);
@@ -284,12 +284,25 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(slot);
         }
 
-        public async Task UpdateFullSlotStatus(int id)
+        public async Task UpdateFullSlotStatus(int id, int highSchoolId = 0)
         {
-            var fullSlot = await Get().Where(s => s.Id == id).FirstOrDefaultAsync();
+            var fullSlot = await Get().Where(s => s.Id == id).Include(s => s.EventChecks).FirstOrDefaultAsync();
             if (fullSlot == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy slot với id = {id}");
+            }
+            
+            
+            if (highSchoolId == 0 || fullSlot.HighSchoolId != highSchoolId)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Buổi này không thuộc về bạn.");
+            }
+            
+            if (!fullSlot.EventChecks.Any())
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    "Buổi này không chứa bất kì event.");
             }
 
             if (fullSlot.Status == (int) SlotStatus.Close)
@@ -297,6 +310,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     "Buổi này đã bị đóng.");
             }
+
 
             fullSlot.Status = (int) SlotStatus.Full;
             await UpdateAsyn(fullSlot);

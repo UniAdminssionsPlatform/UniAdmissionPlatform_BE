@@ -224,9 +224,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/slot-full")]
         public async Task<IActionResult> UpdateSlotStatus(int slotId)
         {
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                await _slotService.UpdateFullSlotStatus(slotId);
+                await _slotService.UpdateFullSlotStatus(slotId, universityId);
                 return Ok(MyResponse<object>.OkWithMessage("Trạng thái buổi chuyển thành đã đầy!"));
             }
             catch (ErrorResponse e)
