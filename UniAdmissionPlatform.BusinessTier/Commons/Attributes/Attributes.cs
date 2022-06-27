@@ -30,6 +30,18 @@ namespace UniAdmissionPlatform.BusinessTier.Commons.Attributes
             this.Params = parameters;
         }
     }
+    
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+    public class HiddenObjectParamsAttribute : System.Attribute
+    {
+        public string Params { get; set; }
+
+        public HiddenObjectParamsAttribute(string parameters)
+        {
+            this.Params = parameters;
+        }
+    }
+    
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class HiddenControllerAttribute : System.Attribute
     {

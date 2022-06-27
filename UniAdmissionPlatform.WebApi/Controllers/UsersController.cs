@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Annotations;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Account;
@@ -330,6 +331,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/list-accounts")]
+        [HiddenObjectParams("account.")]
         public async Task<IActionResult> GetAllAccounts([FromQuery] UserAccountBaseViewModel filter, string sort,
             int page, int limit)
         {

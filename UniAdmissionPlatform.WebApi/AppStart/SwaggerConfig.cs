@@ -92,7 +92,6 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                                 || context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any())
                                && !context.MethodInfo.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any();
 
-
                 var hiden = context.MethodInfo.CustomAttributes.FirstOrDefault(a =>
                     a.AttributeType == typeof(HiddenParamsAttribute));
                 if (hiden != null)
@@ -104,6 +103,25 @@ namespace UniAdmissionPlatform.WebApi.AppStart
                         {
                             operation.Parameters.Remove(operation.Parameters.FirstOrDefault(a =>
                                 a.Name.ToSnakeCase() == parameter.ToSnakeCase()));
+                        }
+                    }
+                }
+
+                var hidenObject = context.MethodInfo.CustomAttributes.FirstOrDefault(a =>
+                    a.AttributeType == typeof(HiddenObjectParamsAttribute));
+                if (hidenObject != null)
+                {
+                    var parameters = ((string)hidenObject.ConstructorArguments.FirstOrDefault().Value).Split(",");
+                    foreach (var parameter in parameters)
+                    {
+                        if (operation.Parameters.Any(a => a.Name.ToSnakeCase().Contains(parameter.ToSnakeCase())))
+                        {
+                            var openApiParameter = operation.Parameters.Where(a =>
+                                a.Name.ToSnakeCase().Contains(parameter.ToSnakeCase())).ToList();
+                            foreach (var apiParameter in openApiParameter)
+                            {
+                                operation.Parameters.Remove(apiParameter);
+                            }
                         }
                     }
                 }

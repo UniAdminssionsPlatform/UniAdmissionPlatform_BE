@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
@@ -253,6 +254,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Account" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/list")]
+        [HiddenObjectParams("account.")]
         public async Task<IActionResult> GetHighSchoolManagerStatusPending([FromQuery] UserAccountBaseViewModel filter, string sort, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
