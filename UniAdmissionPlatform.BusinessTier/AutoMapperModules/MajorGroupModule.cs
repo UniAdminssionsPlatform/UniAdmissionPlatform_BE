@@ -14,7 +14,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
             mc.CreateMap<MajorGroup, MajorGroupBaseViewModel>();
             mc.CreateMap<CreateMajorGroupRequest, MajorGroup>();
             mc.CreateMap<UpdateMajorGroupRequest, MajorGroup>();
-            
+            mc.CreateMap<MajorGroup, MajorGroupNameViewModel>();
         }
     }
 }

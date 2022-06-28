@@ -43,7 +43,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var allMajor = await _majorService.GetAllMajor(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<MajorBaseViewModel>>.OkWithDetail(allMajor, $"Đạt được thành công"));
+                return Ok(MyResponse<PageResult<MajorViewModelWithMajorGroup>>.OkWithDetail(allMajor, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

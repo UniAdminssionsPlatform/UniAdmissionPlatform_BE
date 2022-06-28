@@ -16,7 +16,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IMajorService
     {
-        Task<PageResult<MajorBaseViewModel>> GetAllMajor(MajorBaseViewModel filter, string sort, int page, int limit);
+        Task<PageResult<MajorViewModelWithMajorGroup>> GetAllMajor(MajorBaseViewModel filter, string sort, int page, int limit);
         Task<MajorBaseViewModel> GetMajorById(int id);
         Task<int> CreateMajor(CreateMajorRequest createMajorRequest);
         Task UpdateMajor(int id, UpdateMajorRequest updateMajorRequest);
@@ -35,10 +35,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<MajorBaseViewModel>> GetAllMajor(MajorBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<MajorViewModelWithMajorGroup>> GetAllMajor(MajorBaseViewModel majorBaseViewModel, string sort, int page, int limit)
         {
+            var mapper = _mapper.CreateMapper();
+            var filter = mapper.Map<MajorViewModelWithMajorGroup>(majorBaseViewModel);
+
             var (total, queryable) = Get()
-                .ProjectTo<MajorBaseViewModel>(_mapper)
+                .ProjectTo<MajorViewModelWithMajorGroup>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             if (sort != null)
@@ -46,7 +49,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
 
-            return new PageResult<MajorBaseViewModel>
+            return new PageResult<MajorViewModelWithMajorGroup>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

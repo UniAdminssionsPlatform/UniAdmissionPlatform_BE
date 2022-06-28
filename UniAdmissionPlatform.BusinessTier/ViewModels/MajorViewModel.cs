@@ -11,4 +11,9 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string Code { get; set; }
         public int? MajorGroupId { get; set; }
     }
+    
+    public class MajorViewModelWithMajorGroup : MajorBaseViewModel
+    {
+        public MajorGroupNameViewModel MajorGroupNameViewModel { get; set; }
+    }
 }
