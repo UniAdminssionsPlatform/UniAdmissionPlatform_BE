@@ -12,4 +12,9 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string ThumbnailUrl { get; set; }
     }
+    
+    public class MajorGroupNameViewModel
+    {
+        public string Name { get; set; }
+    }
 }
