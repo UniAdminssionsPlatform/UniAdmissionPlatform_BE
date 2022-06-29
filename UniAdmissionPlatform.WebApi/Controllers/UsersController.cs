@@ -312,5 +312,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
+        
+        /// <summary>
+        /// Switch status of user for admin
+        /// </summary>
+        /// <response code="200">
+        /// Switch status of user for admin successfully
+        /// </response>
+        /// <response code="400">
+        /// Switch status of user for admin fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/accounts/{userId:int}")]
+        public async Task<IActionResult> SwitchStatusAccountForAdmin(int userId)
+        {
+            try
+            {
+                await _userService.SwitchStatusAccountForAdmin(userId);
+                return Ok(MyResponse<object>.OkWithMessage("Chuyển đổi trạng thái thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Chuyển đổi trạng thái thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Chuyển đổi trạng thái thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
