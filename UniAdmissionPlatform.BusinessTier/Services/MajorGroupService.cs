@@ -35,8 +35,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
         
-        private const int LimitPaging = 50;
-        private const int DefaultPaging = 10;
+        private const int LimitPaging = 100;
+        private const int DefaultPaging = 50;
         
         public async Task<PageResult<MajorGroupBaseViewModel>> GetAllMajorGroup(MajorGroupBaseViewModel filter, string sort, int page, int limit)
         {
