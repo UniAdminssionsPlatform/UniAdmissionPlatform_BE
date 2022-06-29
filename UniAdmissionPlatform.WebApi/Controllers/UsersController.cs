@@ -29,15 +29,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
-        private readonly IAccountService _accountService;
         private readonly IHighSchoolService _highSchoolService;
         private readonly IUniversityService _universityService;
 
-        public UsersController(IUserService userService, IAuthService authService, IAccountService accountService, IHighSchoolService highSchoolService, IUniversityService universityService)
+        public UsersController(IUserService userService, IAuthService authService, IHighSchoolService highSchoolService, IUniversityService universityService)
         {
             _userService = userService;
             _authService = authService;
-            _accountService = accountService;
             _highSchoolService = highSchoolService;
             _universityService = universityService;
         }
@@ -312,44 +310,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                     default:
                         throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
                 }
-            }
-        }
-        
-        /// <summary>
-        /// Get list accounts
-        /// </summary>
-        /// <response code="200">
-        /// Get list accounts successfully
-        /// </response>
-        /// <response code="400">
-        /// Get list accounts fail
-        /// </response>
-        /// /// <response code="401">
-        /// No Login
-        /// </response>
-        /// <returns></returns>
-        [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
-        [Route("~/api/v{version:apiVersion}/admin/list-accounts")]
-        [HiddenObjectParams("account.")]
-        public async Task<IActionResult> GetAllAccounts([FromQuery] UserAccountBaseViewModel filter, string sort,
-            int page, int limit)
-        {
-            try
-            {
-                var events = await _userService.GetAllAccounts(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<UserAccountBaseViewModel>>.OkWithDetail(events, $"Đạt được thành công"));
-            }
-            catch (ErrorResponse e)
-            {
-                throw e.Error.Code switch
-                {
-                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Lấy danh sách thất bại. " + e.Error.Message),
-                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Lấy danh sách thất bại. " + e.Error.Message),
-                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
-                };
             }
         }
     }

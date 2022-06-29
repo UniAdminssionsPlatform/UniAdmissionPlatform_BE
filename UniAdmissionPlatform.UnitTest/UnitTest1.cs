@@ -13,7 +13,7 @@ namespace UniAdmissionPlatform.UnitTest
         public void TestMethod1()
         {
             var userService = TestAssemblyInitialize.ServiceProvider.GetService<IUserService>();
-            userService!.GetAllAccounts(new UserAccountBaseViewModel(), null, 1, 10);
+            // userService!.GetAllAccounts(new UserAccountBaseViewModel(), null, 1, 10);
         }
         
         

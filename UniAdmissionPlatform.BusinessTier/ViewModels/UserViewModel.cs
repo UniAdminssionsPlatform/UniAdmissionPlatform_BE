@@ -13,9 +13,4 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public DateTime? UpdatedAt { get; set; }
     }
     
-    public class UserAccountBaseViewModel
-    {
-        public int? Status { get; set; }
-        public ManagerAccountBaseViewModel Account { get; set; }
-    }
 }
