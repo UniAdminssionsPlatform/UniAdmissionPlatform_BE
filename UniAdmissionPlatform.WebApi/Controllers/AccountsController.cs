@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Commons.Toolkit;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
@@ -65,6 +66,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
+        /// Get list accounts for admin
+        /// </summary>
+        /// <response code="200">
+        /// Get list accounts for admin successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list accounts for admin fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/accounts")]
+        public async Task<IActionResult> GetAllAccountForAdmin([FromQuery] ManagerAccountBaseViewModel filter, int page, int limit, string sort)
+        {
+            try
+            {
+                var accounts = await _accountService.GetAllAccountForAdmin(filter, page, limit, sort);
+                return Ok(MyResponse<PageResult<ManagerAccountBaseViewModel>>.OkWithData(accounts));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
         /// Get a student account by id
         /// </summary>
         /// <response code="200">
@@ -75,7 +112,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Admin High School - Account" })]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
         public async Task<IActionResult> GetStudentAccountById(int studentId)
         {
@@ -149,7 +186,21 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/[controller]/university")]
         public async Task<IActionResult> GetUniversityAccount([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
-            return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
+            try
+            {
+                return Ok(await _accountService.GetAllUniAccount(filter, page, limit, sort));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
         }
         
         /// <summary>
@@ -302,5 +353,155 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         private const long FileMaxSize = 10000000;
+        
+        /// <summary>
+        /// Get list pending manager for university
+        /// </summary>
+        /// <response code="200">
+        /// Get list pending manager for university successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list pending manager for university fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/accounts/list")]
+        [HiddenObjectParams("account.")]
+        public async Task<IActionResult> GetUniversityManagerStatusPending([FromQuery] ManagerAccountBaseViewModel filter, string sort, int page, int limit)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                var accountManager = await _accountService.GetUniversityManagerStatusPending(filter, sort, page, limit, universityId);
+                return Ok(MyResponse<PageResult<ManagerAccountBaseViewModel>>.OkWithDetail(accountManager, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Get list pending manager for high school
+        /// </summary>
+        /// <response code="200">
+        /// Get list pending manager for high school successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list pending manager for high school fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/list")]
+        [HiddenObjectParams("account.")]
+        public async Task<IActionResult> GetHighSchoolManagerStatusPending([FromQuery] ManagerAccountBaseViewModel filter, string sort, int page, int limit)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            try
+            {
+                var accountManager = await _accountService.GetHighSchoolManagerStatusPending(filter, sort, page, limit, highSchoolId);
+                return Ok(MyResponse<PageResult<ManagerAccountBaseViewModel>>.OkWithDetail(accountManager, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy danh sách thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Update status to active university manager
+        /// </summary>
+        /// <response code="200">
+        /// Update status to active university manager successfully
+        /// </response>
+        /// <response code="400">
+        /// Update status to active university manager fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/accounts/switch-status")]
+        public async Task<IActionResult> SetActiveForUniversityAdmin(int userId)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            try
+            {
+                await _accountService.SetActiveForUniversityAdmin(userId, universityId);
+                return Ok(MyResponse<object>.OkWithMessage("Xét duyệt thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Update status to active high school manager
+        /// </summary>
+        /// <response code="200">
+        /// Update status to active high school manager successfully
+        /// </response>
+        /// <response code="400">
+        /// Update status to active high school manager fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/switch-status")]
+        public async Task<IActionResult> SetActiveForHighSchoolAdmin(int userId)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            try
+            {
+                await _accountService.SetActiveForHighSchoolAdmin(userId, highSchoolId);
+                return Ok(MyResponse<object>.OkWithMessage("Xét duyệt thành công!"));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Cập nhập thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }

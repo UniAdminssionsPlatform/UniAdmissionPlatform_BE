@@ -31,6 +31,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateUniAccount(int id, UpdateProfileRequest updateProfileRequest);
         Task UpdateAccount(int id, UpdateAccountRequestForAdmin updateAccountRequestForAdmin);
         Task<AccountStudentByIdViewModelWithHighSchool> GetStudentAccountById(int studentId);
+
+        Task<PageResult<ManagerAccountBaseViewModel>> GetAllAccountForAdmin(
+            ManagerAccountBaseViewModel managerAccountBaseViewModel, int page, int limit, string sort);
+        Task<PageResult<ManagerAccountBaseViewModel>> GetUniversityManagerStatusPending(ManagerAccountBaseViewModel filter,
+            string sort, int page, int limit, int universityId);
+        Task<PageResult<ManagerAccountBaseViewModel>> GetHighSchoolManagerStatusPending(ManagerAccountBaseViewModel filter, string sort,
+            int page, int limit, int highSchoolId);
+        Task SetActiveForHighSchoolAdmin(int userId, int highSchoolId);
+        Task SetActiveForUniversityAdmin(int userId, int universityId);
     }
     public partial class AccountService
     {
@@ -241,6 +250,120 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {studentId}.");
             }
             return studentAccount;
+        }
+        
+        public async Task<PageResult<ManagerAccountBaseViewModel>> GetAllAccountForAdmin(ManagerAccountBaseViewModel managerAccountBaseViewModel, int page, int limit, string sort)
+        {
+            var mapper = _mapper.CreateMapper();
+            var filter = mapper.Map<ManagerAccountBaseViewModel>(managerAccountBaseViewModel);
+            var (total, queryable) = Get()
+                .ProjectTo<ManagerAccountBaseViewModel>(_mapper).DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            
+            return new PageResult<ManagerAccountBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<ManagerAccountBaseViewModel>> GetUniversityManagerStatusPending(ManagerAccountBaseViewModel filter, string sort, int page, int limit, int universityId)
+        {
+            var (total, queryable) = Get()
+                .Where(a => a.RoleId == "uniAdmin" 
+                            && a.UniversityId == universityId 
+                            && a.IdNavigation.Status == (int)UserStatus.Pending 
+                            && a.IdNavigation.DeletedAt == null)
+                .Include(a=> a.IdNavigation)
+                .ProjectTo<ManagerAccountBaseViewModel>(_mapper)
+                .DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<ManagerAccountBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task<PageResult<ManagerAccountBaseViewModel>> GetHighSchoolManagerStatusPending(ManagerAccountBaseViewModel filter, string sort, int page, int limit, int highSchoolId)
+        {
+            var (total, queryable) = Get()
+                .Where(a => a.RoleId == "schoolAdmin" 
+                            && a.HighSchoolId == highSchoolId 
+                            && a.IdNavigation.Status == (int)UserStatus.Pending 
+                            && a.IdNavigation.DeletedAt == null)
+                .Include(a=> a.IdNavigation)
+                .ProjectTo<ManagerAccountBaseViewModel>(_mapper)
+                .DynamicFilter(filter)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            if (sort != null)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+
+            return new PageResult<ManagerAccountBaseViewModel>
+            {
+                List = await queryable.ToListAsync(),
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = total
+            };
+        }
+        
+        public async Task SetActiveForHighSchoolAdmin(int userId, int highSchoolId)
+        {
+            var highSchoolAdmin = await Get()
+                .Where(a => a.Id == userId 
+                            && a.IdNavigation.DeletedAt == null 
+                            && a.IdNavigation.Status == (int)UserStatus.Pending
+                            && a.HighSchoolId == highSchoolId
+                            && a.RoleId == "schoolAdmin")
+                .Include(a=> a.IdNavigation)
+                .FirstOrDefaultAsync();
+            if (highSchoolAdmin == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy user với id = {userId}");
+            }
+            
+            highSchoolAdmin.IdNavigation.UpdatedAt = DateTime.Now;
+            highSchoolAdmin.IdNavigation.Status = (int)UserStatus.Active;
+        
+            await UpdateAsyn(highSchoolAdmin);
+        }
+        
+        public async Task SetActiveForUniversityAdmin(int userId, int universityId)
+        {
+            var universityAdmin = await Get()
+                .Where(a => a.Id == userId 
+                            && a.IdNavigation.DeletedAt == null 
+                            && a.IdNavigation.Status == (int)UserStatus.Pending
+                            && a.UniversityId == universityId
+                            && a.RoleId == "uniAdmin")
+                .Include(a=> a.IdNavigation)
+                .FirstOrDefaultAsync();
+            if (universityAdmin == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy user với id = {userId}");
+            }
+            
+            universityAdmin.IdNavigation.UpdatedAt = DateTime.Now;
+            universityAdmin.IdNavigation.Status = (int)UserStatus.Active;
+        
+            await UpdateAsyn(universityAdmin);
         }
     }
 }

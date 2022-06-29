@@ -39,19 +39,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
             RegisterForStudentRequest registerForStudentRequest);
         Task SwitchStatusStudentAccount(int studentId, int highSchoolId = 0);
-
-        Task<PageResult<UserAccountBaseViewModel>> GetHighSchoolManagerStatusPending(UserAccountBaseViewModel filter, string sort,
-            int page, int limit, int highSchoolId);
-
-        Task SetActiveForHighSchoolAdmin(int userId, int highSchoolId);
-
-        Task<PageResult<UserAccountBaseViewModel>> GetUniversityManagerStatusPending(UserAccountBaseViewModel filter,
-            string sort, int page, int limit, int universityId);
-
-        Task SetActiveForUniversityAdmin(int userId, int universityId);
-
-        Task<PageResult<UserAccountBaseViewModel>> GetAllAccounts(UserAccountBaseViewModel filter, string sort,
-            int page, int limit);
     }
 
     public partial class UserService
@@ -229,7 +216,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return user;
         }
         
-
         public async Task<LoginResponse> CreateStudentAccount(int userId, int highSchoolId,
             RegisterForStudentRequest registerForStudentRequest)
         {
@@ -326,119 +312,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             user.Status = (int)(user.Status == (int)UserStatus.Active ? UserStatus.Lock : UserStatus.Active);
 
             await UpdateAsyn(user);
-        }
-        
-        public async Task<PageResult<UserAccountBaseViewModel>> GetHighSchoolManagerStatusPending(UserAccountBaseViewModel filter, string sort, int page, int limit, int highSchoolId)
-        {
-            var (total, queryable) = Get()
-                .Where(u => u.DeletedAt == null 
-                            && u.Account.HighSchoolId == highSchoolId 
-                            && u.Status == (int)UserStatus.Pending
-                            && u.Account.Role.Id == "schoolAdmin")
-                .Include( u => u.Account)
-                .ThenInclude(u => u.Role)
-                .ProjectTo<UserAccountBaseViewModel>(_mapper)
-                .DynamicFilter(filter)
-                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-            if (sort != null)
-            {
-                queryable = queryable.OrderBy(sort);
-            }
-
-            return new PageResult<UserAccountBaseViewModel>
-            {
-                List = await queryable.ToListAsync(),
-                Page = page == 0 ? 1 : page,
-                Limit = limit == 0 ? DefaultPaging : limit,
-                Total = total
-            };
-        }
-        
-        public async Task SetActiveForHighSchoolAdmin(int userId, int highSchoolId)
-        {
-            var highSchoolAdmin = await Get()
-                .Where(t => t.Id == userId 
-                            && t.DeletedAt == null 
-                            && t.Status == (int)UserStatus.Pending
-                            && t.Account.HighSchoolId == highSchoolId
-                            && t.Account.Role.Id == "schoolAdmin")
-                .FirstOrDefaultAsync();
-            if (highSchoolAdmin == null)
-            {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy user với id = {userId}");
-            }
-            
-            highSchoolAdmin.UpdatedAt = DateTime.Now;
-            highSchoolAdmin.Status = (int)UserStatus.Active;
-        
-            await UpdateAsyn(highSchoolAdmin);
-        }
-        
-        public async Task<PageResult<UserAccountBaseViewModel>> GetUniversityManagerStatusPending(UserAccountBaseViewModel filter, string sort, int page, int limit, int universityId)
-        {
-            var (total, queryable) = Get()
-                .Where(u => u.DeletedAt == null 
-                            && u.Account.UniversityId == universityId 
-                            && u.Status == (int)UserStatus.Pending
-                            && u.Account.Role.Id == "uniAdmin")
-                .Include( u => u.Account)
-                .ThenInclude(u => u.Role)
-                .ProjectTo<UserAccountBaseViewModel>(_mapper)
-                .DynamicFilter(filter)
-                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-            if (sort != null)
-            {
-                queryable = queryable.OrderBy(sort);
-            }
-
-            return new PageResult<UserAccountBaseViewModel>
-            {
-                List = await queryable.ToListAsync(),
-                Page = page == 0 ? 1 : page,
-                Limit = limit == 0 ? DefaultPaging : limit,
-                Total = total
-            };
-        }
-        
-        public async Task SetActiveForUniversityAdmin(int userId, int universityId)
-        {
-            var universityAdmin = await Get()
-                .Where(t => t.Id == userId 
-                            && t.DeletedAt == null 
-                            && t.Status == (int)UserStatus.Pending
-                            && t.Account.UniversityId == universityId
-                            && t.Account.Role.Id == "uniAdmin")
-                .FirstOrDefaultAsync();
-            if (universityAdmin == null)
-            {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy user với id = {userId}");
-            }
-            
-            universityAdmin.UpdatedAt = DateTime.Now;
-            universityAdmin.Status = (int)UserStatus.Active;
-        
-            await UpdateAsyn(universityAdmin);
-        }
-        public async Task<PageResult<UserAccountBaseViewModel>> GetAllAccounts(UserAccountBaseViewModel filter, string sort, int page, int limit)
-        {
-            var (total, queryable) = Get()
-                .Where(u => u.DeletedAt == null)
-                .ProjectTo<UserAccountBaseViewModel>(_mapper)
-                .DynamicFilter(filter)
-                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-        
-            if (sort != null)
-            {
-                queryable = queryable.OrderBy(sort);
-            }
-            
-            return new PageResult<UserAccountBaseViewModel>
-            {
-                List = await queryable.ToListAsync(),
-                Page = page == 0 ? 1 : page,
-                Limit = limit == 0 ? DefaultPaging : limit,
-                Total = total
-            };
         }
     }
 }

@@ -90,7 +90,6 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                     }));
 
             mc.CreateMap<User, UserBaseViewModel>();
-            mc.CreateMap<User, UserAccountBaseViewModel>();
         }
     }
 }
