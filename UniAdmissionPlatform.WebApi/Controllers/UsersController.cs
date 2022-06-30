@@ -328,7 +328,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
-        [Route("~/api/v{version:apiVersion}/admin/accounts/{userId:int}")]
+        [Route("~/api/v{version:apiVersion}/admin/accounts/switch-status/{userId:int}")]
         public async Task<IActionResult> SwitchStatusAccountForAdmin(int userId)
         {
             try
