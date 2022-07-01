@@ -80,10 +80,15 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string RoleId { get; set; }
         public int? HighSchoolId { get; set; }
+        [String]
+        public string HighSchoolName { get; set; }
         public int? UniversityId { get; set; }
+        [String]
+        public string UniversityName { get; set; }
         public int? OrganizationId { get; set; }
         public int? WardId { get; set; }
         public string EmailContact { get; set; }
         public int? Status { get; set; }
+        
     }
 }
