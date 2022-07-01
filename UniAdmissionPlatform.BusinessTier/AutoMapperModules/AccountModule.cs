@@ -27,7 +27,11 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                 .ForMember(des => des.Status, opt => opt.MapFrom(
                 src => src.IdNavigation.Status));
             mc.CreateMap<Account, ManagerAccountBaseViewModel>().ForMember(des => des.Status, opt => opt.MapFrom(
-                src => src.IdNavigation.Status));
+                src => src.IdNavigation.Status))
+                .ForMember(des => des.HighSchoolName, opt => opt.MapFrom(
+                src => src.HighSchool.Name))
+                .ForMember(des => des.UniversityName, opt => opt.MapFrom(
+                    src => src.University.Name));
             mc.CreateMap<AccountBaseViewModel, ManagerAccountBaseViewModel>();
         }
     }
