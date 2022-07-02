@@ -24,7 +24,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             _universityProgramService = universityProgramService;
            
         }
-        
+
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University Programs" })]
+        [Route("~/api/v{version:apiVersion}/university-programs/university-program-admissions")]
+        public async Task<IActionResult> GetUniversityProgramAdmissions([FromQuery] int university, [FromQuery] int schoolYearId)
+        {
+            var universityProgramAdmissions = await _universityProgramService.GetUniversityAdmissionProgram(university, schoolYearId);
+            return Ok(MyResponse<ListUniversityProgramAdmission>.OkWithDetail(universityProgramAdmissions, "Đạt được thành công."));
+        }
+
         /// <summary>
         /// Get a university program by id
         /// </summary>

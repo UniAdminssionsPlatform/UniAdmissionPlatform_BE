@@ -486,19 +486,24 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.MajorId, "MajorDepartment_Major_Id_fk");
 
+                entity.HasIndex(e => e.MajorParentId, "MajorDepartment_Major_Id_fk_2");
+
                 entity.HasIndex(e => e.UniversityId, "MajorDepartment_University_Id_fk");
 
                 entity.HasIndex(e => e.DeletedAt, "ix_major_department_deleted_at");
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Name).HasColumnType("tinytext");
 
                 entity.HasOne(d => d.Major)
-                    .WithMany(p => p.MajorDepartments)
+                    .WithMany(p => p.MajorDepartmentMajors)
                     .HasForeignKey(d => d.MajorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("MajorDepartment_Major_Id_fk");
+
+                entity.HasOne(d => d.MajorParent)
+                    .WithMany(p => p.MajorDepartmentMajorParents)
+                    .HasForeignKey(d => d.MajorParentId)
+                    .HasConstraintName("MajorDepartment_Major_Id_fk_2");
 
                 entity.HasOne(d => d.University)
                     .WithMany(p => p.MajorDepartments)
@@ -959,6 +964,9 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.DistrictId, "University_District_Id_fk");
 
+                entity.HasIndex(e => e.UniversityCode, "University_UniversityCode_uindex")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.DeletedAt, "ix_university_deleted_at");
 
                 entity.Property(e => e.Address)
@@ -989,7 +997,7 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.Property(e => e.UniversityCode)
                     .IsRequired()
-                    .HasColumnType("tinytext");
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.WebsiteUrl)
                     .IsRequired()
@@ -1052,13 +1060,11 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.SchoolYearId, "UniversityProgram_SchoolYear_Id_fk");
 
+                entity.HasIndex(e => e.SubjectGroupId, "UniversityProgram_SubjectGroup_Id_fk");
+
                 entity.HasIndex(e => e.DeletedAt, "ix_university_program_deleted_at");
 
-                entity.Property(e => e.Description).IsRequired();
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnType("tinytext");
+                entity.Property(e => e.Name).HasColumnType("tinytext");
 
                 entity.HasOne(d => d.MajorDepartment)
                     .WithMany(p => p.UniversityPrograms)
@@ -1071,6 +1077,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.SchoolYearId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("UniversityProgram_SchoolYear_Id_fk");
+
+                entity.HasOne(d => d.SubjectGroup)
+                    .WithMany(p => p.UniversityPrograms)
+                    .HasForeignKey(d => d.SubjectGroupId)
+                    .HasConstraintName("UniversityProgram_SubjectGroup_Id_fk");
             });
 
             modelBuilder.Entity<User>(entity =>

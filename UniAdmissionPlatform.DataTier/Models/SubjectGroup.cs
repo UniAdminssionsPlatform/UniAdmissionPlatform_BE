@@ -11,6 +11,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             SubjectGroupMajors = new HashSet<SubjectGroupMajor>();
             SubjectGroupSubjects = new HashSet<SubjectGroupSubject>();
+            UniversityPrograms = new HashSet<UniversityProgram>();
         }
 
         public int Id { get; set; }
@@ -18,5 +19,6 @@ namespace UniAdmissionPlatform.DataTier.Models
 
         public virtual ICollection<SubjectGroupMajor> SubjectGroupMajors { get; set; }
         public virtual ICollection<SubjectGroupSubject> SubjectGroupSubjects { get; set; }
+        public virtual ICollection<UniversityProgram> UniversityPrograms { get; set; }
     }
 }

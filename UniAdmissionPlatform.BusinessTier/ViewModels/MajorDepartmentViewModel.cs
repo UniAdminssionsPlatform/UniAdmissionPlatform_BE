@@ -1,4 +1,5 @@
-﻿using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
+﻿using System.Collections.Generic;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
     public class MajorDepartmentBaseViewModel

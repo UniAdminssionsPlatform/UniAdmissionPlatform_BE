@@ -28,8 +28,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(
             UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit);
 
-        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>
-            GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit);
+        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit);
+
+        Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId);
     }
     public partial class UniversityProgramService
     {
@@ -40,7 +41,16 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             _mapper = mapper.ConfigurationProvider;
         }
-        
+
+        public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId)
+        {
+            var universityProgramAdmissions = await Get()
+                .Where(up => up.MajorDepartment.University.Id == universityId && up.DeletedAt == null && up.SchoolYearId == schoolYearId)
+                .ProjectTo<UniversityProgramAdmission>(_mapper)
+                .ToListAsync();
+            return new ListUniversityProgramAdmission(universityProgramAdmissions);
+        }
+
         public async Task<UniversityProgramBaseViewModel> GetUniversityProgramById(int universityProgramId)
         {
             var universityProgramById = await Get()

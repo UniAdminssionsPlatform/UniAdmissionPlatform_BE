@@ -48,7 +48,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
-                .Where(n => n.DeletedAt == null && n.IsPublish
+                .Where(n => n.DeletedAt == null && n.IsPublish != null && n.IsPublish.Value
                     && (filter.TagSearchId == null || n.NewsTags.Select(nt => nt.TagId).Contains(filter.TagSearchId.Value))
                 )
                 .ProjectTo<NewsBaseViewModel>(_mapper)

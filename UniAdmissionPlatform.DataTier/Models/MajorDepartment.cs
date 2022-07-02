@@ -19,8 +19,10 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public int? MajorParentId { get; set; }
 
         public virtual Major Major { get; set; }
+        public virtual Major MajorParent { get; set; }
         public virtual University University { get; set; }
         public virtual ICollection<UniversityProgram> UniversityPrograms { get; set; }
     }
