@@ -41,7 +41,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public string ParentProgramCode { get; set; }
         public List<MajorWrapper> Majors { get; set; }
         public List<SubjectGroupWrapper> SubjectGroups { get; set; }
-        public int SumOfQuantity { get; set; }
+        public int? SumOfQuantity { get; set; }
 
         public UniversityProgramAdmissionWrapper()
         {
@@ -138,6 +138,13 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
             }
 
             UniversityProgramAdmissions = dictionary.Values.ToList();
+            foreach (var universityProgramAdmissionWrapper in UniversityProgramAdmissions)
+            {
+                if (universityProgramAdmissionWrapper.SumOfQuantity == 0)
+                {
+                    universityProgramAdmissionWrapper.SumOfQuantity = null;
+                }
+            }
         }
     }
     
