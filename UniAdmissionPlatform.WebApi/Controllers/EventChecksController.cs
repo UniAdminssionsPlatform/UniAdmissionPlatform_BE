@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Reason;
@@ -190,6 +191,31 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             var universityId = _authService.GetUniversityId(HttpContext);
             var eventCheckForUniAdmin = await _eventCheckService.GetEventCheckForUniAdmin(universityId, filter, sort, page, limit);
             return Ok(MyResponse<PageResult<EventCheckWithEventAndSlotModel>>.OkWithDetail(eventCheckForUniAdmin, "Đạt được thành công"));
+        }
+        
+        
+        /// /// <summary>
+        /// Get list event check for high school
+        /// </summary>
+        /// <response code="200">
+        /// Get list event check successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list event check fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Event checks" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks")]
+        [HiddenObjectParams("event.,slot.")]
+        public async Task<IActionResult> GetAllEventCheckForHighSchoolAdmin([FromQuery] EventCheckWithEventAndSlotModel filter, string sort,int page, int limit)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            var eventCheckForHighSchoolAdmin = await _eventCheckService.GetEventCheckForHighSchoolAdmin(highSchoolId, filter, sort, page, limit);
+            return Ok(MyResponse<PageResult<EventCheckWithEventAndSlotModel>>.OkWithDetail(eventCheckForHighSchoolAdmin, "Đạt được thành công"));
         }
     }
 }
