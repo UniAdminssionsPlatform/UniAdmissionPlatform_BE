@@ -76,7 +76,7 @@ namespace UniAdmissionPlatform.WebApi
             
             JobStorage.Current = mySqlStorage;
             
-            // services.AddHangfireServer(options => options.WorkerCount = 1);
+            services.AddHangfireServer(options => options.WorkerCount = 2);
             
             services.InitFirebase();
 
@@ -101,7 +101,7 @@ namespace UniAdmissionPlatform.WebApi
 
             services.ConfigureAutoMapperServices();
 
-            // services.InitCronJobVoid();
+            services.InitCronJobVoid();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

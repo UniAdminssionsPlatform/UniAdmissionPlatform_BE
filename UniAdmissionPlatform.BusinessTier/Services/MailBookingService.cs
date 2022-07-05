@@ -75,7 +75,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 var mailRequest = new MailRequest
                 {
                     //todo: add field email to account table
-                    ToEmail = "bacnvse141019@fpt.edu.vn",
+                    ToEmail = account.EmailContact,
                     HtmlBody = await RazorTemplateEngine.RenderAsync("~/Views/NewBookingRequestToSchoolAdmin.cshtml", model),
                     Subject = $"Cuộc đặt lịch mới ID = {eventChecks.Id}"
                 };
@@ -125,7 +125,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 var mailRequest = new MailRequest
                 {
                     //todo: add field email to account table
-                    ToEmail = "bacnvse141019@fpt.edu.vn",
+                    ToEmail = account.EmailContact,
                     HtmlBody = await RazorTemplateEngine.RenderAsync("~/Views/ApprovedEventToUniAdmin.cshtml", model),
                     Subject = $"Cuộc đặt lịch được chấp nhận ID = {eventChecks.Id}"
                 };
