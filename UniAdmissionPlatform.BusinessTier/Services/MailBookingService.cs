@@ -129,8 +129,11 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     HtmlBody = await RazorTemplateEngine.RenderAsync("~/Views/ApprovedEventToUniAdmin.cshtml", model),
                     Subject = $"Cuộc đặt lịch được chấp nhận ID = {eventChecks.Id}"
                 };
-                
-                await _mailService.SendHtmlEmailAsync(mailRequest);
+
+                if (!string.IsNullOrWhiteSpace(account.EmailContact))
+                {
+                    await _mailService.SendHtmlEmailAsync(mailRequest);
+                }
             }
         }
     }
