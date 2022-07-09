@@ -10,11 +10,11 @@ using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     
-    public partial interface IFollowService:IBaseService<Follow>
+    public partial interface INotificationService:IBaseService<Notification>
     {
     }
-    public partial class FollowService:BaseService<Follow>,IFollowService
+    public partial class NotificationService:BaseService<Notification>,INotificationService
     {
-        public FollowService(IUnitOfWork unitOfWork,IFollowRepository repository):base(unitOfWork,repository){}
+        public NotificationService(IUnitOfWork unitOfWork,INotificationRepository repository):base(unitOfWork,repository){}
     }
 }

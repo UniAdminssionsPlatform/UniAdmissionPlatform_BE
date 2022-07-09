@@ -9,12 +9,12 @@ using UniAdmissionPlatform.DataTier.BaseConnect;
 using UniAdmissionPlatform.DataTier.Models;
 namespace UniAdmissionPlatform.BusinessTier.Generations.Repositories
 {
-    public partial interface IFollowRepository :IBaseRepository<Follow>
+    public partial interface INotificationRepository :IBaseRepository<Notification>
     {
     }
-    public partial class FollowRepository :BaseRepository<Follow>, IFollowRepository
+    public partial class NotificationRepository :BaseRepository<Notification>, INotificationRepository
     {
-         public FollowRepository(DbContext dbContext) : base(dbContext)
+         public NotificationRepository(DbContext dbContext) : base(dbContext)
          {
          }
     }

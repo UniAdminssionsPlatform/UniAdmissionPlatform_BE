@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////////////
 //
 //              AUTO-GENERATED
@@ -41,6 +41,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IEventTypeService, EventTypeService>();
             services.AddScoped<IEventTypeRepository, EventTypeRepository>();
         
+            services.AddScoped<IFollowService, FollowService>();
+            services.AddScoped<IFollowRepository, FollowRepository>();
+        
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IGenderRepository, GenderRepository>();
         
@@ -76,6 +79,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
         
             services.AddScoped<INewsTagService, NewsTagService>();
             services.AddScoped<INewsTagRepository, NewsTagRepository>();
+        
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
         
             services.AddScoped<IOrganizationService, OrganizationService>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
@@ -154,9 +160,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
         
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IWardRepository, WardRepository>();
-            
-            services.AddScoped<IFollowService, FollowService>();
-            services.AddScoped<IFollowRepository, FollowRepository>();
         }
     }
 }

@@ -7,6 +7,11 @@ namespace UniAdmissionPlatform.DataTier.Models
 {
     public partial class Account
     {
+        public Account()
+        {
+            Notifications = new HashSet<Notification>();
+        }
+
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
@@ -35,5 +40,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual University University { get; set; }
         public virtual Ward Ward { get; set; }
         public virtual Student Student { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

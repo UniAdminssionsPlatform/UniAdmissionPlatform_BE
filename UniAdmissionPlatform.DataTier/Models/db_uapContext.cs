@@ -37,6 +37,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<NewsMajor> NewsMajors { get; set; }
         public virtual DbSet<NewsTag> NewsTags { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<OrganizationEvent> OrganizationEvents { get; set; }
         public virtual DbSet<OrganizationType> OrganizationTypes { get; set; }
@@ -595,6 +596,22 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.TagId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("NewsTag_Tag_Id_fk");
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.ToTable("Notification");
+
+                entity.HasIndex(e => e.AccountId, "Notification_Account_Id_fk");
+
+                entity.Property(e => e.Content).HasColumnType("tinytext");
+
+                entity.Property(e => e.Title).HasColumnType("tinytext");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("Notification_Account_Id_fk");
             });
 
             modelBuilder.Entity<Organization>(entity =>
