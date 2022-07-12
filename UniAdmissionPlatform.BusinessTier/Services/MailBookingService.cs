@@ -62,9 +62,9 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 var model = new MailNewBookingRequestToSchoolAdminModel
                 {
                     NameOfSchoolAdmin = 
-                        (account.FirstName ?? "")
+                        (account.LastName ?? "")
                         + (" " + account.MiddleName ?? "")
-                        + (" " + account.LastName ?? ""),
+                        + (" " + account.FirstName ?? ""),
                     NameOfUniversities = nameOfUniversities,
                     BookingTime = bookingTime,
                     SlotStartDate = slotStartDate,
@@ -113,9 +113,9 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 var model = new ApprovedEventToUniAdminModel
                 {
                     NameOfUniAdmin = 
-                        (account.FirstName ?? "")
+                        (account.LastName ?? "")
                         + (" " + account.MiddleName ?? "")
-                        + (" " + account.LastName ?? ""),
+                        + (" " + account.FirstName ?? ""),
                     ApprovedTime = approvedTime,
                     BookingDetailUrl = "",
                     SlotEndDate = slotEndDate,
@@ -165,6 +165,8 @@ namespace UniAdmissionPlatform.BusinessTier.Services
             var eventName = eventChecks.Event.Name;
             
             var rejectedTime = eventChecks.UpdatedAt;
+            
+            // var rejectReason = 
 
             var slotStartDate = eventChecks.Slot.StartDate;
 
@@ -175,11 +177,12 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 var model = new RejectedEventToUniversityAdminModel
                 {
                     NameOfUniAdmin = 
-                        (account.FirstName ?? "")
+                        (account.LastName ?? "")
                         + (" " + account.MiddleName ?? "")
-                        + (" " + account.LastName ?? ""),
+                        + (" " + account.FirstName ?? ""),
                     EventName = eventName,
                     RejectedTime = rejectedTime,
+                    RejectReason = "test abc",
                     BookingDetailUrl = "",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
