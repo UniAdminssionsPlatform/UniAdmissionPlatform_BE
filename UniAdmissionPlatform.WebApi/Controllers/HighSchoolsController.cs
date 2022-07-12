@@ -148,8 +148,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "High Schools" })]
-        [Route("~/api/v{version:apiVersion}/high-schools/{highSchoolId:int}/event-slot")]
+        [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/high-school-slots/{highSchoolId:int}/events")]
         public async Task<IActionResult> GetEventsInfoByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
             try
