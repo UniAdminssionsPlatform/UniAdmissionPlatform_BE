@@ -290,13 +290,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Slots" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/{id:int}/events")]
-        public async Task<IActionResult> GetListEventBySlotId(int id)
+        [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{slotId:int}/events")]
+        public async Task<IActionResult> GetListEventBySlotId(int slotId)
         {
             try
             {
-                var eventsBySlotId =  await _slotService.GetEventsBySlotId(id);
+                var eventsBySlotId =  await _slotService.GetEventsBySlotId(slotId);
                 return Ok(MyResponse<SlotWithEventsViewModel>.OkWithDetail(eventsBySlotId, "Đạt được thành công!"));
             }
             catch (ErrorResponse e)
