@@ -179,8 +179,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Accounts" })]
-        [Route("~/api/v{version:apiVersion}/accounts/high-school/profile/{highSchoolId:int}")]
+        [SwaggerOperation(Tags = new[] { "High Schools" })]
+        [Route("~/api/v{version:apiVersion}/high-school/profile/{highSchoolId:int}")]
         public async Task<IActionResult> GetHighSchoolProfile(int highSchoolId)
         {
             try

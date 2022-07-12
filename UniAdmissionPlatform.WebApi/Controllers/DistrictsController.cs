@@ -53,6 +53,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get list district by id
+        /// </summary>
+        /// <response code="200">
+        /// Get list district by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get list district by id fail
+        /// </response>
+        /// <returns></returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "District" })]
         [Route("~/api/v{version:apiVersion}/[controller]/{id:int}")]

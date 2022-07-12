@@ -46,8 +46,8 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         /// </response>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Accounts" })]
-        [Route("~/api/v{version:apiVersion}/[controller]/student")]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/student")]
         public async Task<IActionResult> GetStudentInfo([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             try
