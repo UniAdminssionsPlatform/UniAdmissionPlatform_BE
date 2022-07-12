@@ -185,6 +185,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             eventCheck.Status = (int)EventCheckStatus.Rejected;
             await UpdateAsyn(eventCheck);
+            
+            BackgroundJob.Enqueue<IMailBookingService>(mailBookingService => mailBookingService.SendEmailForRejectedEventToUniAdmin(eventCheck.Id));
         }
         
         public async Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId, int highSchoolId)

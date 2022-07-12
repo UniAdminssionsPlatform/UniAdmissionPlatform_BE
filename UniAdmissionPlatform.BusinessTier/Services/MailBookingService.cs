@@ -14,6 +14,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
     {
         Task SendMailForNewBookingToSchoolAdmin(int eventCheckId);
         Task SendEmailForApprovedEventToUniAdmin(int eventCheckId);
+        Task SendEmailForRejectedEventToUniAdmin(int eventCheckId);
     }
 
     public class MailBookingService : IMailBookingService
@@ -134,6 +135,69 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 {
                     await _mailService.SendHtmlEmailAsync(mailRequest);
                 }
+            }
+        }
+        
+        public async Task SendEmailForRejectedEventToUniAdmin(int eventCheckId)
+        {
+            var eventChecks = await _eventCheckService.Get()
+                .Where(ev => ev.Id == eventCheckId)
+                .Include(ec => ec.Slot)
+                .ThenInclude(s => s.HighSchool)
+                .Include(ec => ec.Event)
+                .ThenInclude(e => e.UniversityEvents)
+                .ThenInclude(ue => ue.University)
+                .FirstOrDefaultAsync();
+            
+            if (eventChecks == null)
+            {
+                throw new Exception("Fail at sending mail for new rejected event to university admin");
+            }
+            
+            var university = eventChecks.Event.UniversityEvents.First();
+
+            var accounts = await _accountService
+                .Get()
+                .Where(a => a.UniversityId == university.UniversityId 
+                            && a.RoleId == "uniAdmin")
+                .ToListAsync();
+            
+            var eventName = eventChecks.Event.Name;
+            
+            var rejectedTime = eventChecks.UpdatedAt;
+
+            var slotStartDate = eventChecks.Slot.StartDate;
+
+            var slotEndDate = eventChecks.Slot.EndDate;
+            
+            foreach (var account in accounts)
+            {
+                var model = new RejectedEventToUniversityAdminModel
+                {
+                    NameOfUniAdmin = 
+                        (account.FirstName ?? "")
+                        + (" " + account.MiddleName ?? "")
+                        + (" " + account.LastName ?? ""),
+                    EventName = eventName,
+                    RejectedTime = rejectedTime,
+                    BookingDetailUrl = "",
+                    SlotEndDate = slotEndDate,
+                    SlotStartDate = slotStartDate,
+                    NameOfHighSchool = eventChecks.Slot.HighSchool.Name
+                };
+                
+                var mailRequest = new MailRequest
+                {
+                    ToEmail = account.EmailContact,
+                    HtmlBody = await RazorTemplateEngine.RenderAsync("~/Views/RejectedEventToUniversityAdmin.cshtml", model),
+                    Subject = $"Sự kiện{eventChecks.Event.Name} của bạn đã bị từ chối với ID = {eventChecks.Id}"
+                };
+                
+                if (!string.IsNullOrWhiteSpace(account.EmailContact))
+                {
+                    await _mailService.SendHtmlEmailAsync(mailRequest);
+                }
+                
             }
         }
     }
