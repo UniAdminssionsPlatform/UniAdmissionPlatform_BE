@@ -16,13 +16,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     public class UniversityProgramsController : ControllerBase
     {
         private readonly IUniversityProgramService _universityProgramService;
+        private readonly IAuthService _authService;
       
         
 
-        public UniversityProgramsController(IUniversityProgramService universityProgramService)
+        public UniversityProgramsController(IUniversityProgramService universityProgramService, IAuthService authService)
         {
             _universityProgramService = universityProgramService;
-           
+            _authService = authService;
         }
 
         [HttpGet]
@@ -160,13 +161,13 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs")]
-        public async Task<IActionResult> CreateUniversityProgram([FromBody] CreateUniversityProgramRequest createUniversityProgramRequest)
+        public async Task<IActionResult> CreateUniversityProgram([FromBody] BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest)
         {
-            
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                var universityProgramId = await _universityProgramService.CreateUniversityProgram(createUniversityProgramRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new {universityProgramId}, $"Tạo chương trình học ngành học thành công với id = {universityProgramId}"));
+                var universityProgramId = await _universityProgramService.CreateUniversityProgram(universityId, bulkCreateUniversityProgramMajorRequest);
+                return Ok(MyResponse<object>.OkWithDetail(new {universityProgramId}, $"Tạo {universityProgramId} chương trình học ngành học thành công"));
             }
             catch (ErrorResponse e)
             {
