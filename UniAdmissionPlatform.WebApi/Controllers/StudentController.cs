@@ -419,5 +419,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Get follow university by id
+        /// </summary>
+        /// <response code="200">
+        /// Get follow university by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Get follow university by id fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Follow" })]
+        [Route("~/api/v{version:apiVersion}/student/follow/{universityId:int}")]
+        public async Task<IActionResult> GetFollowUniversityById(int universityId)
+        {
+            try
+            {
+                var studentId = _authService.GetUserId(HttpContext);
+                var followUniversityById = await _followService.GetFollowUniversityById(studentId, universityId);
+                return Ok(MyResponse<FollowBaseViewModel>.OkWithDetail(followUniversityById,"Lấy theo dõi trường đại học thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Lấy thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }

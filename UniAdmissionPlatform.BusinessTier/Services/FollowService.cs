@@ -19,6 +19,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IFollowService
     {
         Task FollowUniversity(int studentId, int universityId);
+        Task<FollowBaseViewModel> GetFollowUniversityById(int studentId, int universityId);
     }
     public partial class FollowService
     {
@@ -52,6 +53,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     : FollowUniversityStatus.Followed);
                 await UpdateAsyn(followUni);
             }
+        }
+        
+        public async Task<FollowBaseViewModel> GetFollowUniversityById(int studentId, int universityId)
+        {
+            var followUniversity = await Get()
+                .Where(fu => fu.StudentId == studentId 
+                             && fu.UniversityId == universityId)
+                .ProjectTo<FollowBaseViewModel>(_mapper)
+                .FirstOrDefaultAsync();
+
+            if (followUniversity == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest,
+                    $"Không tìm thấy theo dõi nào của học sinh có id = {studentId}");
+            }
+            return followUniversity;
         }
     }
 }
