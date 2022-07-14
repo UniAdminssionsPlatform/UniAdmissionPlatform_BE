@@ -382,40 +382,39 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
-        
+
         /// <summary>
-        /// Create a new follow university by id
+        /// Follow university
         /// </summary>
         /// <response code="200">
-        /// Create a new follow university by id successfully
+        /// Follow university successfully
         /// </response>
         /// <response code="400">
-        /// Create a new follow university by id fail
+        /// Follow university fail
         /// </response>
         /// <response code="401">
         /// No login
         /// </response>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Follow" })]
-        [Route("~/api/v{version:apiVersion}/student/university")]
-        public async Task<IActionResult> CreateFollow([FromBody] CreateFollowRequest createFollowRequest)
+        [Route("~/api/v{version:apiVersion}/student/follow/{universityId:int}")]
+        public async Task<IActionResult> FollowUniversity(int universityId)
         {
-            var studentId = _authService.GetUserId(HttpContext);
-
             try
             {
-                var followId = await _followService.CreateFollow(studentId, createFollowRequest);
-                return Ok(MyResponse<object>.OkWithDetail(new { followId }, $"Theo dõi trường đại học thành công với id = {followId}."));
+                var studentId = _authService.GetUserId(HttpContext);
+                await _followService.FollowUniversity(studentId, universityId);
+                return Ok(MyResponse<object>.OkWithMessage("Thực hiện thành công."));
             }
             catch (ErrorResponse e)
             {
                 throw e.Error.Code switch
                 {
                     StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Theo dõi thất bại. " + e.Error.Message),
+                        "Thực hiện thất bại. " + e.Error.Message),
                     StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Theo dõi thất bại. " + e.Error.Message),
+                        "Thực hiện thất bại. " + e.Error.Message),
                     _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
                 };
             }
