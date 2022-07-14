@@ -18,7 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IFollowService
     {
-        Task<int> FollowUniversity(int studentId, int universityId);
+        Task FollowUniversity(int studentId, int universityId);
     }
     public partial class FollowService
     {
@@ -29,7 +29,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
         
-        public async Task<int> FollowUniversity(int studentId, int universityId)
+        public async Task FollowUniversity(int studentId, int universityId)
         {
             var followUni = await Get()
                 .Where(fu => fu.StudentId == studentId 
@@ -52,7 +52,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     : FollowUniversityStatus.Followed);
                 await UpdateAsyn(followUni);
             }
-            return (int) followUni.Status;
         }
     }
 }
