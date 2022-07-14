@@ -18,8 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface IFollowService
     {
-        Task<int> CreateFollow(int studentId, CreateFollowRequest createFollowRequest);
-
+        Task<int> FollowUniversity(int studentId, int universityId);
     }
     public partial class FollowService
     {
@@ -30,16 +29,30 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _mapper = mapper.ConfigurationProvider;
         }
         
-
-        public async Task<int> CreateFollow(int studentId, CreateFollowRequest createFollowRequest)
+        public async Task<int> FollowUniversity(int studentId, int universityId)
         {
-            var follow = _mapper.CreateMapper().Map<Follow>(createFollowRequest);
-            follow.StudentId = studentId;
-            follow.Status = (int)FollowUniversityStatus.Followed;
-
-            await CreateAsyn(follow);
-            return follow.StudentId;
+            var followUni = await Get()
+                .Where(fu => fu.StudentId == studentId 
+                            && fu.UniversityId == universityId)
+                .FirstOrDefaultAsync();
+            if (followUni == null)
+            {
+                var follow = new Follow()
+                    {
+                        StudentId = studentId,
+                        UniversityId = universityId,
+                        Status = (int)FollowUniversityStatus.Followed
+                    };
+                await CreateAsyn(follow);
+            }
+            else
+            {
+                followUni.Status = (int) (followUni.Status == (int) FollowUniversityStatus.Followed
+                    ? FollowUniversityStatus.Unfollowed
+                    : FollowUniversityStatus.Followed);
+                await UpdateAsyn(followUni);
+            }
+            return (int) followUni.Status;
         }
-        
     }
 }
