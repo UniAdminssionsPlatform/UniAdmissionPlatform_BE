@@ -127,7 +127,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event này chưa được tổ chức tại bất kì trường nào");
             }
 
-            @event.Status = (int)EventStatus.OnGoing;
+            if (isPublish)
+            {
+                @event.Status = (int)EventStatus.OnGoing;
+            }
+            else
+            {
+                @event.Status = (int)EventStatus.Init;
+            }
+                
 
             await UpdateAsyn(@event);
         }
