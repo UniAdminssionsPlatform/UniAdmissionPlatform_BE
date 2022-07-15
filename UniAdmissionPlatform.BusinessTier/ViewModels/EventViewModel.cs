@@ -30,6 +30,11 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public DateTime? EndTime { get; set; }
     }
 
+    public class EventWithIsApproveModel : EventBaseViewModel
+    {
+        public bool? IsApprove { get; set; }
+    }
+
     public class EventWithSlotModel : EventBaseViewModel
     {
         public List<SlotWithEventCheckStatusModel> Slots { get; set; }
@@ -57,9 +62,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     
     public class ListEventByUniIdBaseViewModel
     {
-        public EventBaseViewModel Event { get; set;}
+        public EventWithIsApproveModel Event { get; set;}
         public int? UniversityId { get; set; }
-        
     }
     
     public class EventWithSlotViewModel
