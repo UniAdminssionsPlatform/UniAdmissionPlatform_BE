@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Constants;
 using UniAdmissionPlatform.BusinessTier.Commons.Utils;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Requests.UniversityProgram;
@@ -20,43 +21,96 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IUniversityProgramService
     {
         Task<UniversityProgramBaseViewModel> GetUniversityProgramById(int universityProgramId);
-        Task<PageResult<UniversityProgramBaseViewModel>> GetAllUniversityProgram(UniversityProgramBaseViewModel filter, string sort, int page, int limit);
-        Task<int> CreateUniversityProgram(int universityId, BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest);
-        Task UpdateUniversityProgram(int universityProgramId, UpdateUniversityProgramRequest updateUniversityProgramRequest);
+
+        Task<PageResult<UniversityProgramBaseViewModel>> GetAllUniversityProgram(UniversityProgramBaseViewModel filter,
+            string sort, int page, int limit);
+
+        Task<int> CreateUniversityProgram(int universityId,
+            BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest);
+
+        Task UpdateUniversityProgram(int universityProgramId,
+            UpdateUniversityProgramRequest updateUniversityProgramRequest);
+
         Task DeleteUniversityProgramById(int universityProgramId);
 
         Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(
             UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit);
 
-        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit);
+        Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>
+            GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit);
 
         Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId);
+
+        Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgramByStudentId(int studentId);
     }
+
     public partial class UniversityProgramService
     {
         private readonly IConfigurationProvider _mapper;
         private readonly IMajorDepartmentRepository _majorDepartmentRepository;
+        private readonly ISchoolRecordRepository _schoolRecordRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IGroupPointRepository _groupPointRepository;
 
-        public UniversityProgramService(IUnitOfWork unitOfWork, IUniversityProgramRepository repository, IMapper mapper, IMajorDepartmentRepository majorDepartmentRepository) : base(unitOfWork,
+        public UniversityProgramService(IUnitOfWork unitOfWork, IUniversityProgramRepository repository, IMapper mapper,
+            IMajorDepartmentRepository majorDepartmentRepository, ISchoolRecordRepository schoolRecordRepository,
+            ISubjectRepository subjectRepository, IGroupPointRepository groupPointRepository) : base(unitOfWork,
             repository)
         {
             _majorDepartmentRepository = majorDepartmentRepository;
             _mapper = mapper.ConfigurationProvider;
+            _schoolRecordRepository = schoolRecordRepository;
+            _subjectRepository = subjectRepository;
+            _groupPointRepository = groupPointRepository;
         }
 
-        public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId)
+        public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId,
+            int schoolYearId)
         {
             var universityProgramAdmissions = await Get()
-                .Where(up => up.MajorDepartment.University.Id == universityId && up.DeletedAt == null && up.SchoolYearId == schoolYearId)
+                .Where(up =>
+                    up.MajorDepartment.University.Id == universityId && up.DeletedAt == null &&
+                    up.SchoolYearId == schoolYearId)
                 .ProjectTo<UniversityProgramAdmission>(_mapper)
                 .ToListAsync();
+            return new ListUniversityProgramAdmission(universityProgramAdmissions);
+        }
+
+        public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgramByStudentId(int studentId)
+        {
+            var mainSubjectIds = SubjectModule.BaseSubjectIds.Split(',');
+            var year = DateTime.Now.Year;
+            var schoolRecord = await _schoolRecordRepository.Get().Include(sr => sr.StudentRecordItems.Where(sri => mainSubjectIds.Contains(sri.SubjectId.ToString()))).FirstOrDefaultAsync(sr => sr.SchoolYear.Year == year && sr.StudentId == studentId);
+            if (schoolRecord == null)
+            {
+                return null;
+            }
+
+            if (schoolRecord.StudentRecordItems.Count(sri => sri.Score != null) != mainSubjectIds.Length)
+            {
+                return null;
+            }
+            
+            var sumOfPoint = 0.0;
+            foreach (var schoolRecordStudentRecordItem in schoolRecord.StudentRecordItems)
+            {
+                sumOfPoint += schoolRecordStudentRecordItem.Score ?? 0;
+            }
+
+
+
+            var averageOfPoint = sumOfPoint / schoolRecord.StudentRecordItems.Count;
+
+            var groupPoints = await _groupPointRepository.Get().Where(gp => gp.Point != null && gp.Point <= averageOfPoint + 1).Select(gp => gp.Id).ToListAsync();
+
+            var universityProgramAdmissions = await Get().Where(up => groupPoints.Contains(up.GroupPointId ?? 0) && up.SchoolYear.Year == year - 1).ProjectTo<UniversityProgramAdmission>(_mapper).ToListAsync();
             return new ListUniversityProgramAdmission(universityProgramAdmissions);
         }
 
         public async Task<UniversityProgramBaseViewModel> GetUniversityProgramById(int universityProgramId)
         {
             var universityProgramById = await Get()
-                .Where(up => up.Id == universityProgramId && up.DeletedAt == null )
+                .Where(up => up.Id == universityProgramId && up.DeletedAt == null)
                 .ProjectTo<UniversityProgramBaseViewModel>(_mapper).FirstOrDefaultAsync();
 
             if (universityProgramById == null)
@@ -64,13 +118,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest,
                     $"Không tìm thấy chương trình học nào có id = {universityProgramId}");
             }
+
             return universityProgramById;
         }
-        
+
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<UniversityProgramBaseViewModel>> GetAllUniversityProgram(UniversityProgramBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<UniversityProgramBaseViewModel>> GetAllUniversityProgram(
+            UniversityProgramBaseViewModel filter, string sort, int page, int limit)
         {
             var (total, queryable) = Get()
                 .Where(up => up.DeletedAt == null)
@@ -90,8 +146,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 Total = total
             };
         }
-        
-        public async Task<int> CreateUniversityProgram(int universityId, BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest)
+
+        public async Task<int> CreateUniversityProgram(int universityId,
+            BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest)
         {
             var majorDepartments = await _majorDepartmentRepository.Get().Where(md =>
                 md.UniversityId == universityId && bulkCreateUniversityProgramMajorRequest.MajorDepartmentDetails
@@ -106,25 +163,28 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             foreach (var createUniversityProgramRequest in createUniversityProgramRequests)
             {
                 var majorDepartment = _mapper.CreateMapper().Map<UniversityProgram>(createUniversityProgramRequest);
-            
+
                 majorDepartment.CreatedAt = DateTime.Now;
                 majorDepartment.UpdatedAt = DateTime.Now;
-            
+
                 await CreateAsyn(majorDepartment);
             }
-            
+
             return bulkCreateUniversityProgramMajorRequest.MajorDepartmentDetails.Count;
         }
 
-        public async Task UpdateUniversityProgram(int universityProgramId, UpdateUniversityProgramRequest updateUniversityProgramRequest)
+        public async Task UpdateUniversityProgram(int universityProgramId,
+            UpdateUniversityProgramRequest updateUniversityProgramRequest)
         {
             var majorDepartment = await FirstOrDefaultAsyn(up => up.Id == universityProgramId && up.DeletedAt == null);
             if (majorDepartment == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chương trình học id:{universityProgramId}.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
+                    $"Không tìm thấy chương trình học id:{universityProgramId}.");
             }
+
             var mapper = _mapper.CreateMapper();
-            majorDepartment = mapper.Map(updateUniversityProgramRequest,majorDepartment);
+            majorDepartment = mapper.Map(updateUniversityProgramRequest, majorDepartment);
             majorDepartment.UpdatedAt = DateTime.Now;
             await UpdateAsyn(majorDepartment);
         }
@@ -134,14 +194,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var majorDepartment = await FirstOrDefaultAsyn(up => up.Id == universityProgramId && up.DeletedAt == null);
             if (majorDepartment == null)
             {
-                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy chương trình học id:{universityProgramId}.");
+                throw new ErrorResponse(StatusCodes.Status404NotFound,
+                    $"Không tìm thấy chương trình học id:{universityProgramId}.");
             }
+
             majorDepartment.UpdatedAt = DateTime.Now;
             majorDepartment.DeletedAt = DateTime.Now;
             await UpdateAsyn(majorDepartment);
         }
-        
-        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetail(UniversityProgramWithMajorDepartmentAndSchoolYearModel filter, string sort, int page, int limit)
+
+        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>
+            GetAllUniversityProgramWithDetail(UniversityProgramWithMajorDepartmentAndSchoolYearModel filter,
+                string sort, int page, int limit)
         {
             var (total, queryable) = Get()
                 .Where(u => u.DeletedAt == null)
@@ -162,10 +226,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
 
-        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>> GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit)
+        public async Task<PageResult<UniversityProgramWithMajorDepartmentAndSchoolYearModel>>
+            GetAllUniversityProgramWithDetailByUniversityId(int universityId, string sort, int page, int limit)
         {
-            var (total, queryable) = Get().Where(up => up.MajorDepartment.UniversityId == universityId && up.DeletedAt == null).ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);;
-            
+            var (total, queryable) = Get()
+                .Where(up => up.MajorDepartment.UniversityId == universityId && up.DeletedAt == null)
+                .ProjectTo<UniversityProgramWithMajorDepartmentAndSchoolYearModel>(_mapper)
+                .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            ;
+
             if (sort != null)
             {
                 queryable = queryable.OrderBy(sort);

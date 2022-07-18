@@ -8,5 +8,6 @@
         public int SchoolYearId { get; set; }
         public int? SubjectGroupId { get; set; }
         public int? Quantity { get; set; }
+        public double? RecordPoint { get; set; }
     }
 }

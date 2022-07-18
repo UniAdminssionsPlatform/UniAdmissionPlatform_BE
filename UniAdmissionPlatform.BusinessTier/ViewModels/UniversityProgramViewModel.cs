@@ -32,6 +32,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int UniversityId { get; set; }
+        public string UniversityName { get; set; }
     }
 
     public class UniversityProgramAdmissionWrapper
@@ -77,7 +79,9 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
                         defaultUniversityProgramAdmissionWrapper.SubjectGroups.Add(new SubjectGroupWrapper
                         {
                             Id = universityProgramAdmission.SubjectGroupId,
-                            Name = universityProgramAdmission.SubjectGroupName
+                            Name = universityProgramAdmission.SubjectGroupName,
+                            UniversityId = universityProgramAdmission.UniversityId,
+                            UniversityName = universityProgramAdmission.UniversityName
                         });
                     }
 
@@ -159,5 +163,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int SubjectGroupId { get; set; }
         public string SubjectGroupName { get; set; }
         public int? Quantity { get; set; }
+        public int UniversityId { get; set; }
+        public string UniversityName { get; set; }
     }
 }

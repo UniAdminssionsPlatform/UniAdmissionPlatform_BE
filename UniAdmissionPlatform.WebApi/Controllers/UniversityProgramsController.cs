@@ -17,13 +17,15 @@ namespace UniAdmissionPlatform.WebApi.Controllers
     {
         private readonly IUniversityProgramService _universityProgramService;
         private readonly IAuthService _authService;
+        private readonly IGroupPointService _groupPointService;
       
         
 
-        public UniversityProgramsController(IUniversityProgramService universityProgramService, IAuthService authService)
+        public UniversityProgramsController(IUniversityProgramService universityProgramService, IAuthService authService, IGroupPointService groupPointService)
         {
             _universityProgramService = universityProgramService;
             _authService = authService;
+            _groupPointService = groupPointService;
         }
 
         [HttpGet]
@@ -34,6 +36,26 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             var universityProgramAdmissions = await _universityProgramService.GetUniversityAdmissionProgram(university, schoolYearId);
             return Ok(MyResponse<ListUniversityProgramAdmission>.OkWithDetail(universityProgramAdmissions, "Đạt được thành công."));
         }
+
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University Programs" })]
+        [Route("~/api/v{version:apiVersion}/student/university-programs/suggestion-university-program")]
+        public async Task<IActionResult> GetSuggestionUniversityProgram()
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            var universityAdmissionProgramByStudentId = await _universityProgramService.GetUniversityAdmissionProgramByStudentId(userId);
+            return Ok(universityAdmissionProgramByStudentId);
+        }
+
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "University Programs" })]
+        [Route("~/api/v{version:apiVersion}/admin/university-programs/sync")]
+        public async Task<IActionResult> Sync()
+        {
+            await _groupPointService.Sync();
+            return NoContent();
+        }
+
 
         /// <summary>
         /// Get a university program by id

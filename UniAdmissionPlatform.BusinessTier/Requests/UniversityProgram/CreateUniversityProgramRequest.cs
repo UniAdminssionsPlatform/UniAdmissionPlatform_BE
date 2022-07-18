@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.UniversityProgram
         public int SchoolYearId { get; set; }
         public int? SubjectGroupId { get; set; }
         public int? Quantity { get; set; }
+        public double? RecordPoint { get; set; }
     }
 
     public class BulkCreateUniversityProgramMajorRequest
@@ -32,7 +33,8 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.UniversityProgram
                         MajorDepartmentId = majorDepartmentDetail.MajorDepartmentId,
                         SchoolYearId = this.SchoolYearId,
                         SubjectGroupId = subjectGroupDetail.SubjectGroupId,
-                        Quantity = subjectGroupDetail.Quantity
+                        Quantity = subjectGroupDetail.Quantity,
+                        RecordPoint = subjectGroupDetail.RecordPoint
                     });
                 }
             }
@@ -53,5 +55,6 @@ namespace UniAdmissionPlatform.BusinessTier.Requests.UniversityProgram
     {
         public int SubjectGroupId { get; set; }
         public int? Quantity { get; set; }
+        public double? RecordPoint { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<GoalAdmission> GoalAdmissions { get; set; }
         public virtual DbSet<GoalAdmissionType> GoalAdmissionTypes { get; set; }
+        public virtual DbSet<GroupPoint> GroupPoints { get; set; }
         public virtual DbSet<HighSchool> HighSchools { get; set; }
         public virtual DbSet<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual DbSet<Major> Majors { get; set; }
@@ -381,6 +382,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("tinytext");
+            });
+
+            modelBuilder.Entity<GroupPoint>(entity =>
+            {
+                entity.ToTable("GroupPoint");
             });
 
             modelBuilder.Entity<HighSchool>(entity =>
@@ -1073,6 +1079,8 @@ namespace UniAdmissionPlatform.DataTier.Models
             {
                 entity.ToTable("UniversityProgram");
 
+                entity.HasIndex(e => e.GroupPointId, "UniversityProgram_GroupPointId_Id_fk");
+
                 entity.HasIndex(e => e.MajorDepartmentId, "UniversityProgram_MajorDepartment_Id_fk");
 
                 entity.HasIndex(e => e.SchoolYearId, "UniversityProgram_SchoolYear_Id_fk");
@@ -1082,6 +1090,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.HasIndex(e => e.DeletedAt, "ix_university_program_deleted_at");
 
                 entity.Property(e => e.Name).HasColumnType("tinytext");
+
+                entity.HasOne(d => d.GroupPoint)
+                    .WithMany(p => p.UniversityPrograms)
+                    .HasForeignKey(d => d.GroupPointId)
+                    .HasConstraintName("UniversityProgram_GroupPointId_Id_fk");
 
                 entity.HasOne(d => d.MajorDepartment)
                     .WithMany(p => p.UniversityPrograms)

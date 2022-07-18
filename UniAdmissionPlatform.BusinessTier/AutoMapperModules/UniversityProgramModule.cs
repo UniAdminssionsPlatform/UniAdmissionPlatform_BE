@@ -40,7 +40,11 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                 .ForMember(des => des.SubjectGroupId, opt => opt.MapFrom(
                     src => src.SubjectGroup.Id))
                 .ForMember(des => des.SubjectGroupName, opt => opt.MapFrom(
-                    src => src.SubjectGroup.Name));
+                    src => src.SubjectGroup.Name))
+                .ForMember(des => des.UniversityId, opt => opt.MapFrom(
+                    src => src.MajorDepartment.University.Id))
+                .ForMember(des => des.UniversityName, opt => opt.MapFrom(
+                    src => src.MajorDepartment.University.Name));
 
 
 

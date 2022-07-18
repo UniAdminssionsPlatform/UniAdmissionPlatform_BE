@@ -53,6 +53,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IGoalAdmissionTypeService, GoalAdmissionTypeService>();
             services.AddScoped<IGoalAdmissionTypeRepository, GoalAdmissionTypeRepository>();
         
+            services.AddScoped<IGroupPointService, GroupPointService>();
+            services.AddScoped<IGroupPointRepository, GroupPointRepository>();
+        
             services.AddScoped<IHighSchoolService, HighSchoolService>();
             services.AddScoped<IHighSchoolRepository, HighSchoolRepository>();
         
