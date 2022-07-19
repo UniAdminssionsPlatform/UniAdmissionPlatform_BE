@@ -26,13 +26,13 @@ namespace UniAdmissionPlatform.Firestore
 
         public async Task CreateEventComment(Comment comment)
         {
-            var collectionReference = _db.Collection("Comment").Document("Event").Collection("Comments");
+            var collectionReference = _db.Collection("Comment").Document("Event").Collection(comment.ReferenceId.ToString());
             await collectionReference.AddAsync(comment);
         }
 
         public async Task<List<Comment>> GetEventComment(int eventId, int page, int limit)
         {
-            var querySnapshot = await _db.Collection("Comment").Document("Event").Collection("Comments").WhereEqualTo("ReferenceId", eventId).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
+            var querySnapshot = await _db.Collection("Comment").Document("Event").Collection(eventId.ToString()).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
             var comments = new List<Comment>();
             var querySnapshotDocuments = querySnapshot.Documents;
             foreach (var querySnapshotDocument in querySnapshotDocuments)
@@ -52,7 +52,7 @@ namespace UniAdmissionPlatform.Firestore
 
         public async Task<List<Comment>> GetUniversityComment(int universityId, int page, int limit)
         {
-            var querySnapshot = await _db.Collection("Comment").Document("University").Collection("Comments").WhereEqualTo("ReferenceId", universityId).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
+            var querySnapshot = await _db.Collection("Comment").Document("University").Collection(universityId.ToString()).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
             var comments = new List<Comment>();
             var querySnapshotDocuments = querySnapshot.Documents;
             foreach (var querySnapshotDocument in querySnapshotDocuments)
