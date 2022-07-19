@@ -348,5 +348,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Approve a new representative for admin
+        /// </summary>
+        /// <response code="200">
+        /// Approve a new representative for admin successfully
+        /// </response>
+        /// <response code="400">
+        /// Approve a new representative for admin fail
+        /// </response>
+        /// /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpPut]
+        [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin/accounts/approve/{userId:int}")]
+        public async Task<IActionResult> ApproveNewAccountForAdmin(int userId)
+        {
+            try
+            {
+                await _userService.ApproveNewAccountForAdmin(userId);
+                return Ok(MyResponse<object>.OkWithMessage("Chuyển đổi trạng thái thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Chuyển đổi trạng thái thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Chuyển đổi trạng thái thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
