@@ -44,7 +44,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             var userId = _authService.GetUserId(HttpContext);
             var universityAdmissionProgramByStudentId = await _universityProgramService.GetUniversityAdmissionProgramByStudentId(userId);
-            return Ok(universityAdmissionProgramByStudentId);
+            return Ok(MyResponse<ListUniversityProgramAdmissionForStudent>.OkWithDetail(universityAdmissionProgramByStudentId, "Đạt được thành công."));
         }
 
         [HttpGet]

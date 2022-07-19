@@ -41,7 +41,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId);
 
-        Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgramByStudentId(int studentId);
+        Task<ListUniversityProgramAdmissionForStudent> GetUniversityAdmissionProgramByStudentId(int studentId);
     }
 
     public partial class UniversityProgramService
@@ -76,7 +76,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return new ListUniversityProgramAdmission(universityProgramAdmissions);
         }
 
-        public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgramByStudentId(int studentId)
+        public async Task<ListUniversityProgramAdmissionForStudent> GetUniversityAdmissionProgramByStudentId(int studentId)
         {
             var mainSubjectIds = SubjectModule.BaseSubjectIds.Split(',');
             var year = DateTime.Now.Year;
@@ -104,7 +104,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var groupPoints = await _groupPointRepository.Get().Where(gp => gp.Point != null && gp.Point <= averageOfPoint + 1).Select(gp => gp.Id).ToListAsync();
 
             var universityProgramAdmissions = await Get().Where(up => groupPoints.Contains(up.GroupPointId ?? 0) && up.SchoolYear.Year == year - 1).ProjectTo<UniversityProgramAdmission>(_mapper).ToListAsync();
-            return new ListUniversityProgramAdmission(universityProgramAdmissions);
+            return new ListUniversityProgramAdmissionForStudent(universityProgramAdmissions);
         }
 
         public async Task<UniversityProgramBaseViewModel> GetUniversityProgramById(int universityProgramId)

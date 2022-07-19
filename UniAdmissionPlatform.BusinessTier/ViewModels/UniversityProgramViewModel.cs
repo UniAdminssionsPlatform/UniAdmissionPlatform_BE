@@ -32,8 +32,6 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int UniversityId { get; set; }
-        public string UniversityName { get; set; }
     }
 
     public class UniversityProgramAdmissionWrapper
@@ -50,11 +48,45 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
             Majors = new List<MajorWrapper>();
             SubjectGroups = new List<SubjectGroupWrapper>();
         }
-    }  
+    }
+    
+    public class ListUniversityProgramAdmissionForStudent
+    {
+        public List<ListUniversityProgramAdmission> UniversityProgramAdmissionForStudents { get; set; }
 
+        public ListUniversityProgramAdmissionForStudent(List<UniversityProgramAdmission> universityProgramAdmissions)
+        {
+            var universityProgramAdmissionForStudents = new Dictionary<int, List<UniversityProgramAdmission>>();
+            foreach (var universityProgramAdmission in universityProgramAdmissions)
+            {
+                if (universityProgramAdmissionForStudents.ContainsKey(universityProgramAdmission.UniversityId))
+                {
+                    universityProgramAdmissionForStudents[universityProgramAdmission.UniversityId].Add(universityProgramAdmission);
+                }
+                else
+                {
+                    universityProgramAdmissionForStudents.Add(universityProgramAdmission.UniversityId, new List<UniversityProgramAdmission>());
+                    universityProgramAdmissionForStudents[universityProgramAdmission.UniversityId].Add(universityProgramAdmission);
+                }
+            }
+
+            UniversityProgramAdmissionForStudents = new List<ListUniversityProgramAdmission>();
+            foreach (var universityProgramAdmissionForStudent in universityProgramAdmissionForStudents)
+            {
+                var listUniversityProgramAdmission = new ListUniversityProgramAdmission(universityProgramAdmissionForStudent.Value)
+                    {
+                        UniversityId = universityProgramAdmissionForStudent.Key,
+                        UniversityName = universityProgramAdmissionForStudent.Value.FirstOrDefault()?.UniversityName ?? ""
+                    };
+                UniversityProgramAdmissionForStudents.Add(listUniversityProgramAdmission);
+            }
+        }
+    }
     public class ListUniversityProgramAdmission
     {
         public List<UniversityProgramAdmissionWrapper> UniversityProgramAdmissions { get; set; }
+        public int UniversityId { get; set; }
+        public string UniversityName { get; set; }
 
         public ListUniversityProgramAdmission(List<UniversityProgramAdmission> universityProgramAdmissions)
         {
@@ -80,8 +112,6 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
                         {
                             Id = universityProgramAdmission.SubjectGroupId,
                             Name = universityProgramAdmission.SubjectGroupName,
-                            UniversityId = universityProgramAdmission.UniversityId,
-                            UniversityName = universityProgramAdmission.UniversityName
                         });
                     }
 
