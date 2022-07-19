@@ -40,6 +40,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             RegisterForStudentRequest registerForStudentRequest);
         Task SwitchStatusStudentAccount(int studentId, int highSchoolId = 0);
         Task SwitchStatusAccountForAdmin(int userId);
+        Task ApproveNewAccountForAdmin(int userId);
     }
 
     public partial class UserService
@@ -328,6 +329,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
             
             user.Status = (int)(user.Status == (int)UserStatus.Active ? UserStatus.Lock : UserStatus.Active);
+            user.UpdatedAt = DateTime.Now;
+            await UpdateAsyn(user);
+        }
+        
+        public async Task ApproveNewAccountForAdmin(int userId)
+        {
+            var user = await Get()
+                .Where(u => u.Id == userId
+                            && u.Status == (int)UserStatus.Pending)
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tồn tại tài khoản này.");
+            }
+            
+            user.Status = (int)UserStatus.Active;
             user.UpdatedAt = DateTime.Now;
             await UpdateAsyn(user);
         }
