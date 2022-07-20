@@ -20,6 +20,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task FollowUniversity(int studentId, int universityId);
         Task<FollowBaseViewModel> GetFollowUniversityById(int studentId, int universityId);
+        Task<int> CountFollowByUniversityId(int universityId);
     }
     public partial class FollowService
     {
@@ -69,6 +70,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     $"Không tìm thấy theo dõi nào của học sinh có id = {studentId}");
             }
             return followUniversity;
+        }
+        
+        public async Task<int> CountFollowByUniversityId(int universityId)
+        {
+            var followUniversityById = await Get()
+                    .CountAsync(f => f.UniversityId == universityId 
+                                     && f.Status == (int)FollowUniversityStatus.Followed);
+            return followUniversityById;
         }
     }
 }

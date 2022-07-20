@@ -456,5 +456,41 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Count follow university
+        /// </summary>
+        /// <response code="200">
+        /// Count follow university successfully
+        /// </response>
+        /// <response code="400">
+        /// Count follow university fail
+        /// </response>
+        /// <response code="401">
+        /// No Login
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Student - Follow" })]
+        [Route("~/api/v{version:apiVersion}/university/{universityId:int}/follow")]
+        public async Task<IActionResult> CountFollowByUniversityId(int universityId)
+        {
+            try
+            {
+                var countFollowByUniversityId = await _followService.CountFollowByUniversityId(universityId);
+                return Ok(MyResponse<object>.OkWithDetail(countFollowByUniversityId,"Thực hiện thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Thực hiện thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Thực hiện thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }
