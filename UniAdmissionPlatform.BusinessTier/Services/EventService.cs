@@ -122,7 +122,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Trạng thái sự kiện không hợp lệ.");
             }
 
-            if (isPublish && @event.EventTypeId != 2 && !@event.EventChecks.Any())
+            if (isPublish && @event.EventTypeId == 2 && !@event.EventChecks.Any())
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Event này chưa được tổ chức tại bất kì trường nào");
             }
