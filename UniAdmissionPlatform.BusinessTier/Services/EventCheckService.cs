@@ -248,14 +248,19 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<EventCheckWithEventAndSlotModel>> GetEventCheckForUniAdmin(int universityId, EventCheckWithEventAndSlotModel filter, string sort, int page, int limit)
         {
-            var (total, queryable) =  Get().Where(ev => ev.DeletedAt == null && ev.Event.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId))
+            var temp = Get().Where(ev =>
+                ev.DeletedAt == null && ev.Event.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId)); 
+            
+            if (sort != null)
+            {
+                temp = temp.OrderBy(sort);
+            }
+            
+            var (total, queryable) =  temp
                 .ProjectTo<EventCheckWithEventAndSlotModel>(_mapper)
                 .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
                 
-            if (sort != null)
-            {
-                queryable = queryable.OrderBy(sort);
-            }
+            
 
             return new PageResult<EventCheckWithEventAndSlotModel>
             {
