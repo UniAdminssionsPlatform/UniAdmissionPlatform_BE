@@ -47,9 +47,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit)
         {
+            List<int> tagIds = null;
+            if (filter.Tags != null)
+            {
+                var substring = filter.Tags.Substring(1, filter.Tags.Length - 2);
+                tagIds = substring.Split(",").Select(int.Parse).ToList();
+            }
             var (total, queryable) = Get()
                 .Where(n => n.DeletedAt == null && n.IsPublish != null && n.IsPublish.Value
-                    && (filter.TagSearchId == null || n.NewsTags.Select(nt => nt.TagId).Contains(filter.TagSearchId.Value))
+                            && (tagIds == null || n.NewsTags.Select(nt => nt.TagId).Any(ti => tagIds.Contains(ti)))
                 )
                 .ProjectTo<NewsBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
@@ -70,9 +76,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         public async Task<PageResult<NewsWithPublishViewModel>> GetAllNewsForUniversityAdmin(NewsWithPublishViewModel filter, string sort, int page, int limit, int universityId)
         {
+            List<int> tagIds = null;
+            if (filter.Tags != null)
+            {
+                var substring = filter.Tags.Substring(1, filter.Tags.Length - 2);
+                tagIds = substring.Split(",").Select(int.Parse).ToList();
+            }
             var (total, queryable) = Get()
                 .Where(n => n.DeletedAt == null && n.UniversityNews.Select(un => un.UniversityId).Contains(universityId)
-                                                && (filter.TagSearchId == null || n.NewsTags.Select(nt => nt.TagId).Contains(filter.TagSearchId.Value))
+                                                && (tagIds == null || n.NewsTags.Select(nt => nt.TagId).Any(ti => tagIds.Contains(ti)))
                 )
                 .ProjectTo<NewsWithPublishViewModel>(_mapper)
                 .DynamicFilter(filter)

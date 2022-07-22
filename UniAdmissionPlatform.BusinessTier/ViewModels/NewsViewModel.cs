@@ -19,7 +19,9 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [Skip]
         public int? TagSearchId { get; set; }
         [Skip]
-        public List<TagBaseViewModel> Tags { get; set; }
+        public string Tags { get; set; }
+        [Skip]
+        public List<TagBaseViewModel> TagList { get; set; }
     }
 
     public class NewsWithPublishViewModel : NewsBaseViewModel
