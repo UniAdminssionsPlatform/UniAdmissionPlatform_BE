@@ -18,7 +18,7 @@ namespace UniAdmissionPlatform.BusinessTier.Commons.Utils
                 var propertyVal = entity.GetType().GetProperty(item.Name).GetValue(entity, null);
                 if (propertyVal == null) continue;
                 if (item.CustomAttributes.Any(a => a.AttributeType == typeof(SkipAttribute))) continue;
-                bool isDateTime = item.PropertyType == typeof(DateTime);
+                bool isDateTime = item.PropertyType == typeof(DateTime) || item.PropertyType == typeof(DateTime?);
                 if (isDateTime)
                 {
                     DateTime dt = (DateTime)propertyVal;
