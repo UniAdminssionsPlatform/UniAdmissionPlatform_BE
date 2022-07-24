@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 using Newtonsoft.Json;
+using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.Firestore.Models;
 
 namespace UniAdmissionPlatform.Firestore
@@ -10,8 +11,8 @@ namespace UniAdmissionPlatform.Firestore
     public interface ICommentService
     {
         Task CreateEventComment(Comment comment);
-        Task<List<Comment>> GetEventComment(int eventId, int page, int limit);
-        Task<List<Comment>> GetUniversityComment(int universityId, int page, int limit);
+        Task<PageResult<Comment>> GetEventComment(int eventId, int page, int limit);
+        Task<PageResult<Comment>> GetUniversityComment(int universityId, int page, int limit);
 
         Task CreateUniversityComment(Comment comment);
     }
@@ -26,13 +27,15 @@ namespace UniAdmissionPlatform.Firestore
 
         public async Task CreateEventComment(Comment comment)
         {
-            var collectionReference = _db.Collection("Comment").Document("Event").Collection(comment.ReferenceId.ToString());
+            var collectionReference = _db.Collection("Comment").Document("Event").Collection("Comments");
             await collectionReference.AddAsync(comment);
         }
 
-        public async Task<List<Comment>> GetEventComment(int eventId, int page, int limit)
+        public async Task<PageResult<Comment>> GetEventComment(int eventId, int page, int limit)
         {
-            var querySnapshot = await _db.Collection("Comment").Document("Event").Collection(eventId.ToString()).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
+            var snapshotAsync = await _db.Collection("Comment").Document("Event").Collection("Comments").WhereEqualTo("ReferenceId", eventId).GetSnapshotAsync();
+            var total = snapshotAsync.Count;
+            var querySnapshot = await _db.Collection("Comment").Document("Event").Collection("Comments").WhereEqualTo("ReferenceId", eventId).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
             var comments = new List<Comment>();
             var querySnapshotDocuments = querySnapshot.Documents;
             foreach (var querySnapshotDocument in querySnapshotDocuments)
@@ -47,12 +50,20 @@ namespace UniAdmissionPlatform.Firestore
                 }
             }
 
-            return comments;
+            return new PageResult<Comment>
+            {
+                Limit = limit,
+                Page = page,
+                Total = total,
+                List = comments
+            };
         }
 
-        public async Task<List<Comment>> GetUniversityComment(int universityId, int page, int limit)
+        public async Task<PageResult<Comment>> GetUniversityComment(int universityId, int page, int limit)
         {
-            var querySnapshot = await _db.Collection("Comment").Document("University").Collection(universityId.ToString()).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
+            var snapshotAsync = await _db.Collection("Comment").Document("University").Collection("Comments").WhereEqualTo("ReferenceId", universityId).GetSnapshotAsync();
+            var total = snapshotAsync.Count;
+            var querySnapshot = await _db.Collection("Comment").Document("University").Collection("Comments").WhereEqualTo("ReferenceId", universityId).OrderByDescending("CreatedDate").OrderByDescending("UpdatedDate").Offset((page - 1) * limit).Limit(limit).GetSnapshotAsync();
             var comments = new List<Comment>();
             var querySnapshotDocuments = querySnapshot.Documents;
             foreach (var querySnapshotDocument in querySnapshotDocuments)
@@ -67,7 +78,13 @@ namespace UniAdmissionPlatform.Firestore
                 }
             }
 
-            return comments;
+            return new PageResult<Comment>
+            {
+                Limit = limit,
+                Page = page,
+                Total = total,
+                List = comments
+            };
         }
 
 

@@ -34,7 +34,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public async Task<IActionResult> GetEventComment(int eventId, int page = 1, int limit = 10)
         {
             var eventComments = await _commentService.GetEventComment(eventId, page, limit);
-            return Ok(MyResponse<List<Comment>>.OkWithDetail(eventComments, "Đạt được thành công."));
+            return Ok(MyResponse<PageResult<Comment>>.OkWithDetail(eventComments, "Đạt được thành công."));
         }
 
         [HttpPost("event")]
@@ -81,7 +81,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public async Task<IActionResult> GetUniversityComments(int universityId, int page = 1, int limit = 10)
         {
             var universityComments = await _commentService.GetUniversityComment(universityId, page, limit);
-            return Ok(MyResponse<List<Comment>>.OkWithDetail(universityComments, "Đạt được thành công."));
+            return Ok(MyResponse<PageResult<Comment>>.OkWithDetail(universityComments, "Đạt được thành công."));
         }
     }
 }
