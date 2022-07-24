@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 using Newtonsoft.Json;
+using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.Firestore.Models;
 
@@ -20,8 +22,10 @@ namespace UniAdmissionPlatform.Firestore
     public class CommentService : ICommentService
     {
         private readonly FirestoreDb _db;
-        public CommentService()
+        private readonly IAccountRepository _accountRepository;
+        public CommentService(IAccountRepository accountRepository)
         {
+            _accountRepository = accountRepository;
             _db = FirestoreDb.Create("uni-admission-platform");
         }
 
@@ -49,6 +53,8 @@ namespace UniAdmissionPlatform.Firestore
                     comments.Add(comment);
                 }
             }
+            
+            AddAccountInfo(comments);
 
             return new PageResult<Comment>
             {
@@ -78,6 +84,8 @@ namespace UniAdmissionPlatform.Firestore
                 }
             }
 
+            AddAccountInfo(comments);
+
             return new PageResult<Comment>
             {
                 Limit = limit,
@@ -85,6 +93,20 @@ namespace UniAdmissionPlatform.Firestore
                 Total = total,
                 List = comments
             };
+        }
+
+        private void AddAccountInfo(List<Comment> comments)
+        {
+            var accounts = _accountRepository.Get().Where(a => comments.Select(c => c.UserId).Contains(a.Id))
+                .ToDictionary(a => a.Id, a => a);
+
+            foreach (var comment in comments.Where(comment => accounts.ContainsKey(comment.UserId)))
+            {
+                var account = accounts[comment.UserId];
+                comment.UserName = account.FirstName + ' ' + account.MiddleName + ' ' + account.LastName;
+                comment.AvatarUrl = account.ProfileImageUrl;
+                comment.Role = account.RoleId;
+            }
         }
 
 
