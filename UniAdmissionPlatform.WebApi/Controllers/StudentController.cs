@@ -492,5 +492,42 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 };
             }
         }
+        
+        /// <summary>
+        /// Delete student record items by id
+        /// </summary>
+        /// <response code="200">
+        /// Delete student record items by id successfully
+        /// </response>
+        /// <response code="400">
+        /// Delete student record items by id fail
+        /// </response>
+        /// <response code="401">
+        /// No login
+        /// </response>
+        /// <returns></returns>
+        [HttpDelete]
+        [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
+        [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        public async Task<IActionResult> DeleteStudentRecordItemById(int studentRecordItemId)
+        {
+            try
+            {
+                var studentId = _authService.GetUserId(HttpContext);
+                await _studentRecordItemService.DeleteStudentRecordItemById(studentRecordItemId , studentId);
+                return Ok(MyResponse<object>.OkWithData("Xóa thành công."));
+            }
+            catch (ErrorResponse e)
+            {
+                throw e.Error.Code switch
+                {
+                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Xóa thất bại. " + e.Error.Message),
+                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                        "Xóa thất bại. " + e.Error.Message),
+                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
+                };
+            }
+        }
     }
 }

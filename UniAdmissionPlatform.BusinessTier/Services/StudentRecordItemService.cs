@@ -27,6 +27,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             int studentId = 0);
         Task UpdateStudentRecordItem(int studentRecordItemId, UpdateStudentRecordItemRequest updateStudentRecordItemRequest, int studentId = 0);
         Task<StudentRecordItemBaseViewModel> GetStudentRecordItemById(int studentRecordItemId);
+        Task DeleteStudentRecordItemById(int studentRecordItemId, int studentId);
     }
     public partial class StudentRecordItemService
     {
@@ -113,6 +114,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             return stuRecordItemId;
+        }
+        
+        public async Task DeleteStudentRecordItemById(int studentRecordItemId, int studentId)
+        {
+            var studentRecordItem = await FirstOrDefaultAsyn(s => s.Id == studentRecordItemId && s.SchoolRecord.StudentId == studentId);
+            if (studentRecordItem == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy môn học.");
+            }
+            
+            await DeleteAsyn(studentRecordItem);
         }
         
     }
