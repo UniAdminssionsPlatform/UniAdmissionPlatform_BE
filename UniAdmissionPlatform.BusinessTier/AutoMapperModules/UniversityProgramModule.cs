@@ -10,6 +10,13 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         public static void ConfigUniversityProgramModuleMapperModule(this IMapperConfigurationExpression mc)
         {
             mc.CreateMap<UniversityProgram, UniversityProgramBaseViewModel>();
+            mc.CreateMap<UniversityProgram, UniversityProgramDetailViewModel>()
+                .ForMember(des => des.Major, opt
+                    => opt.MapFrom(src => src.MajorDepartment.Major.Name))
+                .ForMember(des => des.SchoolYear, opt
+                    => opt.MapFrom(src => src.SchoolYear.Year))
+                .ForMember(des => des.SubjectGroup, opt
+                    => opt.MapFrom(src => src.SubjectGroup.Name));
             mc.CreateMap<CreateUniversityProgramRequest, UniversityProgram>();
             mc.CreateMap<UpdateUniversityProgramRequest, UniversityProgram>()
                 .ForAllMembers(opt => opt

@@ -26,7 +26,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             string sort, int page, int limit);
 
         Task<int> CreateUniversityProgram(int universityId,
-            BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest);
+            CreateUniversityProgramRequest createUniversityProgramRequest);
 
         Task UpdateUniversityProgram(int universityProgramId,
             UpdateUniversityProgramRequest updateUniversityProgramRequest);
@@ -42,6 +42,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId, int schoolYearId);
 
         Task<ListUniversityProgramAdmissionForStudent> GetUniversityAdmissionProgramByStudentId(int studentId);
+        Task<PageResult<UniversityProgramDetailViewModel>> GetAll(UniversityProgramBaseViewModel filter, int universityId, int page, int limit);
     }
 
     public partial class UniversityProgramService
@@ -62,6 +63,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             _schoolRecordRepository = schoolRecordRepository;
             _subjectRepository = subjectRepository;
             _groupPointRepository = groupPointRepository;
+        }
+
+        public async Task<PageResult<UniversityProgramDetailViewModel>> GetAll(UniversityProgramBaseViewModel filter, int universityId, int page, int limit)
+        {
+            var (total, universityProgramBaseViewModels) = Get()
+                .Where(up =>
+                    up.MajorDepartment.University.Id == universityId && up.DeletedAt == null)
+                .Where(up => filter.MajorDepartmentId == null || up.MajorDepartmentId == filter.MajorDepartmentId)
+                .Where(up => filter.SchoolYearId == null || up.SchoolYearId == filter.SchoolYearId)
+                .Where(up => filter.SubjectGroupId == null || up.SubjectGroupId == filter.SubjectGroupId)
+                .ProjectTo<UniversityProgramDetailViewModel>(_mapper)
+                .PagingIQueryable(page, limit, 20, 1);
+
+            return new PageResult<UniversityProgramDetailViewModel>
+            {
+                Limit = limit,
+                List = await universityProgramBaseViewModels.ToListAsync(),
+                Page = page,
+                Total = total
+            };
         }
 
         public async Task<ListUniversityProgramAdmission> GetUniversityAdmissionProgram(int universityId,
@@ -148,29 +169,17 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         }
 
         public async Task<int> CreateUniversityProgram(int universityId,
-            BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest)
+            CreateUniversityProgramRequest createUniversityProgramRequest)
         {
-            var majorDepartments = await _majorDepartmentRepository.Get().Where(md =>
-                md.UniversityId == universityId && bulkCreateUniversityProgramMajorRequest.MajorDepartmentDetails
-                    .Select(mdd => mdd.MajorDepartmentId).Contains(md.Id)).CountAsync();
-
-            if (majorDepartments != bulkCreateUniversityProgramMajorRequest.MajorDepartmentDetails.Count)
+            var majorDepartment = _majorDepartmentRepository.Get().FirstOrDefault(md => md.Id == createUniversityProgramRequest.MajorDepartmentId && md.UniversityId == universityId);
+            if (majorDepartment == null)
             {
-                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Một số ngành không có ở trường bạn.");
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Bạn không có quyền.");
             }
-
-            var createUniversityProgramRequests = bulkCreateUniversityProgramMajorRequest.ToUniversityProgramRequests();
-            foreach (var createUniversityProgramRequest in createUniversityProgramRequests)
-            {
-                var majorDepartment = _mapper.CreateMapper().Map<UniversityProgram>(createUniversityProgramRequest);
-
-                majorDepartment.CreatedAt = DateTime.Now;
-                majorDepartment.UpdatedAt = DateTime.Now;
-
-                await CreateAsyn(majorDepartment);
-            }
-
-            return bulkCreateUniversityProgramMajorRequest.MajorDepartmentDetails.Count;
+            var mapper = _mapper.CreateMapper();
+            var universityProgram = mapper.Map<UniversityProgram>(createUniversityProgramRequest);
+            await CreateAsyn(universityProgram);
+            return universityProgram.Id;
         }
 
         public async Task UpdateUniversityProgram(int universityProgramId,

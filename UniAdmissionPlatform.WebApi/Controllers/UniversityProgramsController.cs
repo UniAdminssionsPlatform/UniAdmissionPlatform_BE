@@ -38,6 +38,16 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
+        [Route("~/api/v{version:apiVersion}/admin-university/university-programs/university-program-admissions")]
+        public async Task<IActionResult> GetUniversityProgram([FromQuery] UniversityProgramBaseViewModel filter, int page = 1, int limit = 10)
+        {
+            var universityId = _authService.GetUniversityId(HttpContext);
+            var pageResult = await _universityProgramService.GetAll(filter, universityId, page, limit);
+            return Ok(MyResponse<PageResult<UniversityProgramDetailViewModel>>.OkWithData(pageResult));
+        }
+
+        [HttpGet]
         [SwaggerOperation(Tags = new[] { "University Programs" })]
         [Route("~/api/v{version:apiVersion}/student/university-programs/suggestion-university-program")]
         public async Task<IActionResult> GetSuggestionUniversityProgram()
@@ -183,7 +193,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs")]
-        public async Task<IActionResult> CreateUniversityProgram([FromBody] BulkCreateUniversityProgramMajorRequest bulkCreateUniversityProgramMajorRequest)
+        public async Task<IActionResult> CreateUniversityProgram([FromBody] CreateUniversityProgramRequest bulkCreateUniversityProgramMajorRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
             try

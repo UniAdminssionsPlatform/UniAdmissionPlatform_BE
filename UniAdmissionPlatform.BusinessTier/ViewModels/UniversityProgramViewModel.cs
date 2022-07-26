@@ -9,10 +9,23 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         [String]
         public string Name { get; set; }
         public int? MajorDepartmentId { get; set; }
+        public int? SubjectGroupId { get; set; }
         [String]
         public string Description { get; set; }
         public int? SchoolYearDescription { get; set; }
         public int? SchoolYearId { get; set; }
+    }
+
+    public class UniversityProgramDetailViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Major { get; set; }
+        public string Description { get; set; }
+        public int SchoolYear { get; set; }
+        public string SubjectGroup { get; set; }
+        public int? Quantity { get; set; }
+        public float? RecordPoint { get; set; }
     }
 
     public class UniversityProgramWithMajorDepartmentAndSchoolYearModel : UniversityProgramBaseViewModel
