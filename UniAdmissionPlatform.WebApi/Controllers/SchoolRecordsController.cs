@@ -141,7 +141,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
 
         /// <summary>
-        /// Delete a school records by id (not done yet)
+        /// Delete a school records by id
         /// </summary>
         /// <response code="200">
         /// Delete a school records successfully
