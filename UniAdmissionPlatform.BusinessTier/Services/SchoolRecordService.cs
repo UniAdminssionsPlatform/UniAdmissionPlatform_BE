@@ -79,7 +79,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<int> CreateSchoolRecord(int studentId, CreateSchoolRecordRequest createSchoolRecordRequest)
         {
             if (Get().Any(sr => sr.StudentId == studentId 
-                                && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId))
+                                && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId && sr.DeletedAt == null))
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Đã tồn tại học bạ của năm này.");
             }
