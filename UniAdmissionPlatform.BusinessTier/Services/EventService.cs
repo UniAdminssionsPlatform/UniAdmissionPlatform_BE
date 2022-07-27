@@ -28,8 +28,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest);
         Task PublishEvent(int eventId, bool isPublish, int universityId = 0);
-        Task UpdateEvent(int id, UpdateEventRequest updateEventRequest);
-        Task DeleteEvent(int id);
+        Task UpdateEvent(int id, int universityId, UpdateEventRequest updateEventRequest);
+        Task DeleteEvent(int id, int universityId);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
             int page, int limit);
         Task<EventBaseViewModel> GetEventByID(int Id);
@@ -75,6 +75,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             var mapper = _mapper.CreateMapper();
             var uniEvent = mapper.Map<Event>(createEventRequest);
+            uniEvent.UniversityId = universityId;
 
             // var checkDate = DateTime.Now.AddDays(7);
             // if (uniEvent.StartTime <= checkDate)
@@ -139,9 +140,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         }
 
 
-        public async Task UpdateEvent(int id, UpdateEventRequest updateEventRequest)
+        public async Task UpdateEvent(int id, int universityId, UpdateEventRequest updateEventRequest)
         {
-            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
+            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null && t.UniversityId == universityId).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
@@ -161,9 +162,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(uniEvent);
         }
         
-        public async Task DeleteEvent(int id)
+        public async Task DeleteEvent(int id, int universityId)
         {
-            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
+            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null && t.UniversityId == universityId).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");

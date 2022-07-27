@@ -60,7 +60,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<SubjectGroupSubject> SubjectGroupSubjects { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<University> Universities { get; set; }
-        public virtual DbSet<UniversityEvent> UniversityEvents { get; set; }
         public virtual DbSet<UniversityNews> UniversityNews { get; set; }
         public virtual DbSet<UniversityProgram> UniversityPrograms { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -70,8 +69,6 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseMySQL("Server=13.215.17.178,3306;Initial Catalog=db_uap;User ID=admin;Password=adminuap123;Connection Timeout=30;");
             }
         }
 
@@ -241,6 +238,8 @@ namespace UniAdmissionPlatform.DataTier.Models
 
                 entity.HasIndex(e => e.EventTypeId, "Event_EventType_Id_fk");
 
+                entity.HasIndex(e => e.UniversityId, "Event_University_Id_fk");
+
                 entity.HasIndex(e => e.DeletedAt, "ix_event_deleted_at");
 
                 entity.Property(e => e.Address).HasColumnType("tinytext");
@@ -271,6 +270,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.EventTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Event_EventType_Id_fk");
+
+                entity.HasOne(d => d.University)
+                    .WithMany(p => p.Events)
+                    .HasForeignKey(d => d.UniversityId)
+                    .HasConstraintName("Event_University_Id_fk");
             });
 
             modelBuilder.Entity<EventCheck>(entity =>
@@ -1031,28 +1035,6 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.DistrictId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("University_District_Id_fk");
-            });
-
-            modelBuilder.Entity<UniversityEvent>(entity =>
-            {
-                entity.HasKey(e => new { e.UniversityId, e.EventId })
-                    .HasName("PRIMARY");
-
-                entity.ToTable("UniversityEvent");
-
-                entity.HasIndex(e => e.EventId, "UniversityEvent_Event_Id_fk");
-
-                entity.HasOne(d => d.Event)
-                    .WithMany(p => p.UniversityEvents)
-                    .HasForeignKey(d => d.EventId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("UniversityEvent_Event_Id_fk");
-
-                entity.HasOne(d => d.University)
-                    .WithMany(p => p.UniversityEvents)
-                    .HasForeignKey(d => d.UniversityId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("UniversityEvent_University_Id_fk");
             });
 
             modelBuilder.Entity<UniversityNews>(entity =>

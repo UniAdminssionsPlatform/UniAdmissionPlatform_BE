@@ -120,9 +120,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
         public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventRequest updateEventRequest)
         {
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                await _eventService.UpdateEvent(eventId, updateEventRequest);
+                await _eventService.UpdateEvent(eventId,universityId, updateEventRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new{eventId}, $"Cập nhập event thành công với ID = {eventId}"));
                 // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
@@ -221,9 +222,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
         public async Task<IActionResult> DeleteAEvent(int eventId)
         {
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                await _eventService.DeleteEvent(eventId);
+                await _eventService.DeleteEvent(eventId, universityId);
                 return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
             }
             catch (ErrorResponse e)
