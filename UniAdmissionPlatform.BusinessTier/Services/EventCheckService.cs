@@ -122,7 +122,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var eventCheck = await Get(ec => ec.Id == eventCheckId)
                 .Include(ec => ec.Slot)
-                .Include(ec => ec.Event).ThenInclude(e => e.UniversityEvents)
+                .Include(ec => ec.Event).ThenInclude(e => e.University)
                 .FirstOrDefaultAsync();
             
             if (eventCheck.Slot.HighSchoolId != highSchoolId)
@@ -174,7 +174,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var reasonEntity = new Reason
             {
                 ReferenceId = eventCheck.Id,
-                UniversityId = eventCheck.Event.UniversityEvents.FirstOrDefault()?.UniversityId ?? null,
+                UniversityId = eventCheck.Event.UniversityId,
                 HighSchoolId = eventCheck.Slot.HighSchoolId,
                 Detail = reason,
                 Type = (int?)ReasonEnum.HighSchoolRejectUniversity,
@@ -249,7 +249,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<EventCheckWithEventAndSlotModel>> GetEventCheckForUniAdmin(int universityId, EventCheckWithEventAndSlotModel filter, string sort, int page, int limit)
         {
             var temp = Get().Where(ev =>
-                ev.DeletedAt == null && ev.Event.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId)); 
+                ev.DeletedAt == null && ev.Event.UniversityId == universityId); 
             
             if (sort != null)
             {

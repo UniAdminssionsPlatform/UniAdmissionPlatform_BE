@@ -28,8 +28,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task<int> CreateEvent(int universityId, CreateEventRequest createEventRequest);
         Task PublishEvent(int eventId, bool isPublish, int universityId = 0);
-        Task UpdateEvent(int id, UpdateEventRequest updateEventRequest);
-        Task DeleteEvent(int id);
+        Task UpdateEvent(int id, int universityId, UpdateEventRequest updateEventRequest);
+        Task DeleteEvent(int id, int universityId);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
             int page, int limit);
         Task<EventBaseViewModel> GetEventByID(int Id);
@@ -39,6 +39,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             string sort);
 
         Task CloseEvent();
+        Task<List<EventByUniIdBaseViewModel>> GetListEventsByUniversityId(int universityId);
+
+        Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string eventName,
+            string eventHostName, int? eventTypeId, int? statusEvent, string sort, int page, int limit);
     }
     
     public partial class EventService
@@ -71,12 +75,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             var mapper = _mapper.CreateMapper();
             var uniEvent = mapper.Map<Event>(createEventRequest);
-
-            var uniEventUniversityEvents = uniEvent.UniversityEvents = new List<UniversityEvent>();
-            uniEventUniversityEvents.Add(new UniversityEvent
-            {
-                UniversityId = universityId,
-            });
+            uniEvent.UniversityId = universityId;
 
             // var checkDate = DateTime.Now.AddDays(7);
             // if (uniEvent.StartTime <= checkDate)
@@ -103,7 +102,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             Event @event = null;
             if (universityId != 0)
             {
-                @event = await Get().Where(e => e.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId) && e.Id == eventId).FirstOrDefaultAsync();
+                @event = await Get().Where(e => e.UniversityId == universityId && e.Id == eventId).FirstOrDefaultAsync();
                 if (@event == null)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy sự kiện.");
@@ -141,9 +140,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         }
 
 
-        public async Task UpdateEvent(int id, UpdateEventRequest updateEventRequest)
+        public async Task UpdateEvent(int id, int universityId, UpdateEventRequest updateEventRequest)
         {
-            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
+            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null && t.UniversityId == universityId).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
@@ -163,9 +162,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(uniEvent);
         }
         
-        public async Task DeleteEvent(int id)
+        public async Task DeleteEvent(int id, int universityId)
         {
-            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null).FirstOrDefaultAsync();
+            var uniEvent = await Get().Where(t => t.Id == id && t.DeletedAt == null && t.UniversityId == universityId).FirstOrDefaultAsync();
             if (uniEvent == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
@@ -213,7 +212,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             // check xem event do co phai cua university khong
             var uniEvent = await Get().Where(e =>
-                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityEvents.Contains(new UniversityEvent {UniversityId = universityId, EventId = bookSlotForUniAdminRequest.EventId}))
+                    e.Id == bookSlotForUniAdminRequest.EventId && e.UniversityId == universityId)
                 .Include(e => e.EventChecks)
                 .ThenInclude(ec => ec.Slot)
                 .FirstOrDefaultAsync();
@@ -259,7 +258,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var queryable = Get().Where(
                 e =>
                     e.DeletedAt == null &&
-                    e.UniversityEvents.Select(ue => ue.UniversityId).Contains(universityId)
+                    e.UniversityId == universityId
                      && (fromDate == null || e.StartTime >= fromDate)
                          && (toDate == null || e.EndTime == null || e.EndTime <= toDate)
                      );
@@ -287,6 +286,61 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
 
             await SaveAsyn();
+        }
+
+        public async Task<List<EventByUniIdBaseViewModel>> GetListEventsByUniversityId(int universityId)
+        {
+            var events = await Get().Where(e => e.UniversityId == universityId && e.DeletedAt == null).ToListAsync();
+
+            var eventBaseViewModels = _mapper.CreateMapper().Map<List<EventBaseViewModel>>(events);
+
+            var eventByUniIdBaseViewModels = eventBaseViewModels.Select(e => new EventByUniIdBaseViewModel(e, e.UniversityId)).ToList();
+            return eventByUniIdBaseViewModels;
+        }
+
+        public async Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string eventName, string eventHostName, int? eventTypeId, int? statusEvent,
+            string sort, int page, int limit)
+        {
+            var events = Get();
+            var total = 0;
+
+            if (sort != null)
+            {
+                (total, events) = events
+                    .Where(
+                        e => e.DeletedAt == null
+                             && (e.UniversityId == universityId)
+                             && (eventName == null || e.Name.Contains(eventName))
+                             && (eventHostName == null || e.HostName.Contains(eventHostName))
+                             && (eventTypeId == null || e.EventTypeId == eventTypeId)
+                             && (statusEvent == null || e.Status == statusEvent)
+                    ).OrderBy(sort).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            }
+            else
+            {
+                (total, events) = events
+                    .Where(
+                        e => e.DeletedAt == null
+                             && (e.UniversityId == universityId)
+                             && (eventName == null || e.Name.Contains(eventName))
+                             && (eventHostName == null || e.HostName.Contains(eventHostName))
+                             && (eventTypeId == null || e.EventTypeId == eventTypeId)
+                             && (statusEvent == null || e.Status == statusEvent)
+                    ).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            }
+            
+            
+
+            
+            var eventWithIsApproveModels = _mapper.CreateMapper().Map<List<EventWithIsApproveModel>>(await events.ToListAsync()).Select(e => new ListEventByUniIdBaseViewModel(e, e.UniversityId)).ToList();
+
+            return new PageResult<ListEventByUniIdBaseViewModel>
+            {
+                Limit = limit,
+                List = eventWithIsApproveModels,
+                Page = page,
+                Total = total
+            };
         }
     }
 }

@@ -14,7 +14,9 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         public static void ConfigEventMapperModule(this IMapperConfigurationExpression mc)
         {
             mc.CreateMap<CreateEventRequest, Event>();
-            mc.CreateMap<Event, EventBaseViewModel>();
+            mc.CreateMap<Event, EventBaseViewModel>()
+                .ForMember(des => des.UniversityName, opt =>
+                    opt.MapFrom(src => src.University.Name));
             mc.CreateMap<Event, EventBySlotBaseViewModel>();
             mc.CreateMap<UpdateEventRequest, Event>()
                 .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));

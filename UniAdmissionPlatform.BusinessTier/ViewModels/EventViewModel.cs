@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
+
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
     public class EventBaseViewModel
@@ -28,6 +29,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public int? DistrictId { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public int? UniversityId { get; set; }
+        public string UniversityName { get; set; }
     }
 
     public class EventWithIsApproveModel : EventBaseViewModel
@@ -56,14 +59,25 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     public class EventByUniIdBaseViewModel
     {
         public EventBaseViewModel Event { get; set;}
-        public int UniversityId { get; set; }
-        
+        public int? UniversityId { get; set; }
+
+        public EventByUniIdBaseViewModel(EventBaseViewModel @event, int? universityId)
+        {
+            Event = @event;
+            UniversityId = universityId;
+        }
     }
     
     public class ListEventByUniIdBaseViewModel
     {
         public EventWithIsApproveModel Event { get; set;}
         public int? UniversityId { get; set; }
+
+        public ListEventByUniIdBaseViewModel(EventWithIsApproveModel @event, int? universityId)
+        {
+            Event = @event;
+            UniversityId = universityId;
+        }
     }
     
     public class EventWithSlotViewModel
