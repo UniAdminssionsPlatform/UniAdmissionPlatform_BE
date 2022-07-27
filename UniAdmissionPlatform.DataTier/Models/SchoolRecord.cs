@@ -17,6 +17,9 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int StudentId { get; set; }
         public int SchoolYearId { get; set; }
         public float TotalScore { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public virtual SchoolYear SchoolYear { get; set; }
         public virtual Student Student { get; set; }
