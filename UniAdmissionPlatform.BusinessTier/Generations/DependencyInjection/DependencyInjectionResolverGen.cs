@@ -110,6 +110,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IRegionRepository, RegionRepository>();
         
+            services.AddScoped<IReportSettingService, ReportSettingService>();
+            services.AddScoped<IReportSettingRepository, ReportSettingRepository>();
+        
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
         

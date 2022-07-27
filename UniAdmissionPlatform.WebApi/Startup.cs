@@ -82,6 +82,8 @@ namespace UniAdmissionPlatform.WebApi
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
+            services.AddScoped<IReportService, ReportService>();
+
             services.ConfigureVersioningServices();
 
             services.ConfigureFilterServices();

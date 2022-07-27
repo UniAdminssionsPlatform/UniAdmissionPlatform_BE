@@ -1,0 +1,111 @@
+﻿{
+  "dataSource": {
+    "type": "json",
+    "filename": "https://localhost:5001/api/v1/student-report?event-id={0}&token={1}",
+    "mapping": {
+      "eventId": {
+        "type": "number",
+        "caption": "Event Id"
+      },
+      "eventName": {
+        "type": "string",
+        "caption": "Event Name"
+      },
+      "firstName": {
+        "type": "string",
+        "caption": "First Name"
+      },
+      "middleName": {
+        "type": "string",
+        "caption": "Middle Name"
+      },
+      "lastName": {
+        "type": "string",
+        "caption": "Last Name"
+      },
+      "phoneNumber": {
+        "type": "string",
+        "caption": "Phone Number"
+      },
+      "emailContact": {
+        "type": "string",
+        "caption": "Email Contact"
+      },
+      "dateOfBirth": {
+        "type": "year",
+        "caption": "Date Of Birth"
+      },
+      "highSchoolId": {
+        "type": "number",
+        "caption": "High School Id"
+      },
+      "highSchoolName": {
+        "type": "string",
+        "caption": "High School Name"
+      },
+      "wardName": {
+        "type": "string",
+        "caption": "Ward Name"
+      },
+      "districtName": {
+        "type": "string",
+        "caption": "District Name"
+      },
+      "provinceName": {
+        "type": "string",
+        "caption": "Province Name"
+      }
+    }
+  },
+  "slice": {
+    "rows": [
+      {
+        "uniqueName": "eventId"
+      },
+      {
+        "uniqueName": "eventName"
+      },
+      {
+        "uniqueName": "firstName"
+      },
+      {
+        "uniqueName": "middleName"
+      },
+      {
+        "uniqueName": "lastName"
+      },
+      {
+        "uniqueName": "phoneNumber"
+      },
+      {
+        "uniqueName": "emailContact"
+      },
+      {
+        "uniqueName": "dateOfBirth"
+      },
+      {
+        "uniqueName": "highSchoolId"
+      },
+      {
+        "uniqueName": "highSchoolName"
+      },
+      {
+        "uniqueName": "wardName"
+      },
+      {
+        "uniqueName": "districtName"
+      },
+      {
+        "uniqueName": "provinceName"
+      }
+    ],
+    "expandAll": true
+  },
+  "options": {
+    "chart": {
+      "type": "column_line"
+    }
+  },
+  "version": "2.9.26",
+  "creationDate": "2022-06-07T12:54:06.559Z"
+}

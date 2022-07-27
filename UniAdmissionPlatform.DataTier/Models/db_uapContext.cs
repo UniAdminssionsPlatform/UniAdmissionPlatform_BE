@@ -47,6 +47,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Reason> Reasons { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
+        public virtual DbSet<ReportSetting> ReportSettings { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<SchoolRecord> SchoolRecords { get; set; }
         public virtual DbSet<SchoolYear> SchoolYears { get; set; }
@@ -65,6 +66,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<UniversityProgram> UniversityPrograms { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Ward> Wards { get; set; }
+        public virtual DbSet<StudentReport> StudentReports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -785,6 +787,18 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("tinytext");
+            });
+
+            modelBuilder.Entity<ReportSetting>(entity =>
+            {
+                entity.ToTable("ReportSetting");
+
+                entity.HasIndex(e => e.Code, "ReportSetting_Code_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<Role>(entity =>
