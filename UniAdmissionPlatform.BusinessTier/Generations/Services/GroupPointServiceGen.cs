@@ -15,8 +15,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class GroupPointService:BaseService<GroupPoint>,IGroupPointService
     {
-        public GroupPointService(IUnitOfWork unitOfWork,IGroupPointRepository repository):base(unitOfWork,repository)
-        {
-        }
+        public GroupPointService(IUnitOfWork unitOfWork,IGroupPointRepository repository):base(unitOfWork,repository){}
     }
 }

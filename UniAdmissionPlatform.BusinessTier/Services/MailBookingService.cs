@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -35,7 +36,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
             var eventChecks = await _eventCheckService.Get()
                 .Where(ev => ev.Id == eventCheckId)
                 .Include(ec => ec.Slot).ThenInclude(s => s.HighSchool)
-                .Include(ec => ec.Event).ThenInclude(e => e.UniversityEvents).ThenInclude(ue => ue.University)
+                .Include(ec => ec.Event).ThenInclude(e => e.University)
                 .FirstOrDefaultAsync();
 
             if (eventChecks == null)
@@ -49,7 +50,10 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 .Where(a => a.HighSchoolId == highSchoolId && a.RoleId == "schoolAdmin")
                 .ToListAsync();
 
-            var nameOfUniversities = eventChecks.Event.UniversityEvents.Select(ue => ue.University.Name).ToList();
+            var universityName = eventChecks.Event.University.Name;
+
+            var nameOfUniversities = new List<string>();
+            nameOfUniversities.Add(universityName);
 
             var bookingTime = eventChecks.CreatedAt;
 
@@ -90,7 +94,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
             var eventChecks = await _eventCheckService.Get()
                 .Where(ev => ev.Id == eventCheckId)
                 .Include(ec => ec.Slot).ThenInclude(s => s.HighSchool)
-                .Include(ec => ec.Event).ThenInclude(e => e.UniversityEvents).ThenInclude(ue => ue.University)
+                .Include(ec => ec.Event).ThenInclude(e => e.University)
                 .FirstOrDefaultAsync();
 
             if (eventChecks == null)
@@ -98,9 +102,9 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 throw new Exception("Fail at sending mail for new approved event to uni admin");
             }
 
-            var university = eventChecks.Event.UniversityEvents.First();
+            var university = eventChecks.Event.University;
 
-            var accounts = await _accountService.Get().Where(a => a.UniversityId == university.UniversityId && a.RoleId == "uniAdmin").ToListAsync();
+            var accounts = await _accountService.Get().Where(a => a.UniversityId == university.Id && a.RoleId == "uniAdmin").ToListAsync();
             
             var approvedTime = eventChecks.UpdatedAt;
 
@@ -145,20 +149,19 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 .Include(ec => ec.Slot)
                 .ThenInclude(s => s.HighSchool)
                 .Include(ec => ec.Event)
-                .ThenInclude(e => e.UniversityEvents)
-                .ThenInclude(ue => ue.University)
+                .ThenInclude(e => e.University)
                 .FirstOrDefaultAsync();
             
             if (eventChecks == null)
             {
                 throw new Exception("Fail at sending mail for new rejected event to university admin");
             }
-            
-            var university = eventChecks.Event.UniversityEvents.First();
+
+            var university = eventChecks.Event.University;
 
             var accounts = await _accountService
                 .Get()
-                .Where(a => a.UniversityId == university.UniversityId 
+                .Where(a => a.UniversityId == university.Id 
                             && a.RoleId == "uniAdmin")
                 .ToListAsync();
             
