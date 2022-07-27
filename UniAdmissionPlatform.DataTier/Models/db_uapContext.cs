@@ -25,6 +25,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual DbSet<EventCheck> EventChecks { get; set; }
         public virtual DbSet<EventType> EventTypes { get; set; }
         public virtual DbSet<Follow> Follows { get; set; }
+        public virtual DbSet<FollowEvent> FollowEvents { get; set; }
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<GoalAdmission> GoalAdmissions { get; set; }
         public virtual DbSet<GoalAdmissionType> GoalAdmissionTypes { get; set; }
@@ -329,6 +330,28 @@ namespace UniAdmissionPlatform.DataTier.Models
                     .HasForeignKey(d => d.UniversityId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Follow_University_Id_fk");
+            });
+
+            modelBuilder.Entity<FollowEvent>(entity =>
+            {
+                entity.HasKey(e => new { e.EventId, e.StudentId })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("FollowEvent");
+
+                entity.HasIndex(e => e.StudentId, "FollowEvent_Student_Id_fk");
+
+                entity.HasOne(d => d.Event)
+                    .WithMany(p => p.FollowEvents)
+                    .HasForeignKey(d => d.EventId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FollowEvent_Event_Id_fk");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.FollowEvents)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FollowEvent_Student_Id_fk");
             });
 
             modelBuilder.Entity<Gender>(entity =>

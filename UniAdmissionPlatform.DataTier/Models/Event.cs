@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public Event()
         {
             EventChecks = new HashSet<EventCheck>();
+            FollowEvents = new HashSet<FollowEvent>();
             HighSchoolEvents = new HashSet<HighSchoolEvent>();
             OrganizationEvents = new HashSet<OrganizationEvent>();
             Participations = new HashSet<Participation>();
@@ -39,6 +40,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public virtual EventType EventType { get; set; }
         public virtual University University { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }
+        public virtual ICollection<FollowEvent> FollowEvents { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual ICollection<OrganizationEvent> OrganizationEvents { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }

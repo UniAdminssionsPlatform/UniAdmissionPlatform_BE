@@ -44,6 +44,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IFollowService, FollowService>();
             services.AddScoped<IFollowRepository, FollowRepository>();
         
+            services.AddScoped<IFollowEventService, FollowEventService>();
+            services.AddScoped<IFollowEventRepository, FollowEventRepository>();
+        
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IGenderRepository, GenderRepository>();
         
