@@ -301,7 +301,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task<PageResult<ListEventByUniIdBaseViewModel>> GetListEventsByUniId(int universityId, string eventName, string eventHostName, int? eventTypeId, int? statusEvent,
             string sort, int page, int limit)
         {
-            var events = Get();
+            var events = Get().Include(e => e.University).AsQueryable();
             var total = 0;
 
             if (sort != null)

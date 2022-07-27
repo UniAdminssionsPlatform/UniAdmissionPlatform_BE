@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int? UniversityId { get; set; }
-        public string UniversityName { get; set; }
+        public UniversityBaseViewModel University { get; set; }
     }
 
     public class EventWithIsApproveModel : EventBaseViewModel

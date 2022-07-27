@@ -15,8 +15,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
         {
             mc.CreateMap<CreateEventRequest, Event>();
             mc.CreateMap<Event, EventBaseViewModel>()
-                .ForMember(des => des.UniversityName, opt =>
-                    opt.MapFrom(src => src.University.Name));
+                .ForMember(des => des.University, opt =>
+                    opt.MapFrom(src => src.University));
             mc.CreateMap<Event, EventBySlotBaseViewModel>();
             mc.CreateMap<UpdateEventRequest, Event>()
                 .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
@@ -30,6 +30,8 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                     opt => opt.MapFrom(
                         src => src.EventChecks));
             mc.CreateMap<Event, EventWithIsApproveModel>()
+                .ForMember(des => des.University, opt => opt.MapFrom(
+                    src => src.University))
                 .ForMember(des => des.IsApprove, opt =>
                     opt.MapFrom(src =>
                         src.EventTypeId != 2
