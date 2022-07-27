@@ -56,7 +56,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             string sort, int page, int limit, int studentId = 0)
         {
             var (total, queryable) = Get()
-                .Where(sr => studentId == 0 || sr.StudentId == studentId)
+                .Where(sr => studentId == 0 || sr.StudentId == studentId 
+                    && sr.DeletedAt == null)
                 .ProjectTo<SchoolRecordBaseViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -77,13 +78,16 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<int> CreateSchoolRecord(int studentId, CreateSchoolRecordRequest createSchoolRecordRequest)
         {
-            if (Get().Any(sr => sr.StudentId == studentId && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId))
+            if (Get().Any(sr => sr.StudentId == studentId 
+                                && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId))
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Đã tồn tại học bạ của năm này.");
             }
             var schoolRecord = _mapper.CreateMapper().Map<SchoolRecord>(createSchoolRecordRequest);
             schoolRecord.StudentId = studentId;
-
+            schoolRecord.CreatedAt = DateTime.Now;
+            schoolRecord.UpdatedAt = DateTime.Now;
+            
             await CreateAsyn(schoolRecord);
             return schoolRecord.Id;
         }
@@ -91,7 +95,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task UpdateSchoolRecord(int schoolRecordId, int studentId,
             UpdateSchoolRecordRequest updateSchoolRecordRequest)
         {
-            var schoolRecord = await Get().Include(sr => sr.StudentRecordItems).FirstOrDefaultAsync(sr => sr.Id == schoolRecordId && sr.Student.Id == studentId);
+            var schoolRecord = await Get().Include(sr => sr.StudentRecordItems)
+                .FirstOrDefaultAsync(sr => sr.Id == schoolRecordId 
+                                           && sr.Student.Id == studentId 
+                                           && sr.DeletedAt == null);
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound,
@@ -155,20 +162,24 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             }
             
             schoolRecord = mapper.Map(updateSchoolRecordRequest, schoolRecord);
-
+            schoolRecord.UpdatedAt = DateTime.Now;
+            
             await UpdateAsyn(schoolRecord);
         }
 
         public async Task DeleteSchoolRecordById(int schoolRecordId, int studentId)
         {
-            var schoolRecord = await FirstOrDefaultAsyn(sr => sr.Id == schoolRecordId && sr.Student.Id == studentId);
+            var schoolRecord = await FirstOrDefaultAsyn(sr => sr.Id == schoolRecordId 
+                                                              && sr.Student.Id == studentId 
+                                                              && sr.DeletedAt == null);
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound,
                     $"Không tìm thấy phiếu điểm(School Record) id:{schoolRecordId}.");
             }
-
-            // not done yet . 
+            schoolRecord.UpdatedAt = DateTime.Now;
+            schoolRecord.DeletedAt = DateTime.Now;
+            
             await UpdateAsyn(schoolRecord);
         }
 
@@ -202,7 +213,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<int> ImportSchoolRecord(int studentId, int schoolYearId, IFormFile file)
         {
-            var schoolRecord = await FirstOrDefaultAsyn(sr => sr.StudentId == studentId && sr.SchoolYearId == schoolYearId);
+            var schoolRecord = await FirstOrDefaultAsyn(sr => sr.StudentId == studentId 
+                                                              && sr.SchoolYearId == schoolYearId 
+                                                              && sr.DeletedAt == null);
             if (schoolRecord != null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Đã tồn tại phiếu điểm này.");
@@ -250,6 +263,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, stringBuilder.ToString());
             }
+            
+            schoolRecord.CreatedAt = DateTime.Now;
+            schoolRecord.UpdatedAt = DateTime.Now;
+            
             await CreateAsyn(newSchoolRecord);
 
             return newSchoolRecord.Id;
@@ -257,7 +274,11 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<SchoolRecordWithStudentRecordItemModel> GetByIdAndStudentId(int schoolYearId, int studentId = 0)
         {
-            var schoolRecord = await Get().Where(sr => sr.SchoolYearId == schoolYearId && (studentId == 0 || sr.StudentId == studentId)).ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper).FirstOrDefaultAsync();
+            var schoolRecord = await Get().Where(sr => sr.SchoolYearId == schoolYearId 
+                                                       && (studentId == 0 || sr.StudentId == studentId) 
+                                                       && sr.DeletedAt == null)
+                .ProjectTo<SchoolRecordWithStudentRecordItemModel>(_mapper)
+                .FirstOrDefaultAsync();
             if (schoolRecord == null)
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không thể tìm thấy học bạ.");
