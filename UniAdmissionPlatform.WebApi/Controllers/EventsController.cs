@@ -22,14 +22,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IEventService _eventService;
         private readonly IAuthService _authService;
         private readonly ISlotService _slotService;
-        private readonly IUniversityEventService _universityEventService;
         
-        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService, IUniversityEventService universityEventService)
+        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService)
         {
             _eventService = eventService;
             _authService = authService;
             _slotService = slotService;
-            _universityEventService = universityEventService;
         }
         
         /// <summary>
@@ -122,9 +120,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
         public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventRequest updateEventRequest)
         {
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                await _eventService.UpdateEvent(eventId, updateEventRequest);
+                await _eventService.UpdateEvent(eventId,universityId, updateEventRequest);
                 return Ok(MyResponse<object>.OkWithDetail(new{eventId}, $"Cập nhập event thành công với ID = {eventId}"));
                 // return Ok(MyResponse<object>.OkWithMessage("Cập nhập thành công!"));
             }
@@ -223,9 +222,10 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
         public async Task<IActionResult> DeleteAEvent(int eventId)
         {
+            var universityId = _authService.GetUniversityId(HttpContext);
             try
             {
-                await _eventService.DeleteEvent(eventId);
+                await _eventService.DeleteEvent(eventId, universityId);
                 return Ok(MyResponse<object>.OkWithMessage("Xóa thành công!"));
             }
             catch (ErrorResponse e)
@@ -288,42 +288,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-        
-        /// <summary>
-        /// Get a event by university id
-        /// </summary>
-        /// <response code="200">
-        /// Get a event by university id successfully
-        /// </response>
-        /// <response code="400">
-        /// Get a event by university id fail
-        /// </response>
-        /// <response code="401">
-        /// No Login
-        /// </response>
-        /// <returns></returns>
-        [HttpGet]
-        [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
-        [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}")]
-        public async Task<IActionResult> GetEventByUniId(int universityId)
-        {
-            try
-            {
-                var eventByUniId = await _universityEventService.GetEventByUniId(universityId);
-                return Ok(MyResponse<EventByUniIdBaseViewModel>.OkWithDetail(eventByUniId, "Truy cập thành công!"));
-            }
-            catch (ErrorResponse e)
-            {
-                throw e.Error.Code switch
-                {
-                    StatusCodes.Status404NotFound => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Tìm kiếm thất bại. " + e.Error.Message),
-                    StatusCodes.Status400BadRequest => new GlobalException(ExceptionCode.PrintMessageErrorOut,
-                        "Tìm kiếm thất bại. " + e.Error.Message),
-                    _ => new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message),
-                };
-            }
-        }
+
         
         /// <summary>
         /// Get list events for specific university 
@@ -342,7 +307,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             { 
-                var listEvent = await _universityEventService.GetListEventsByUniId(universityId,eventName,  eventHostName, eventTypeId, statusEvent, sort, page, limit);
+                var listEvent = await _eventService.GetListEventsByUniId(universityId,eventName,  eventHostName, eventTypeId, statusEvent, sort, page, limit);
                 return Ok(MyResponse<PageResult<ListEventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
@@ -397,7 +362,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             { 
-                var listEvent = await _universityEventService.GetListOnGoingEventsByUniId(universityId, sort, page, limit);
+                var listEvent = await _eventService.GetListEventsByUniId(universityId, null, null,null, (int?)EventStatus.OnGoing, sort, page, limit);
                 return Ok(MyResponse<PageResult<ListEventByUniIdBaseViewModel>>.OkWithDetail(listEvent, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)

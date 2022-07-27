@@ -149,9 +149,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IUniversityService, UniversityService>();
             services.AddScoped<IUniversityRepository, UniversityRepository>();
         
-            services.AddScoped<IUniversityEventService, UniversityEventService>();
-            services.AddScoped<IUniversityEventRepository, UniversityEventRepository>();
-        
             services.AddScoped<IUniversityNewsService, UniversityNewsService>();
             services.AddScoped<IUniversityNewsRepository, UniversityNewsRepository>();
         

@@ -14,7 +14,6 @@ namespace UniAdmissionPlatform.DataTier.Models
             OrganizationEvents = new HashSet<OrganizationEvent>();
             Participations = new HashSet<Participation>();
             Speakers = new HashSet<Speaker>();
-            UniversityEvents = new HashSet<UniversityEvent>();
         }
 
         public int Id { get; set; }
@@ -34,14 +33,15 @@ namespace UniAdmissionPlatform.DataTier.Models
         public string MeetingUrl { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public int? UniversityId { get; set; }
 
         public virtual District District { get; set; }
         public virtual EventType EventType { get; set; }
+        public virtual University University { get; set; }
         public virtual ICollection<EventCheck> EventChecks { get; set; }
         public virtual ICollection<HighSchoolEvent> HighSchoolEvents { get; set; }
         public virtual ICollection<OrganizationEvent> OrganizationEvents { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
         public virtual ICollection<Speaker> Speakers { get; set; }
-        public virtual ICollection<UniversityEvent> UniversityEvents { get; set; }
     }
 }
