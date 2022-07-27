@@ -30,7 +30,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public IActionResult GetFollow(int eventId)
         {
             var userId = _authService.GetUserId(HttpContext);
-            var isFollow = _followEventService.IsFollow(eventId, userId);
+            var isFollow = _followEventService.IsFollow(userId, eventId);
             return Ok(MyResponse<bool>.OkWithData(isFollow));
         }
 
