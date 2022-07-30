@@ -29,4 +29,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public bool? IsPublish { get; set; }
     }
 
+    public class NewsWithUniversityViewModel : NewsBaseViewModel
+    {
+        public UniversityBaseViewModel University { get; set; }
+    }
 }

@@ -239,7 +239,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var newsById = await _newsService.GetNewsById(newsId);
-                return Ok(MyResponse<NewsBaseViewModel>.OkWithDetail(newsById, $"Đạt được thành công"));
+                return Ok(MyResponse<NewsWithUniversityViewModel>.OkWithDetail(newsById, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {

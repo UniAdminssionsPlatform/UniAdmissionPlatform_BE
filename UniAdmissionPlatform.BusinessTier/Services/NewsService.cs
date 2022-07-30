@@ -20,7 +20,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface INewsService
     {
         Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit);
-        Task<NewsBaseViewModel> GetNewsById(int newsId);
+        Task<NewsWithUniversityViewModel> GetNewsById(int newsId);
         Task<int> CreateNews(int universityId, CreateNewsRequest createNewsRequest);
         Task UpdateNews(int newsId, UpdateNewsRequest updateNewsRequest);
         Task DeleteNewsById(int newsId);
@@ -119,17 +119,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             await UpdateAsyn(news);
         }
 
-        public async Task<NewsBaseViewModel> GetNewsById(int newsId)
+        public async Task<NewsWithUniversityViewModel> GetNewsById(int newsId)
         {
             var news = await Get()
                 .Where(n => n.Id == newsId && n.DeletedAt == null)
+                .ProjectTo<NewsWithUniversityViewModel>(_mapper)
                 .FirstOrDefaultAsync();
             if (news == null)
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tin tức id = {newsId}.");
             }
             
-            return _mapper.CreateMapper().Map<NewsBaseViewModel>(news);
+            return news;
         }
 
         public async Task<int> CreateNews(int universityId, CreateNewsRequest createNewsRequest)
