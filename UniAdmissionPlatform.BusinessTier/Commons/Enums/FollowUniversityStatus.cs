@@ -5,4 +5,10 @@
         Followed,
         Unfollowed
     }
+ 
+    public enum FollowEventStatus
+    {
+        Followed,
+        Unfollowed
+    }
 }

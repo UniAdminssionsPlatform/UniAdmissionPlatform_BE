@@ -9,6 +9,7 @@ namespace UniAdmissionPlatform.DataTier.Models
     {
         public int EventId { get; set; }
         public int StudentId { get; set; }
+        public int? Status { get; set; }
 
         public virtual Event Event { get; set; }
         public virtual Student Student { get; set; }

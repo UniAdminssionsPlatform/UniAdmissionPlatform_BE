@@ -10,6 +10,7 @@ namespace UniAdmissionPlatform.DataTier.Models
         public int? Status { get; set; }
         public int UniversityId { get; set; }
         public int StudentId { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public virtual Student Student { get; set; }
         public virtual University University { get; set; }

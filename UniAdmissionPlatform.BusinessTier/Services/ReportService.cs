@@ -64,7 +64,7 @@ from Event E
          join Ward W on A.WardId = W.Id
          join District D on W.DistrictId = D.Id
          join Province P on D.ProvinceId = P.Id
-where EventId = {0}", eventId).ToList();
+where EventId = {0} and FE.Status = 0", eventId).ToList();
         }
     }
 }

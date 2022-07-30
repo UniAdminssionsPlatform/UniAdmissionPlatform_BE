@@ -2,6 +2,7 @@
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.DataTier.Models;
 
 namespace UniAdmissionPlatform.BusinessTier.Generations.Services
@@ -11,11 +12,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         bool IsFollow(int studentId, int eventId);
         Task Follow(int studentId, int eventId, bool isFollow);
     }
+
     public partial class FollowEventService
     {
         public bool IsFollow(int studentId, int eventId)
         {
-            return Get().Any(fe => fe.StudentId == studentId && fe.EventId == eventId);
+            return Get().Any(fe =>  (fe.Status == 0) &&
+                fe.StudentId == studentId && fe.EventId == eventId);
         }
 
         public async Task Follow(int studentId, int eventId, bool isFollow)
@@ -23,19 +26,28 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             if (!isFollow)
             {
                 var followEvent = Get().FirstOrDefault(fe => fe.EventId == eventId && fe.StudentId == studentId);
-                if (followEvent != null)
+                if (followEvent != null && followEvent.Status == (int?)FollowEventStatus.Followed)
                 {
-                    await DeleteAsyn(followEvent);
+                    followEvent.Status = (int?)FollowEventStatus.Unfollowed;
+                    await UpdateAsyn(followEvent);
                 }
             }
             else
             {
-                if (!IsFollow(studentId, eventId))
+                var followEvent = Get().FirstOrDefault(fe => fe.EventId == eventId && fe.StudentId == studentId);
+                if (followEvent != null && followEvent.Status == (int?)FollowEventStatus.Unfollowed)
+                {
+                    followEvent.Status = (int?)FollowEventStatus.Followed;
+                    await UpdateAsyn(followEvent);
+                }
+
+                if (followEvent == null)
                 {
                     await CreateAsyn(new FollowEvent
                     {
+                        StudentId = studentId,
                         EventId = eventId,
-                        StudentId = studentId
+                        Status = (int?)FollowEventStatus.Unfollowed
                     });
                 }
             }
