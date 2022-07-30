@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -26,13 +27,15 @@ namespace UniAdmissionPlatform.BusinessTier.Services
         private readonly IAccountService _accountService;
         private readonly IMailService _mailService;
         private readonly IUserRepository _userRepository;
+        private readonly IReasonRepository _reasonRepository;
 
-        public MailBookingService(IMailService mailService, IEventCheckService eventCheckService, IAccountService accountService, IUserRepository userRepository)
+        public MailBookingService(IMailService mailService, IEventCheckService eventCheckService, IAccountService accountService, IUserRepository userRepository, IReasonRepository reasonRepository)
         {
             _mailService = mailService;
             _eventCheckService = eventCheckService;
             _accountService = accountService;
             _userRepository = userRepository;
+            _reasonRepository = reasonRepository;
         }
 
         public async Task SendMailForNewBookingToSchoolAdmin(int eventCheckId)
@@ -188,7 +191,9 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                 .Include(ec => ec.Event)
                 .ThenInclude(e => e.University)
                 .FirstOrDefaultAsync();
-            
+
+            var reason = await _reasonRepository.Get().FirstOrDefaultAsync(r => r.ReferenceId == eventCheckId);
+
             if (eventChecks == null)
             {
                 throw new Exception("Fail at sending mail for new rejected event to university admin");
@@ -222,7 +227,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         + (" " + account.FirstName ?? ""),
                     EventName = eventName,
                     RejectedTime = rejectedTime,
-                    RejectReason = "test abc",
+                    RejectReason = reason?.Detail ?? "",
                     BookingDetailUrl = "",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
