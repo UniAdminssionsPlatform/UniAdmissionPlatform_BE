@@ -192,6 +192,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             return new LoginResponse
             {
                 UserId = user.Id,
+                UserName = (user.Account.FirstName?? "") + ' ' + (user.Account.MiddleName?? "")  + ' '  + (user.Account.LastName ?? ""), 
                 Roles = customClaims.Role,
                 Token = tokenString,
                 BufferTime = customClaims.BufferTime * 1000,

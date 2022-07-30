@@ -3,6 +3,7 @@
     public class LoginResponse
     {
         public long UserId { get; set; }
+        public string UserName { get; set; }
         public string Roles { get; set; }
         public int? UniversityId { get; set; }
         public int? HighSchoolId { get; set; }
