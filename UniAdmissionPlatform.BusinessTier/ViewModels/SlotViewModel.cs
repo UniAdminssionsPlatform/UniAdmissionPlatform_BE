@@ -29,6 +29,8 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
 
     public class SlotWithEventCheckStatusModel : SlotViewModel
     {
+        public string HighSchoolAddress { get; set; }
+        public string HighSchoolName { get; set; }
         public int? EventCheckStatus { get; set; }
     }
 
