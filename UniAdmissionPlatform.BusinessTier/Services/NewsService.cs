@@ -19,7 +19,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 {
     public partial interface INewsService
     {
-        Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit);
+        Task<PageResult<NewsWithUniversityViewModel>> GetAllNews(NewsWithUniversityViewModel filter, string sort, int page, int limit);
         Task<NewsWithUniversityViewModel> GetNewsById(int newsId);
         Task<int> CreateNews(int universityId, CreateNewsRequest createNewsRequest);
         Task UpdateNews(int newsId, UpdateNewsRequest updateNewsRequest);
@@ -45,7 +45,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<NewsBaseViewModel>> GetAllNews(NewsBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<NewsWithUniversityViewModel>> GetAllNews(NewsWithUniversityViewModel filter, string sort, int page, int limit)
         {
             List<int> tagIds = null;
             if (filter.Tags != null)
@@ -57,7 +57,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 .Where(n => n.DeletedAt == null && n.IsPublish != null && n.IsPublish.Value
                             && (tagIds == null || n.NewsTags.Select(nt => nt.TagId).Any(ti => tagIds.Contains(ti)))
                 )
-                .ProjectTo<NewsBaseViewModel>(_mapper)
+                .ProjectTo<NewsWithUniversityViewModel>(_mapper)
                 .DynamicFilter(filter)
                 .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             if (sort != null)
@@ -65,7 +65,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
 
-            return new PageResult<NewsBaseViewModel>
+            return new PageResult<NewsWithUniversityViewModel>
             {
                 List = await queryable.ToListAsync(),
                 Page = page == 0 ? 1 : page,

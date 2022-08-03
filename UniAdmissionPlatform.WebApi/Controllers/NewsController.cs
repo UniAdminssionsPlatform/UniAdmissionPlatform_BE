@@ -147,12 +147,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "News" })]
         [Route("~/api/v{version:apiVersion}/[controller]")]
-        public async Task<IActionResult> GetAllNews([FromQuery] NewsBaseViewModel filter, string sort, int page, int limit)
+        public async Task<IActionResult> GetAllNews([FromQuery] NewsWithUniversityViewModel filter, string sort, int page, int limit)
         {
             try
             {
                 var allNews = await _newsService.GetAllNews(filter, sort, page, limit);
-                return Ok(MyResponse<PageResult<NewsBaseViewModel>>.OkWithDetail(allNews, $"Đạt được thành công"));
+                return Ok(MyResponse<PageResult<NewsWithUniversityViewModel>>.OkWithDetail(allNews, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
