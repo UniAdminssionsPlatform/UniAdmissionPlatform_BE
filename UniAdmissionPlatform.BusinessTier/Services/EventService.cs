@@ -32,7 +32,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteEvent(int id, int universityId);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
             int page, int limit);
-        Task<EventBaseViewModel> GetEventByID(int Id);
+        Task<EventWithSlotModel> GetEventByID(int Id);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
 
         Task<List<EventBaseViewModel>> GetListEventsForUniAdmin(int universityId, DateTime? fromDate, DateTime? toDate,
@@ -197,9 +197,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
         
-        public async Task<EventBaseViewModel> GetEventByID(int id)
+        public async Task<EventWithSlotModel> GetEventByID(int id)
         {
-             var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventBaseViewModel>(_mapper).FirstOrDefaultAsync();
+             var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper).FirstOrDefaultAsync();
              if (eventById == null)
              {
                  throw new ErrorResponse(StatusCodes.Status400BadRequest,

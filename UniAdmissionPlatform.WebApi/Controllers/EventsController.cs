@@ -191,7 +191,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var eventByID = await _eventService.GetEventByID(eventId);
-                return Ok(MyResponse<EventBaseViewModel>.OkWithDetail(eventByID, "Truy cập thành công!"));
+                return Ok(MyResponse<EventWithSlotModel>.OkWithDetail(eventByID, "Truy cập thành công!"));
             }
             catch (ErrorResponse e)
             {
