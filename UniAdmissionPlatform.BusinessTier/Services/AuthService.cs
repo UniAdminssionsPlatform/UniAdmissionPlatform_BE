@@ -10,9 +10,15 @@ namespace UniAdmissionPlatform.BusinessTier.Services
         int GetHighSchoolId(HttpContext httpContext);
         int GetUniversityId(HttpContext httpContext);
         int GetOrganizationId(HttpContext httpContext);
+        public bool IsAuth(HttpContext httpContext);
     }
     public class AuthService : IAuthService
     {
+        public bool IsAuth(HttpContext httpContext)
+        {
+            var claims = (CustomClaims) httpContext.Items["claims"];
+            return claims != null;
+        }
         public int GetUserId(HttpContext httpContext)
         {
             var claims = (CustomClaims) httpContext.Items["claims"];

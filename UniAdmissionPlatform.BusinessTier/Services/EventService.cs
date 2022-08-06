@@ -32,7 +32,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task DeleteEvent(int id, int universityId);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
             int page, int limit);
-        Task<EventWithSlotModel> GetEventByID(int Id);
+        Task<EventWithSlotModel> GetEventByID(int Id, int? userId = 0);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
 
         Task<List<EventBaseViewModel>> GetListEventsForUniAdmin(int universityId, DateTime? fromDate, DateTime? toDate,
@@ -49,11 +49,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         private readonly IConfigurationProvider _mapper;
         private readonly IEventTypeRepository _eventTypeRepository;
+        private readonly IFollowEventRepository _followEventRepository;
         
-        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper, IEventTypeRepository eventTypeRepository) : base(unitOfWork, 
+        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper, IEventTypeRepository eventTypeRepository, IFollowEventRepository followEventRepository) : base(unitOfWork, 
             repository)
         {
             _eventTypeRepository = eventTypeRepository;
+            _followEventRepository = followEventRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -197,14 +199,26 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             };
         }
         
-        public async Task<EventWithSlotModel> GetEventByID(int id)
+        public async Task<EventWithSlotModel> GetEventByID(int id, int? userId = 0)
         {
              var eventById = await Get().Where(e => e.Id == id && e.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper).FirstOrDefaultAsync();
+             
              if (eventById == null)
              {
                  throw new ErrorResponse(StatusCodes.Status400BadRequest,
                      $"Không tìm thấy event với id ={id}");
              }
+             
+             if (userId != null && userId != 0)
+             {
+                 var followEvent = await _followEventRepository.FirstOrDefaultAsync(fe => fe.StudentId == userId && fe.EventId == id);
+                 if (followEvent != null)
+                 {
+                     eventById.IsFollow = followEvent.Status != null &&
+                                          followEvent.Status == (int?)FollowEventStatus.Followed;
+                 }
+             }
+             
              return eventById;
         }
         
