@@ -31,6 +31,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
         public DateTime? EndTime { get; set; }
         public int? UniversityId { get; set; }
         public UniversityBaseViewModel University { get; set; }
+        [Skip]
         public bool IsFollow { get; set; }
     }
 
