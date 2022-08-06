@@ -159,7 +159,12 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         {
             try
             {
-                var events = await _eventService.GetAllEvents(filter, sort, page, limit);
+                int? userId = null;
+                if (_authService.IsAuth(HttpContext))
+                {
+                    userId = _authService.GetUserId(HttpContext);
+                }
+                var events = await _eventService.GetAllEvents(filter, sort, page, limit, userId);
                 return Ok(MyResponse<PageResult<EventWithSlotModel>>.OkWithDetail(events, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)

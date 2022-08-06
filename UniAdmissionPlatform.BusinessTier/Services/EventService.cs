@@ -31,7 +31,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         Task UpdateEvent(int id, int universityId, UpdateEventRequest updateEventRequest);
         Task DeleteEvent(int id, int universityId);
         Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort,
-            int page, int limit);
+            int page, int limit, int? userId);
         Task<EventWithSlotModel> GetEventByID(int Id, int? userId = 0);
         Task BookSlotForUniAdmin(int universityId, BookSlotForUniAdminRequest bookSlotForUniAdminRequest);
 
@@ -180,7 +180,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
         
-        public async Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort, int page, int limit)
+        public async Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort, int page, int limit, int? userId)
         {
             var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper)
                 .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
@@ -189,10 +189,25 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 queryable = queryable.OrderBy(sort);
             }
+
+            var eventWithSlotModels = await queryable.ToListAsync();
+
+            if (userId != null)
+            {
+                var followEvents = _followEventRepository.Get().Where(fe => eventWithSlotModels.Select(e => e.Id).Contains(userId)).ToDictionary(fe => fe.EventId, fe => fe);
+                foreach (var eventWithSlotModel in eventWithSlotModels)
+                {
+                    if (eventWithSlotModel.Id != null && followEvents.ContainsKey(eventWithSlotModel.Id.Value))
+                    {
+                        eventWithSlotModel.IsFollow = followEvents[eventWithSlotModel.Id.Value].Status ==
+                                                      (int?)FollowEventStatus.Followed;
+                    }
+                }
+            }
             
             return new PageResult<EventWithSlotModel>
             {
-                List = await queryable.ToListAsync(),
+                List = eventWithSlotModels,
                 Page = page == 0 ? 1 : page,
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
