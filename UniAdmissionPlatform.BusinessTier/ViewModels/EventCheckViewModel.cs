@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using UniAdmissionPlatform.BusinessTier.Commons.Attributes;
 
 namespace UniAdmissionPlatform.BusinessTier.ViewModels
 {
@@ -17,5 +19,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     {
         public SlotViewModel Slot { get; set; }
         public EventBaseViewModel Event { get; set; }
+        [Skip]
+        public string Reason { get; set; }
     }
 }
