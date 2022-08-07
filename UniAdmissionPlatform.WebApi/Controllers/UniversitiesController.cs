@@ -82,9 +82,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         public async Task<IActionResult> GetAllUniversities([FromQuery] UniversityBaseViewModel filter, string sort,
             int page, int limit)
         {
+            int? userId = null;
+            if (_authService.IsAuth(HttpContext))
+            {
+                userId = _authService.GetUserId(HttpContext);
+            }
             try
             {
-                var tags = await _universityService.GetAllUniversities(filter, sort, page, limit);
+                var tags = await _universityService.GetAllUniversities(filter, sort, page, limit, userId);
                 return Ok(MyResponse<PageResult<UniversityBaseViewModel>>.OkWithDetail(tags, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
@@ -116,9 +121,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [Route("~/api/v{version:apiVersion}/[controller]/{universityId:int}")]
         public async Task<IActionResult> GetUniversityByID(int universityId)
         {
+            int? userId = null;
+            if (_authService.IsAuth(HttpContext))
+            {
+                userId = _authService.GetUserId(HttpContext);
+            }
             try
             {
-                var universityById = await _universityService.GetUniversityByID(universityId);
+                var universityById = await _universityService.GetUniversityByID(universityId, userId);
                 return Ok(MyResponse<UniversityBaseViewModel>.OkWithDetail(universityById, "Truy cập thành công!"));
             }
             catch (ErrorResponse e)

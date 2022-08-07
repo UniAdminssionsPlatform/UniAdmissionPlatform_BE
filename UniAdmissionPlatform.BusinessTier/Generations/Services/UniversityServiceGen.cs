@@ -15,6 +15,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class UniversityService:BaseService<University>,IUniversityService
     {
-        public UniversityService(IUnitOfWork unitOfWork,IUniversityRepository repository):base(unitOfWork,repository){}
+        public UniversityService(IUnitOfWork unitOfWork,IUniversityRepository repository, IFollowRepository followRepository):base(unitOfWork,repository)
+        {
+            _followRepository = followRepository;
+        }
     }
 }

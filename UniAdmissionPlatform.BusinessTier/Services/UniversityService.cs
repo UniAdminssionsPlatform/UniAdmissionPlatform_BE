@@ -21,8 +21,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial interface IUniversityService
     {
         Task<UniversityCodeViewModel> GetUniversityNameByCode(string universityCode);
-        Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit);
-        Task<UniversityBaseViewModel> GetUniversityByID(int Id);
+        Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit, int? userId = null);
+        Task<UniversityBaseViewModel> GetUniversityByID(int Id, int? userId = null);
 
         Task<int> CreateUniversity(CreateUniversityRequest createUniversityRequest);
         Task UpdateUniversityProfile(int universityId, UpdateUniversityProfileRequest updateUniversityProfileRequest);
@@ -30,11 +30,13 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     public partial class UniversityService
     {
         private readonly IConfigurationProvider _mapper;
+        private readonly IFollowRepository _followRepository;
 
-        public UniversityService(IUnitOfWork unitOfWork, IUniversityRepository repository, IMapper mapper) : base(
+        public UniversityService(IUnitOfWork unitOfWork, IUniversityRepository repository, IMapper mapper, IFollowRepository followRepository) : base(
             unitOfWork,
             repository)
         {
+            _followRepository = followRepository;
             _mapper = mapper.ConfigurationProvider;
         }
 
@@ -56,7 +58,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit)
+        public async Task<PageResult<UniversityBaseViewModel>> GetAllUniversities(UniversityBaseViewModel filter, string sort, int page, int limit, int? userId = null)
         {
             var (total, queryable) = Get
                     (s => s.Status == (int)UniversityStatus.Active && s.DeletedAt == null)
@@ -69,19 +71,40 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
 
+            var universityBaseViewModels = await queryable.ToListAsync();
+
+            if (userId != null)
+            {
+                var follows = _followRepository.Get().Where(f => f.StudentId == userId && universityBaseViewModels.Select(u => u.Id).Contains(f.UniversityId))
+                    .ToDictionary(f => f.UniversityId, f => f);
+                foreach (var universityBaseViewModel in universityBaseViewModels)
+                {
+                    universityBaseViewModel.IsFollow =
+                        follows.ContainsKey(universityBaseViewModel.Id!.Value)
+                        && follows[universityBaseViewModel.Id!.Value].Status == (int?)FollowUniversityStatus.Followed;
+                }
+            }
+            
             return new PageResult<UniversityBaseViewModel>
             {
-                List = await queryable.ToListAsync(),
+                List = universityBaseViewModels,
                 Page = page == 0 ? 1 : page,
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
             };
         }
         
-        public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId)
+        public async Task<UniversityBaseViewModel> GetUniversityByID(int universityId, int? userId = null)
         {
             var universityById = await Get().Where(u => u.Id == universityId && u.Status == (int)UniversityStatus.Active && u.DeletedAt == null)
                 .ProjectTo<UniversityBaseViewModel>(_mapper).FirstOrDefaultAsync();
+
+            if (userId != null)
+            {
+                var follow = _followRepository.Get()
+                    .FirstOrDefault(f => f.StudentId == userId && f.UniversityId == universityId);
+                universityById.IsFollow = follow != null && follow.Status == (int?)FollowUniversityStatus.Followed;
+            }
 
             if (universityById == null)
             {
