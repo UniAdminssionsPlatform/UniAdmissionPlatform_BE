@@ -294,9 +294,22 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 queryable = queryable.OrderBy(sort);
             }
 
+            var eventCheckWithEventAndSlotModels = await queryable.ToListAsync();
+            foreach (var eventCheckWithEventAndSlotModel in eventCheckWithEventAndSlotModels)
+            {
+                if (eventCheckWithEventAndSlotModel.Status == (int?)EventCheckStatus.Rejected)
+                {
+                    var reason = _reasonRepository.Get().FirstOrDefault(r => r.ReferenceId == eventCheckWithEventAndSlotModel.Id);
+                    if (reason != null)
+                    {
+                        eventCheckWithEventAndSlotModel.Reason = reason.Detail;
+                    }
+                }
+            }
+
             return new PageResult<EventCheckWithEventAndSlotModel>
             {
-                List = await queryable.ToListAsync(),
+                List = eventCheckWithEventAndSlotModels,
                 Page = page == 0 ? 1 : page,
                 Limit = limit == 0 ? DefaultPaging : limit,
                 Total = total
