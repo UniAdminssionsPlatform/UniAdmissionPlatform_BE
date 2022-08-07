@@ -47,7 +47,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     {
                         StudentId = studentId,
                         EventId = eventId,
-                        Status = (int?)FollowEventStatus.Unfollowed
+                        Status = (int?)FollowEventStatus.Followed
                     });
                 }
             }

@@ -194,7 +194,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (userId != null)
             {
-                var followEvents = _followEventRepository.Get().Where(fe => eventWithSlotModels.Select(e => e.Id).Contains(userId)).ToDictionary(fe => fe.EventId, fe => fe);
+                var followEvents = _followEventRepository.Get().Where(fe => eventWithSlotModels.Select(e => e.Id).Contains(fe.EventId) && fe.StudentId == userId).ToDictionary(fe => fe.EventId, fe => fe);
                 foreach (var eventWithSlotModel in eventWithSlotModels)
                 {
                     if (eventWithSlotModel.Id != null && followEvents.ContainsKey(eventWithSlotModel.Id.Value))
