@@ -17,7 +17,7 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
 
     public class EventCheckWithEventAndSlotModel : EventCheckBaseViewModel
     {
-        public SlotViewModel Slot { get; set; }
+        public SlotWithEventCheckStatusModel Slot { get; set; }
         public EventBaseViewModel Event { get; set; }
         [Skip]
         public string Reason { get; set; }
