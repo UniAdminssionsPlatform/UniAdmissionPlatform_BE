@@ -82,7 +82,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     SlotStartDate = slotStartDate,
                     SlotEndDate = slotEndDate,
                     //todo:
-                    BookingDetailUrl = "http://uniadmissionplatformwebapi-dev.ap-southeast-1.elasticbeanstalk.com/"
+                    BookingDetailUrl = "https://ketnoituyensinh.tech"
                 };
 
                 var mailRequest = new MailRequest
@@ -129,7 +129,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
                     ApprovedTime = approvedTime,
-                    BookingDetailUrl = "",
+                    BookingDetailUrl = "https://ketnoituyensinh.tech",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -162,7 +162,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
                     ApprovedTime = approvedTime,
-                    BookingDetailUrl = "",
+                    BookingDetailUrl = "https://ketnoituyensinh.tech",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -229,7 +229,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     EventName = eventName,
                     RejectedTime = rejectedTime,
                     RejectReason = reason?.Detail ?? "",
-                    BookingDetailUrl = "",
+                    BookingDetailUrl = "https://ketnoituyensinh.tech",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -285,7 +285,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         (account.LastName ?? "")
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
-                    BookingDetailUrl = "",
+                    BookingDetailUrl = "https://ketnoituyensinh.tech",
                     EventName = eventName,
                     SlotStartDate = slotStartDate,
                     SlotEndDate = slotEndDate,
