@@ -104,7 +104,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             Event @event = null;
             if (universityId != 0)
             {
-                @event = await Get().Where(e => e.UniversityId == universityId && e.Id == eventId).FirstOrDefaultAsync();
+                @event = await Get().Include(e => e.EventChecks).Where(e => e.UniversityId == universityId && e.Id == eventId).FirstOrDefaultAsync();
                 if (@event == null)
                 {
                     throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không tìm thấy sự kiện.");
@@ -136,7 +136,18 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 @event.Status = (int)EventStatus.Init;
             }
-                
+
+
+
+            if (@event.Status == (int)EventStatus.OnGoing)
+            {
+                foreach (var eventEventCheck in @event.EventChecks.Where(ec => ec.Status == (int) EventCheckStatus.Approved))
+                {
+                    BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
+                        mailBookingService.SendEmailForApprovedEventToUniAdmin(eventEventCheck.Id));
+                }                
+            }
+            
 
             await UpdateAsyn(@event);
         }
