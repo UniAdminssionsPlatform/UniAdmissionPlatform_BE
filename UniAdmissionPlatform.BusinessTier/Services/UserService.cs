@@ -232,8 +232,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var userInRequest = mapper.Map<User>(registerForStudentRequest);
             user.Account = userInRequest.Account;
             user.Account.RoleId = "student";
+            user.Account.ProfileImageUrl = "https://firebasestorage.googleapis.com/v0/b/uni-admission-platform.appspot.com/o/UAP-Image%2Favatar.png?alt=media&token=c33075eb-7bdf-4423-94b9-3703aa71b2f1";
             user.Account.HighSchoolId = highSchoolId;
-
             user.Account.Student = new Student
             {
                 //todo:
@@ -261,6 +261,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             user.Account = userInRequest.Account;
             user.Account.RoleId = "schoolAdmin";
             user.Account.HighSchoolId = highSchoolId;
+            user.Account.ProfileImageUrl = "https://firebasestorage.googleapis.com/v0/b/uni-admission-platform.appspot.com/o/UAP-Image%2Favatar.png?alt=media&token=c33075eb-7bdf-4423-94b9-3703aa71b2f1";
             user.Status = (int)UserStatus.Pending;
             await UpdateAsyn(user);
             return user.Id;
@@ -280,6 +281,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             user.Account = userInRequest.Account;
             user.Account.RoleId = "schoolAdmin";
             user.Account.UniversityId = universityId;
+            user.Account.ProfileImageUrl = "https://firebasestorage.googleapis.com/v0/b/uni-admission-platform.appspot.com/o/UAP-Image%2Favatar.png?alt=media&token=c33075eb-7bdf-4423-94b9-3703aa71b2f1";
             user.Status = (int)UserStatus.Pending;
             await UpdateAsyn(user);
             return user.Id;
