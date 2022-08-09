@@ -144,7 +144,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 foreach (var eventEventCheck in @event.EventChecks.Where(ec => ec.Status == (int) EventCheckStatus.Approved))
                 {
                     BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
-                        mailBookingService.SendEmailForApprovedEventToUniAdmin(eventEventCheck.Id));
+                        mailBookingService.SendEmailForStudent(eventEventCheck.Id));
                 }                
             }
             
