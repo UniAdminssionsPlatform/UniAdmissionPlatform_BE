@@ -24,7 +24,9 @@ namespace UniAdmissionPlatform.DataTier.Models
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool? IsPublish { get; set; }
+        public int? UniversityId { get; set; }
 
+        public virtual University University { get; set; }
         public virtual ICollection<NewsMajor> NewsMajors { get; set; }
         public virtual ICollection<NewsTag> NewsTags { get; set; }
         public virtual ICollection<UniversityNews> UniversityNews { get; set; }

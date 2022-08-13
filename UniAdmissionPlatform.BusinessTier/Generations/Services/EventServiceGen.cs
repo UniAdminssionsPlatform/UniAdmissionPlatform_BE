@@ -15,9 +15,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class EventService:BaseService<Event>,IEventService
     {
-        public EventService(IUnitOfWork unitOfWork,IEventRepository repository, IFollowEventRepository followEventRepository):base(unitOfWork,repository)
-        {
-            _followEventRepository = followEventRepository;
-        }
+        public EventService(IUnitOfWork unitOfWork,IEventRepository repository):base(unitOfWork,repository){}
     }
 }

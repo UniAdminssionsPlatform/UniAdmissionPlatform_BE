@@ -9,12 +9,12 @@ using UniAdmissionPlatform.DataTier.BaseConnect;
 using UniAdmissionPlatform.DataTier.Models;
 namespace UniAdmissionPlatform.BusinessTier.Generations.Repositories
 {
-    public partial interface IUniversityNewsRepository :IBaseRepository<UniversityNews>
+    public partial interface IStudentReportRepository :IBaseRepository<StudentReport>
     {
     }
-    public partial class UniversityNewsRepository :BaseRepository<UniversityNews>, IUniversityNewsRepository
+    public partial class StudentReportRepository :BaseRepository<StudentReport>, IStudentReportRepository
     {
-         public UniversityNewsRepository(DbContext dbContext) : base(dbContext)
+         public StudentReportRepository(DbContext dbContext) : base(dbContext)
          {
          }
     }

@@ -17,7 +17,7 @@ namespace UniAdmissionPlatform.BusinessTier.AutoMapperModules
                 .ForMember(des => des.TagList, opt =>
                     opt.MapFrom(src => src.NewsTags.Select(nt => nt.Tag)))
                 .ForMember(des => des.University, opt =>
-                    opt.MapFrom(src => src.UniversityNews.FirstOrDefault().University ?? new University()));
+                    opt.MapFrom(src => src.University ?? new University()));
             mc.CreateMap<UpdateNewsRequest, News>()
                 .ForAllMembers(opt => opt.Condition((src,des,srcMember)=> srcMember != null));
             mc.CreateMap<CreateNewsRequest, News>()

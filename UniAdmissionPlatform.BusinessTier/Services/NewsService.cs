@@ -83,7 +83,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 tagIds = substring.Split(",").Select(int.Parse).ToList();
             }
             var (total, queryable) = Get()
-                .Where(n => n.DeletedAt == null && n.UniversityNews.Select(un => un.UniversityId).Contains(universityId)
+                .Where(n => n.DeletedAt == null && n.UniversityId == universityId
                                                 && (tagIds == null || n.NewsTags.Select(nt => nt.TagId).Any(ti => tagIds.Contains(ti)))
                 )
                 .ProjectTo<NewsWithPublishViewModel>(_mapper)
@@ -106,7 +106,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         public async Task SetIsPublish(int universityId, int newsId, bool isPublish)
         {
             var news = await Get()
-                .FirstOrDefaultAsync(n => n.DeletedAt == null && n.Id == newsId && n.UniversityNews.Select(un => un.UniversityId).Contains(universityId));
+                .FirstOrDefaultAsync(n => n.DeletedAt == null && n.Id == newsId && n.UniversityId == universityId);
 
             if (news == null)
             {
@@ -145,15 +145,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Một số tag không khả dụng.");
             }
 
-            var uniNewsUniversityNews = news.UniversityNews = new List<UniversityNews>();
-            uniNewsUniversityNews.Add(new UniversityNews
-            {
-                UniversityId = universityId,
-            });
-
             news.CreateDate = DateTime.Now;
             news.CreatedAt = DateTime.Now;
             news.UpdatedAt = DateTime.Now;
+            news.UniversityId = universityId;
             await CreateAsyn(news);
             
             return news.Id;

@@ -137,6 +137,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
             services.AddScoped<IStudentRecordItemService, StudentRecordItemService>();
             services.AddScoped<IStudentRecordItemRepository, StudentRecordItemRepository>();
         
+            services.AddScoped<IStudentReportService, StudentReportService>();
+            services.AddScoped<IStudentReportRepository, StudentReportRepository>();
+        
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
         
@@ -154,9 +157,6 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.DependencyInjection
         
             services.AddScoped<IUniversityService, UniversityService>();
             services.AddScoped<IUniversityRepository, UniversityRepository>();
-        
-            services.AddScoped<IUniversityNewsService, UniversityNewsService>();
-            services.AddScoped<IUniversityNewsRepository, UniversityNewsRepository>();
         
             services.AddScoped<IUniversityProgramService, UniversityProgramService>();
             services.AddScoped<IUniversityProgramRepository, UniversityProgramRepository>();
