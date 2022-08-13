@@ -72,6 +72,8 @@ namespace UniAdmissionPlatform.DataTier.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseMySQL("Server=13.215.17.178,3306;Initial Catalog=db_uap;User ID=admin;Password=adminuap123;Connection Timeout=30;");
             }
         }
 
@@ -320,6 +322,8 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.ToTable("Follow");
 
                 entity.HasIndex(e => e.UniversityId, "Follow_University_Id_fk");
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.Follows)
@@ -572,6 +576,8 @@ namespace UniAdmissionPlatform.DataTier.Models
 
             modelBuilder.Entity<News>(entity =>
             {
+                entity.HasIndex(e => e.UniversityId, "News_University_Id_fk");
+
                 entity.HasIndex(e => e.DeletedAt, "ix_news_deleted_at");
 
                 entity.Property(e => e.Description).IsRequired();
@@ -587,6 +593,11 @@ namespace UniAdmissionPlatform.DataTier.Models
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasColumnType("tinytext");
+
+                entity.HasOne(d => d.University)
+                    .WithMany(p => p.News)
+                    .HasForeignKey(d => d.UniversityId)
+                    .HasConstraintName("News_University_Id_fk");
             });
 
             modelBuilder.Entity<NewsMajor>(entity =>
