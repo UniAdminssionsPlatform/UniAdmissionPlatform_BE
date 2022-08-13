@@ -279,7 +279,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             var mapper = _mapper.CreateMapper();
             var userInRequest = mapper.Map<User>(registerForUniversityManagerRequest);
             user.Account = userInRequest.Account;
-            user.Account.RoleId = "schoolAdmin";
+            user.Account.RoleId = "uniAdmin";
             user.Account.UniversityId = universityId;
             user.Account.ProfileImageUrl = "https://firebasestorage.googleapis.com/v0/b/uni-admission-platform.appspot.com/o/UAP-Image%2Favatar.png?alt=media&token=c33075eb-7bdf-4423-94b9-3703aa71b2f1";
             user.Status = (int)UserStatus.Pending;
