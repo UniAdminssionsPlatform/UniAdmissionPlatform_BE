@@ -190,7 +190,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (filter.EndDate != null)
             {
-                query = query.Where(s => s.EndDate <= filter.EndDate);
+                query = query.Where(s => s.EndDate <= filter.EndDate.Value.AddDays(1));
             }
 
             if (filter.Status != null)
