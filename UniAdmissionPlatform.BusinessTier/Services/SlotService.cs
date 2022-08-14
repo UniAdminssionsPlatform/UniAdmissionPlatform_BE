@@ -23,7 +23,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task CreateSlots(int highSchoolId, List<CreateSlotRequest> createSlotsRequest);
 
-        Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter,
+        Task<PageResult<SlotWithEventsViewModel>> GetSlotForSchoolUni(int highSchoolId, SlotFilterForSchoolAdmin filter,
             bool isPaging, int page,
             int limit);
 
@@ -131,7 +131,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
 
-        public async Task<PageResult<SlotViewModel>> GetSlotForSchoolUni(int highSchoolId,
+        public async Task<PageResult<SlotWithEventsViewModel>> GetSlotForSchoolUni(int highSchoolId,
             SlotFilterForSchoolAdmin filter, bool isPaging, int page, int limit)
         {
             var query = Get().Where(s => s.HighSchoolId == highSchoolId);
@@ -153,20 +153,20 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
             if (isPaging)
             {
-                var (total, queryable) = query
+                var (total, queryable) = query.ProjectTo<SlotWithEventsViewModel>(_mapper)
                     .PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-                return new PageResult<SlotViewModel>
+                return new PageResult<SlotWithEventsViewModel>
                 {
-                    List = _mapper.CreateMapper().Map<List<SlotViewModel>>(await queryable.ToListAsync()),
+                    List = await queryable.ToListAsync(),
                     Page = page == 0 ? 1 : page,
                     Limit = limit == 0 ? DefaultPaging : limit,
                     Total = total
                 };
             }
 
-            return new PageResult<SlotViewModel>
+            return new PageResult<SlotWithEventsViewModel>
             {
-                List = _mapper.CreateMapper().Map<List<SlotViewModel>>(await query.ToListAsync()),
+                List = await query.ProjectTo<SlotWithEventsViewModel>(_mapper).ToListAsync(),
                 Page = page == 0 ? 1 : page,
                 Limit = query.Count(),
                 Total = query.Count()

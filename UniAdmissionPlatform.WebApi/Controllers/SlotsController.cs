@@ -49,7 +49,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
             try
             {
                 var slots = await _slotService.GetSlotForSchoolUni(highSchoolId, slotFilterForSchoolAdmin, isPaging,page, limit);
-                return Ok(MyResponse<PageResult<SlotViewModel>>.OkWithDetail(slots, $"Đạt được thành công"));
+                return Ok(MyResponse<PageResult<SlotWithEventsViewModel>>.OkWithDetail(slots, $"Đạt được thành công"));
             }
             catch (ErrorResponse e)
             {
