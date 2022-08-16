@@ -198,7 +198,6 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Years" })]
         [Route("~/api/v{version:apiVersion}/student/school-years")]
-        [CasbinAuthorize]
         public async Task<IActionResult> GetAllSchoolYears([FromQuery] SchoolYearBaseViewModel filter, string sort, int page, int limit)
         {
             try
