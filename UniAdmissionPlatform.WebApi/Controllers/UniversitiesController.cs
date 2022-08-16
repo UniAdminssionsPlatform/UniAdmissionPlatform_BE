@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.University;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -161,6 +162,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/accounts/university")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest createUniversityRequest)
         {
             try
@@ -203,6 +205,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-university/profile")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateHighSchoolProfile([FromBody] UpdateUniversityProfileRequest updateUniversityProfileRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);

@@ -48,6 +48,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/student")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetStudentInfo([FromQuery] AccountBaseViewModel filter, int page, int limit, string sort)
         {
             try
@@ -81,6 +82,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/accounts")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllAccountForAdmin([FromQuery] ManagerAccountBaseViewModel filter, int page, int limit, string sort)
         {
             try
@@ -114,6 +116,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetStudentAccountById(int studentId)
         {
             try
@@ -259,6 +262,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{id:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountRequestForAdmin updateAccountRequestForAdmin)
         {
             try
@@ -371,6 +375,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-university/accounts/list")]
         [HiddenObjectParams("account.")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetUniversityManagerStatusPending([FromQuery] ManagerAccountBaseViewModel filter, string sort, int page, int limit)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -408,6 +413,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/list")]
+        [CasbinAuthorize]
         [HiddenObjectParams("account.")]
         public async Task<IActionResult> GetHighSchoolManagerStatusPending([FromQuery] ManagerAccountBaseViewModel filter, string sort, int page, int limit)
         {
@@ -446,6 +452,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-university/accounts/switch-status")]
+        [CasbinAuthorize]
         public async Task<IActionResult> SetActiveForUniversityAdmin(int userId)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -483,6 +490,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/accounts/switch-status")]
+        [CasbinAuthorize]
         public async Task<IActionResult> SetActiveForHighSchoolAdmin(int userId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);

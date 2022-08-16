@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.Slot;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -43,6 +44,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetSlotsForHighSchoolAdmin([FromQuery] SlotFilterForSchoolAdmin slotFilterForSchoolAdmin, bool isPaging, int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -78,6 +80,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateSlot([FromBody] List<CreateSlotRequest> createSlotRequest)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -113,6 +116,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/close-slot")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CloseSlot(int slotId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -151,6 +155,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/open-slot")]
+        [CasbinAuthorize]
         public async Task<IActionResult> OpenSlot(int slotId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -188,6 +193,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetSlotsForUniAdmin([FromQuery] SlotFilterForUniAdmin slotFilterForUniAdmin, bool isPaging, int page, int limit)
         {
             try
@@ -222,6 +228,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/slot-full")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateSlotStatus(int slotId)
         {
             var universityId = _authService.GetHighSchoolId(HttpContext);
@@ -259,6 +266,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{slotId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateTag(int slotId, [FromBody] UpdateSlotRequest updateSlotRequest)
         {
             try
@@ -292,6 +300,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{slotId:int}/events")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetListEventBySlotId(int slotId)
         {
             try

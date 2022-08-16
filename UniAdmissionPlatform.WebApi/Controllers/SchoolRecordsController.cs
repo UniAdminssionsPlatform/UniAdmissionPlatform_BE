@@ -9,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.SchoolRecord;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -45,6 +46,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-record")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllSchoolRecord([FromQuery] SchoolRecordBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -82,6 +84,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-record")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateSchoolRecord([FromBody] CreateSchoolRecordRequest createSchoolRecordRequest)
         {
             var studentId = _authService.GetUserId(HttpContext);
@@ -119,6 +122,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-record/{schoolRecordId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateSchoolRecord(int schoolRecordId, [FromBody] UpdateSchoolRecordRequest updateSchoolRecordRequest)
         {
             var studentId = _authService.GetUserId(HttpContext);
@@ -156,6 +160,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-record/{schoolRecordId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteSchoolRecordById(int schoolRecordId)
         {
             var studentId = _authService.GetUserId(HttpContext);
@@ -193,6 +198,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Years" })]
         [Route("~/api/v{version:apiVersion}/student/school-years")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllSchoolYears([FromQuery] SchoolYearBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -229,6 +235,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Years" })]
         [Route("~/api/v{version:apiVersion}/student/school-years/{schoolYearId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetSchoolYearById(int schoolYearId)
         {
             try
@@ -277,6 +284,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-records/{schoolYearId:int}/import-excel-template")]
+        [CasbinAuthorize]
         public async Task<IActionResult> ImportSchoolRecordExcel(int schoolYearId, IFormFile file)
         {
             try
@@ -312,6 +320,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - School Records" })]
         [Route("~/api/v{version:apiVersion}/student/school-record/get-score")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetScoreOfStudent(int schoolYearId)
         {
             var userId = _authService.GetUserId(HttpContext);

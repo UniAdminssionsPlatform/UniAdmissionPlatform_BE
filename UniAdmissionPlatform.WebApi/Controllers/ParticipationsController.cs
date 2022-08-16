@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.Participation;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -108,6 +109,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
         [Route("~/api/v{version:apiVersion}/student/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateParticipationForStudent([FromBody] CreateParticipationRequestForStudent createParticipationRequestForStudent)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -143,6 +145,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
         [Route("~/api/v{version:apiVersion}/student/[controller]/{id:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateParticipationForStudent(int id,
             UpdateParticipationRequestForStudent updateParticipationRequestForStudent)
         {
@@ -182,6 +185,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Student - Participations" })]
         [Route("~/api/v{version:apiVersion}/student/[controller]/{id:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteParticipationForStudent(int id)
         {
             var userId = _authService.GetUserId(HttpContext);

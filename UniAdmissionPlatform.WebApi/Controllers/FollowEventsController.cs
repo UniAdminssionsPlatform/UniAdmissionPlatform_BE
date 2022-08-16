@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.WebApi.Attributes;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
@@ -27,6 +28,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Follow Event" })]
         [Route("~/api/v{version:apiVersion}/student/is-follow")]
+        [CasbinAuthorize]
         public IActionResult GetFollow(int eventId)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -38,6 +40,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Follow Event" })]
         [Route("~/api/v{version:apiVersion}/student/follow")]
+        [CasbinAuthorize]
         public async Task<IActionResult> Follow(int eventId, bool isFollow)
         {
             var userId = _authService.GetUserId(HttpContext);

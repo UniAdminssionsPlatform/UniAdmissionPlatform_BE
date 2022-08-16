@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.StudentRecordItem;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -49,6 +50,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllStudentCertification(
             [FromQuery] StudentCertificationBaseViewModel filter, string sort, int page, int limit)
         {
@@ -88,6 +90,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications/{certificationId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetStudentCertificationByCertificationIdForStudent(int certificationId)
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -126,6 +129,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateStudentCertification(
             [FromBody] CreateStudentCertificationRequest createStudentCertificationRequest)
         {
@@ -167,6 +171,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications/{studentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateStudentCertification(int studentId, int certificationId,
             [FromBody] UpdateStudentCertificationRequest updateStudentCertificationRequest)
         {
@@ -205,6 +210,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Student - Certifications" })]
         [Route("~/api/v{version:apiVersion}/[controller]/certifications/{studentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteStudentCertificationById(int studentId, int certificationId)
         {
             try
@@ -241,6 +247,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllStudentRecordItem([FromQuery] StudentRecordItemBaseViewModel filter,
             string sort, int page, int limit)
         {
@@ -281,6 +288,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetStudentRecordItemById(int studentRecordItemId)
         {
             try
@@ -319,6 +327,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateStudentRecordItem(
             [FromBody] CreateStudentRecordItemRequest createStudentRecordItemRequest)
         {
@@ -359,6 +368,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateStudentRecordItem(int studentRecordItemId,
             [FromBody] UpdateStudentRecordItemRequest updateStudentRecordItemRequest)
         {
@@ -399,6 +409,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Student - Follow" })]
         [Route("~/api/v{version:apiVersion}/student/follow/{universityId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> FollowUniversity(int universityId)
         {
             try
@@ -436,6 +447,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Student - Follow" })]
         [Route("~/api/v{version:apiVersion}/student/follow/{universityId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetFollowUniversityById(int universityId)
         {
             try
@@ -509,6 +521,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Student - Record Items" })]
         [Route("~/api/v{version:apiVersion}/[controller]/record-items/{studentRecordItemId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteStudentRecordItemById(int studentRecordItemId)
         {
             try

@@ -9,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Subject;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -102,6 +103,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Subjects" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectRequest createSubjectRequest)
         {
             try
@@ -135,6 +137,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Subjects" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{subjectId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateSubject(int subjectId, [FromBody] UpdateSubjectRequest updateSubjectRequest)
         {
             try
@@ -171,6 +174,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Subjects" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{subjectId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteSubjectById(int subjectId)
         {
             try

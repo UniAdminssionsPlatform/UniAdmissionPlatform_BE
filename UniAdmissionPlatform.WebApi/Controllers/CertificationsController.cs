@@ -7,6 +7,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Certification;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -100,6 +101,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Certifications" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateCertification([FromBody] CreateCertificationRequest createCertificationRequest)
         {
             try
@@ -133,6 +135,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Certifications" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{certificationId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateCertification(int certificationId, [FromBody] UpdateCertificationRequest updateCertificationRequest)
         {
             try
@@ -169,6 +172,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Certifications" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{certificationId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteCertificationById(int certificationId)
         {
             try

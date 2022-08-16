@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.Event;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -46,6 +47,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest createEventRequest)
         {
             try
@@ -83,6 +85,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/set-publish")]
+        [CasbinAuthorize]
         public async Task<IActionResult> SetPublishEventForAdminUniversity(PublishEventRequest publishEventRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -118,6 +121,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventRequest updateEventRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -231,6 +235,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{eventId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteAEvent(int eventId)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -270,6 +275,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-university/slots/book")]
+        [CasbinAuthorize]
         public async Task<IActionResult> BookSlotForUniAdmin(BookSlotForUniAdminRequest bookSlotForUniAdminRequest)
         {
 
@@ -314,6 +320,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/list-event")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetListEventsByUniId(int universityId, string eventName, string eventHostName,int? eventTypeId, int? statusEvent, string sort, int page, int limit)
         {
             try
@@ -335,6 +342,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{universityId:int}/events")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetEventsByUniId(int universityId, DateTime? fromDate, DateTime? toDate, string sort)
         {
             try

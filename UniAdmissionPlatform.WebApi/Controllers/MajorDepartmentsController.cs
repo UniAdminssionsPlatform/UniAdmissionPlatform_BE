@@ -8,6 +8,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.MajorDepartment;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -41,6 +42,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Major Department" })]
         [Route("~/api/v{version:apiVersion}/admin-university/major-department")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllMajorDepartment([FromQuery] MajorDepartmentBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -78,6 +80,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - Major Department" })]
         [Route("~/api/v{version:apiVersion}/admin-university/major-department")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateMajorDepartment([FromBody] CreateMajorDepartmentRequest createMajorDepartmentRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -115,6 +118,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Major Department" })]
         [Route("~/api/v{version:apiVersion}/admin-university/major-department/{majorDepartmentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateMajorDepartment(int majorDepartmentId, [FromBody] UpdateMajorDepartmentRequest updateMajorDepartmentRequest)
         {
             try
@@ -151,6 +155,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - Major Department" })]
         [Route("~/api/v{version:apiVersion}/admin-university/major-department/{majorDepartmentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteMajorDepartmentById(int majorDepartmentId)
         {
             try

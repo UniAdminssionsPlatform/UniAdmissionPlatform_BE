@@ -8,6 +8,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.UniversityProgram;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -40,6 +41,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs/university-program-admissions")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetUniversityProgram([FromQuery] UniversityProgramBaseViewModel filter, int page = 1, int limit = 10)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -50,6 +52,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "University Programs" })]
         [Route("~/api/v{version:apiVersion}/student/university-programs/suggestion-university-program")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetSuggestionUniversityProgram()
         {
             var userId = _authService.GetUserId(HttpContext);
@@ -60,6 +63,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin/university-programs/sync")]
+        [CasbinAuthorize]
         public async Task<IActionResult> Sync()
         {
             await _groupPointService.Sync();
@@ -193,6 +197,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateUniversityProgram([FromBody] CreateUniversityProgramRequest bulkCreateUniversityProgramMajorRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -230,6 +235,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs/{universityProgramId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateUniversityProgram(int universityProgramId, [FromBody] UpdateUniversityProgramRequest updateUniversityProgramRequest)
         {
             try
@@ -266,6 +272,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - University Programs" })]
         [Route("~/api/v{version:apiVersion}/admin-university/university-programs/{universityProgramId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteUniversityProgramById(int universityProgramId)
         {
             try

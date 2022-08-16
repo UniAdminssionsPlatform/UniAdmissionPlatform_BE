@@ -13,6 +13,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.Reason;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -47,6 +48,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}/approve")]
+        [CasbinAuthorize]
         public async Task<IActionResult> ApproveEventToSlot(int eventCheckId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -85,6 +87,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - EventCheck" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks/{eventCheckId:int}/reject")]
+        [CasbinAuthorize]
         public async Task<IActionResult> RejectEventToSlot(int eventCheckId, [FromBody] CreateReasonRequestBody reason)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -120,6 +123,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin High School - Events" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/events/{slotId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetEventBySlotId(int slotId)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);
@@ -186,6 +190,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Event checks" })]
         [Route("~/api/v{version:apiVersion}/admin-university/event-checks")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllEventCheckForUniAdmin([FromQuery] EventCheckWithEventAndSlotModel filter, string sort,int page, int limit)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -211,6 +216,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin High School - Event checks" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/event-checks")]
         [HiddenObjectParams("event.,slot.")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllEventCheckForHighSchoolAdmin([FromQuery] EventCheckWithEventAndSlotModel filter, string sort,int page, int limit)
         {
             var highSchoolId = _authService.GetHighSchoolId(HttpContext);

@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using UniAdmissionPlatform.BusinessTier.Requests.Casbin;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
+using UniAdmissionPlatform.WebApi.Attributes;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
 {
@@ -28,6 +29,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/subjects")]
+        [CasbinAuthorize]
         public IActionResult GetAllSubjects()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllSubjects()));
@@ -40,6 +42,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/actions")]
+        [CasbinAuthorize]
         public IActionResult GetAllActions()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllActions()));
@@ -52,6 +55,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/objects")]
+        [CasbinAuthorize]
         public IActionResult GetAllObjects()
         {
             return Ok(MyResponse<List<string>>.OkWithData(_casbinService.GetAllObjects()));
@@ -64,6 +68,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/policies")]
+        [CasbinAuthorize]
         public IActionResult GetPolicy()
         {
             return Ok(MyResponse<List<List<string>>>.OkWithData(_casbinService.GetPolicy()));
@@ -77,6 +82,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/policies")]
+        [CasbinAuthorize]
         public async Task<IActionResult> AddPolicy(AddPolicyRequest addPolicyRequest)
         {
             try
@@ -98,6 +104,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Casbin" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/policies")]
+        [CasbinAuthorize]
         public async Task<IActionResult> AddPolicy(RemovePolicyRequest removePolicyRequest)
         {
             try

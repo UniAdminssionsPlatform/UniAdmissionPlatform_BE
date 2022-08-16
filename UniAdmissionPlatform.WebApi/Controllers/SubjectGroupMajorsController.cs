@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.SubjectGroup;
 using UniAdmissionPlatform.BusinessTier.Requests.SubjectGroupMajor;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -72,6 +73,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Group Majors" })]
         [Route("~/api/v{version:apiVersion}/admin/subject-group-majors")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateSubjectGroupMajor(CreateSubjectGroupMajorRequest createSubjectGroupMajorRequest)
         {
             try
@@ -108,6 +110,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Group Majors" })]
         [Route("~/api/v{version:apiVersion}/admin/subject-group-majors")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteSubjectGroupMajor([FromQuery] int subjectGroupId, [FromQuery] int majorId)
         {
             try

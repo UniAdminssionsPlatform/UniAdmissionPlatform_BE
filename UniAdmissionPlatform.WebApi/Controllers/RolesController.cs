@@ -6,6 +6,7 @@ using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
 using UniAdmissionPlatform.WebApi.Helpers;
 using UniAdmissionPlatform.BusinessTier.Generations.Services;
+using UniAdmissionPlatform.WebApi.Attributes;
 
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -38,6 +39,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - Roles" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetListRole([FromQuery] RoleBaseViewModel filter, string sort,
             int page, int limit)
         {

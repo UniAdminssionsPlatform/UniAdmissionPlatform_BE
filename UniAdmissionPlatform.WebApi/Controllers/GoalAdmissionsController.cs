@@ -9,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.GoalAdmission;
 using UniAdmissionPlatform.BusinessTier.Requests.GoalAdmissionType;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -41,6 +42,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admissions" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateGoalAdmission([FromBody] CreateGoalAdmissionRequest createGoalAdmissionRequest)
         {
             try
@@ -77,6 +79,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admissions" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{goalAdmissionId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateGoalAdmission(int goalAdmissionId, [FromBody] UpdateGoalAdmissionRequest updateGoalAdmissionRequest)
         {
             try
@@ -150,6 +153,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admissions" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{goalAdmissionId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteAGoalAdmission(int goalAdmissionId)
         {
             try
@@ -222,6 +226,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admission Types" })]
         [Route("~/api/v{version:apiVersion}/admin-university/goal-admission-type")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateGoalAdmissionType([FromBody] CreateGoalAdmissionTypeRequest createGoalAdmissionTypeRequest)
         {
             try
@@ -258,6 +263,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admission Types" })]
         [Route("~/api/v{version:apiVersion}/admin-university/goal-admission-type/{goalAdmissionTypeId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateGoalAdmissionType(int goalAdmissionTypeId, [FromBody] UpdateGoalAdmissionTypeRequest updateGoalAdmissionTypeRequest)
         {
             try
@@ -331,6 +337,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - Goal Admission Types" })]
         [Route("~/api/v{version:apiVersion}/admin-university/goal-admission-type/{goalAdmissionTypeId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteAGoalAdmissionType(int goalAdmissionTypeId)
         {
             try

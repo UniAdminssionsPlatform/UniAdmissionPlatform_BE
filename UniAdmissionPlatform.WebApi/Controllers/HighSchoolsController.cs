@@ -10,6 +10,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.HighSchool;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -150,6 +151,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - Slots" })]
         [Route("~/api/v{version:apiVersion}/admin-university/high-school-slots/{highSchoolId:int}/events")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetEventsInfoByHighSchoolId(int highSchoolId, string sort, int page, int limit)
         {
             try
@@ -217,6 +219,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/profile")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateHighSchoolProfile([FromBody] UpdateHighSchoolProfileRequest updateHighSchoolProfileRequest)
         {
             var id = _authService.GetHighSchoolId(HttpContext);
@@ -254,6 +257,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/accounts/high-school")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateHighSchoolProfile([FromBody] CreateHighSchoolRequest createHighSchoolRequest)
         {
             try

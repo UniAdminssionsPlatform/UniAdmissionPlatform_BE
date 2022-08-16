@@ -9,6 +9,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.News;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -41,6 +42,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin University - News" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateNews([FromBody] CreateNewsRequest createNewsRequest)
         {
             try
@@ -78,6 +80,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - News" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{newsId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateNews(int newsId, [FromBody] UpdateNewsRequest updateNewsRequest)
         {
             try
@@ -114,6 +117,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin University - News" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{newsId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteNewsById(int newsId)
         {
             try
@@ -180,6 +184,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin University - News" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllNewsForAdminUniversity([FromQuery] NewsWithPublishViewModel filter, string sort, int page, int limit)
         {
             var universityId = _authService.GetUniversityId(HttpContext);
@@ -201,6 +206,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin University - News" })]
         [Route("~/api/v{version:apiVersion}/admin-university/[controller]/{newsId:int}/set-publish")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetAllNewsForAdminUniversity(int newsId, [FromBody] SetPublishRequest setPublishRequest)
         {
             var universityId = _authService.GetUniversityId(HttpContext);

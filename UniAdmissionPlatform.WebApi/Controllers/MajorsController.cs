@@ -10,6 +10,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.Major;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -104,6 +105,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Majors" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateMajor([FromBody] CreateMajorRequest createMajorRequest)
         {
             try
@@ -137,6 +139,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Majors" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{id:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateMajor(int id, [FromBody] UpdateMajorRequest updateMajorRequest)
         {
             try
@@ -173,6 +176,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Majors" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{id:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteMajorById(int id)
         {
             try

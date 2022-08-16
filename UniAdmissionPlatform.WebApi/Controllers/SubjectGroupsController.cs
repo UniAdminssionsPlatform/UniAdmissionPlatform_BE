@@ -11,6 +11,7 @@ using UniAdmissionPlatform.BusinessTier.Requests.SubjectGroup;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.Services;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -109,6 +110,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/subject-groups")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateSubjectGroup(
             [FromBody] CreateSubjectGroupRequest createSubjectGroupRequest)
         {
@@ -144,6 +146,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/subject-groups/{id:int}")]
         [HttpPut]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateSubjectGroup(int id,
             [FromBody] UpdateSubjectGroupRequest updateSubjectGroupRequest)
         {
@@ -182,6 +185,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin - Subject Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/subject-groups/{id:int}")]
         [HttpDelete]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteSubjectGroup(int id)
         {
             try

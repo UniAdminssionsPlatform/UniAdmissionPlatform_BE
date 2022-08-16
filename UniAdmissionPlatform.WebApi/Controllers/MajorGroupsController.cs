@@ -10,6 +10,7 @@ using UniAdmissionPlatform.BusinessTier.Generations.Services;
 using UniAdmissionPlatform.BusinessTier.Requests.MajorGroup;
 using UniAdmissionPlatform.BusinessTier.Responses;
 using UniAdmissionPlatform.BusinessTier.ViewModels;
+using UniAdmissionPlatform.WebApi.Attributes;
 using UniAdmissionPlatform.WebApi.Helpers;
 
 namespace UniAdmissionPlatform.WebApi.Controllers
@@ -107,6 +108,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/major-groups")]
         [HttpPost]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetMajorGroupById([FromBody] CreateMajorGroupRequest createMajorGroupRequest)
         {
             try
@@ -142,6 +144,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/major-groups/{id:int}")]
         [HttpPut]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateMajorGroup(int id, UpdateMajorGroupRequest updateMajorGroupRequest)
         {
             try
@@ -179,6 +182,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [SwaggerOperation(Tags = new[] { "Admin - Major Groups" })]
         [Route("~/api/v{version:apiVersion}/admin/major-groups/{id:int}")]
         [HttpDelete]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteMajorGroupById(int id)
         {
             try

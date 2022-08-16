@@ -256,6 +256,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Admin - User" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> GetUsers([FromQuery] UserBaseViewModel filter, string sort, int page, int limit)
         {
             try
@@ -293,6 +294,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin High School - User" })]
         [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/{studentId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> SwitchStatusStudentAccount(int studentId)
         {
             try
@@ -329,6 +331,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/accounts/switch-status/{userId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> SwitchStatusAccountForAdmin(int userId)
         {
             try
@@ -365,6 +368,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Accounts" })]
         [Route("~/api/v{version:apiVersion}/admin/accounts/approve/{userId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> ApproveNewAccountForAdmin(int userId)
         {
             try

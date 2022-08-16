@@ -39,6 +39,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPost]
         [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]")]
+        [CasbinAuthorize]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagRequest createTagRequest)
         {
             try
@@ -75,6 +76,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpPut]
         [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{tagId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> UpdateTag(int tagId, [FromBody] UpdateTagRequest updateTagRequest)
         {
             try
@@ -148,6 +150,7 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         [HttpDelete]
         [SwaggerOperation(Tags = new[] { "Admin - Tags" })]
         [Route("~/api/v{version:apiVersion}/admin/[controller]/{tagId:int}")]
+        [CasbinAuthorize]
         public async Task<IActionResult> DeleteATag(int tagId)
         {
             try
