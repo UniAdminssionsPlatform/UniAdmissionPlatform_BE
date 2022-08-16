@@ -5,6 +5,7 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Razor.Templating.Core;
 using UniAdmissionPlatform.BusinessTier.Commons.Enums;
 using UniAdmissionPlatform.BusinessTier.Generations.Repositories;
@@ -29,14 +30,16 @@ namespace UniAdmissionPlatform.BusinessTier.Services
         private readonly IMailService _mailService;
         private readonly IUserRepository _userRepository;
         private readonly IReasonRepository _reasonRepository;
+        private readonly IConfiguration _configuration;
 
-        public MailBookingService(IMailService mailService, IEventCheckService eventCheckService, IAccountService accountService, IUserRepository userRepository, IReasonRepository reasonRepository)
+        public MailBookingService(IMailService mailService, IEventCheckService eventCheckService, IAccountService accountService, IUserRepository userRepository, IReasonRepository reasonRepository, IConfiguration configuration)
         {
             _mailService = mailService;
             _eventCheckService = eventCheckService;
             _accountService = accountService;
             _userRepository = userRepository;
             _reasonRepository = reasonRepository;
+            _configuration = configuration;
         }
 
         public async Task SendMailForNewBookingToSchoolAdmin(int eventCheckId)
@@ -82,7 +85,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     SlotStartDate = slotStartDate,
                     SlotEndDate = slotEndDate,
                     //todo:
-                    BookingDetailUrl = "https://ketnoituyensinh.tech"
+                    BookingDetailUrl = _configuration["Url:Fe"] + "/high-school/slot-manage",
                 };
 
                 var mailRequest = new MailRequest
@@ -129,7 +132,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
                     ApprovedTime = approvedTime,
-                    BookingDetailUrl = "https://ketnoituyensinh.tech",
+                    BookingDetailUrl = _configuration["Url:Fe"] + "/uni/manage-event",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -162,7 +165,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
                     ApprovedTime = approvedTime,
-                    BookingDetailUrl = "https://ketnoituyensinh.tech",
+                    BookingDetailUrl = _configuration["Url:Fe"] + $"/event/{eventChecks.EventId}",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -229,7 +232,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                     EventName = eventName,
                     RejectedTime = rejectedTime,
                     RejectReason = reason?.Detail ?? "",
-                    BookingDetailUrl = "https://ketnoituyensinh.tech",
+                    BookingDetailUrl = _configuration["Url:Fe"] + "/uni/manage-event",
                     SlotEndDate = slotEndDate,
                     SlotStartDate = slotStartDate,
                     NameOfHighSchool = eventChecks.Slot.HighSchool.Name
@@ -285,7 +288,7 @@ namespace UniAdmissionPlatform.BusinessTier.Services
                         (account.LastName ?? "")
                         + (" " + account.MiddleName ?? "")
                         + (" " + account.FirstName ?? ""),
-                    BookingDetailUrl = "https://ketnoituyensinh.tech",
+                    BookingDetailUrl = _configuration["Url:Fe"] + $"/event/{eventChecks.EventId}",
                     EventName = eventName,
                     SlotStartDate = slotStartDate,
                     SlotEndDate = slotEndDate,
