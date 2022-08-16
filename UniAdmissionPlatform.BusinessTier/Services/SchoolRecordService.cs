@@ -39,13 +39,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private readonly IConfigurationProvider _mapper;
         private readonly ISubjectRepository _subjectRepository;
         private readonly IStudentRecordItemRepository _studentRecordItemRepository;
+        private readonly ISchoolYearRepository _schoolYearRepository;
 
         public SchoolRecordService(IUnitOfWork unitOfWork, ISchoolRecordRepository repository, IMapper mapper,
-            ISubjectRepository subjectRepository, IStudentRecordItemRepository studentRecordItemRepository) : base(unitOfWork,
+            ISubjectRepository subjectRepository, IStudentRecordItemRepository studentRecordItemRepository, ISchoolYearRepository schoolYearRepository) : base(unitOfWork,
             repository)
         {
             _subjectRepository = subjectRepository;
             _studentRecordItemRepository = studentRecordItemRepository;
+            _schoolYearRepository = schoolYearRepository;
             _mapper = mapper.ConfigurationProvider;
         }
 
@@ -78,11 +80,23 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<int> CreateSchoolRecord(int studentId, CreateSchoolRecordRequest createSchoolRecordRequest)
         {
+            var schoolYear = _schoolYearRepository.Get().FirstOrDefault(sc => sc.Id == createSchoolRecordRequest.SchoolYearId);
+            if (schoolYear == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, "");
+            }
+
+            if (schoolYear.Year > DateTime.Now.Year)
+            {
+                throw new ErrorResponse(StatusCodes.Status400BadRequest, "Không thể tạo cho năm học ở tương lai.");
+            }
+
             if (Get().Any(sr => sr.StudentId == studentId 
                                 && sr.SchoolYearId == createSchoolRecordRequest.SchoolYearId && sr.DeletedAt == null))
             {
                 throw new ErrorResponse(StatusCodes.Status400BadRequest, "Đã tồn tại học bạ của năm này.");
             }
+            
             var schoolRecord = _mapper.CreateMapper().Map<SchoolRecord>(createSchoolRecordRequest);
             schoolRecord.StudentId = studentId;
             schoolRecord.CreatedAt = DateTime.Now;

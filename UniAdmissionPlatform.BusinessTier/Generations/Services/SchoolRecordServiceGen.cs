@@ -15,6 +15,9 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class SchoolRecordService:BaseService<SchoolRecord>,ISchoolRecordService
     {
-        public SchoolRecordService(IUnitOfWork unitOfWork,ISchoolRecordRepository repository):base(unitOfWork,repository){}
+        public SchoolRecordService(IUnitOfWork unitOfWork,ISchoolRecordRepository repository, ISchoolYearRepository schoolYearRepository):base(unitOfWork,repository)
+        {
+            _schoolYearRepository = schoolYearRepository;
+        }
     }
 }
