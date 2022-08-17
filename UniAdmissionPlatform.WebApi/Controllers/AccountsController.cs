@@ -172,6 +172,74 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         }
         
         /// <summary>
+        /// Get admin high school profile
+        /// </summary>
+        /// <response code="200">
+        /// Get admin high school profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Get admin high school profile fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin High School - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/admin-high-school/[controller]/profile")]
+        public async Task<IActionResult> GetAdminHighSchoolAccountById()
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            try
+            {
+                var adminHighSchoolAccountById = await _accountService.GetAdminHighSchoolAccountById(userId);
+                return Ok(MyResponse<AccountAdminHighSchoolByIdViewModelWithHighSchool>.OkWithDetail(adminHighSchoolAccountById, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get admin university profile
+        /// </summary>
+        /// <response code="200">
+        /// Get admin university profile successfully
+        /// </response>
+        /// <response code="400">
+        /// Get admin university profile fail
+        /// </response>
+        /// <returns></returns>
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Admin University - Accounts" })]
+        [Route("~/api/v{version:apiVersion}/university-high-school/[controller]/profile")]
+        public async Task<IActionResult> GetAdminUniversityAccountById()
+        {
+            var userId = _authService.GetUserId(HttpContext);
+            try
+            {
+                var adminUniversityAccountById = await _accountService.GetAdminUniversityAccountById(userId);
+                return Ok(MyResponse<AccountAdminUniversityByIdViewModelWithHighSchool>.OkWithDetail(adminUniversityAccountById, $"Đạt được thành công"));
+            }
+            catch (ErrorResponse e)
+            {
+                switch (e.Error.Code)
+                {
+                    case StatusCodes.Status404NotFound:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut,
+                            "Thất bại. " + e.Error.Message);
+                    default:
+                        throw new GlobalException(ExceptionCode.PrintMessageErrorOut, e.Error.Message);
+                }
+            }
+        }
+        
+        /// <summary>
         /// Get list university accounts
         /// </summary>
         /// <response code="200">

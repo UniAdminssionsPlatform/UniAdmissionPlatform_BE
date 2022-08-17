@@ -40,6 +40,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             int page, int limit, int highSchoolId);
         Task SetActiveForHighSchoolAdmin(int userId, int highSchoolId);
         Task SetActiveForUniversityAdmin(int userId, int universityId);
+        Task<AccountAdminHighSchoolByIdViewModelWithHighSchool> GetAdminHighSchoolAccountById(int adminHighSchoolId);
+        Task<AccountAdminUniversityByIdViewModelWithHighSchool> GetAdminUniversityAccountById(int adminUniversityId);
     }
     public partial class AccountService
     {
@@ -250,6 +252,34 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {studentId}.");
             }
             return studentAccount;
+        }
+        
+        public async Task<AccountAdminHighSchoolByIdViewModelWithHighSchool> GetAdminHighSchoolAccountById(int adminHighSchoolId)
+        {
+            
+            var highSchoolAccount = await Get()
+                .Where(a => a.Id == adminHighSchoolId)
+                .Include(a => a.IdNavigation)
+                .ProjectTo<AccountAdminHighSchoolByIdViewModelWithHighSchool>(_mapper).FirstOrDefaultAsync();
+            if (highSchoolAccount == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {adminHighSchoolId}.");
+            }
+            return highSchoolAccount;
+        }
+        
+        public async Task<AccountAdminUniversityByIdViewModelWithHighSchool> GetAdminUniversityAccountById(int adminUniversityId)
+        {
+            
+            var adminUniversityAccount = await Get()
+                .Where(a => a.Id == adminUniversityId)
+                .Include(a => a.IdNavigation)
+                .ProjectTo<AccountAdminUniversityByIdViewModelWithHighSchool>(_mapper).FirstOrDefaultAsync();
+            if (adminUniversityAccount == null)
+            {
+                throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy tài khoản id = {adminUniversityId}.");
+            }
+            return adminUniversityAccount;
         }
         
         public async Task<PageResult<ManagerAccountBaseViewModel>> GetAllAccountForAdmin(ManagerAccountBaseViewModel managerAccountBaseViewModel, int page, int limit, string sort)

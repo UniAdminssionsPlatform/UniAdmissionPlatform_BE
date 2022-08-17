@@ -46,7 +46,14 @@ namespace UniAdmissionPlatform.BusinessTier.ViewModels
     {
         
     }
-    
+    public class AccountAdminHighSchoolByIdViewModelWithHighSchool : AccountBaseViewModel
+    {
+        
+    }
+    public class AccountAdminUniversityByIdViewModelWithHighSchool : AccountBaseViewModel
+    {
+        
+    }
     public class AccountViewModelWithUniversity : AccountBaseViewModel
     {
         public UniversityBaseViewModel UniversityBaseViewModel { get; set; }
