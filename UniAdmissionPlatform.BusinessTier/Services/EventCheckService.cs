@@ -214,7 +214,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         {
             var eventBySlot = Get().Where(ec =>
                     ec.Status == (int)EventCheckStatus.Approved && ec.Slot.Status != (int)SlotStatus.Close &&
-                    ec.DeletedAt == null).OrderByDescending(ec => ec.Slot.StartDate)
+                    ec.DeletedAt == null && ec.Event.Status == (int) EventStatus.OnGoing).OrderByDescending(ec => ec.Slot.StartDate)
                 .ProjectTo<EventWithSlotViewModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
             var eventWithSlotViewModels = await eventBySlot.Item2.ToListAsync();
 
