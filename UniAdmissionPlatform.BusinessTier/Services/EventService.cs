@@ -50,12 +50,14 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         private readonly IConfigurationProvider _mapper;
         private readonly IEventTypeRepository _eventTypeRepository;
         private readonly IFollowEventRepository _followEventRepository;
+        private readonly IEventCheckService _eventCheckService;
         
-        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper, IEventTypeRepository eventTypeRepository, IFollowEventRepository followEventRepository) : base(unitOfWork, 
+        public EventService(IUnitOfWork unitOfWork, IEventRepository repository, IMapper mapper, IEventTypeRepository eventTypeRepository, IFollowEventRepository followEventRepository, IEventCheckService eventCheckService) : base(unitOfWork, 
             repository)
         {
             _eventTypeRepository = eventTypeRepository;
             _followEventRepository = followEventRepository;
+            _eventCheckService = eventCheckService;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -190,7 +192,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
         
         private const int LimitPaging = 50;
         private const int DefaultPaging = 10;
-        
+
         public async Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort, int page, int limit, int? userId)
         {
             var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper)

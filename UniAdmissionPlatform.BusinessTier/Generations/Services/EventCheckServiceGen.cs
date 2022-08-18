@@ -15,6 +15,10 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     }
     public partial class EventCheckService:BaseService<EventCheck>,IEventCheckService
     {
-        public EventCheckService(IUnitOfWork unitOfWork,IEventCheckRepository repository):base(unitOfWork,repository){}
+        public EventCheckService(IUnitOfWork unitOfWork,IEventCheckRepository repository, IFollowEventRepository followEventRepository, IFollowRepository followRepository):base(unitOfWork,repository)
+        {
+            _followRepository = followRepository;
+            _followEventRepository = followEventRepository;
+        }
     }
 }

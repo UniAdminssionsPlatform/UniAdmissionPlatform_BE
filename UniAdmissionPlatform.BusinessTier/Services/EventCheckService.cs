@@ -24,6 +24,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         Task ApproveEventToSlot(int highSchoolId, int eventCheckId);
         Task<EventBySlotBaseViewModel> GetEventBySlotId(int slotId, int highSchoolId);
+        Task<PageResult<EventWithSlotViewModel>> GetCurrentEvents(int userId, int highSchoolId, int page, int limit);
         Task RejectEventToSlot(int highSchoolId, int eventCheckId, string reason);
         Task<PageResult<EventWithSlotViewModel>> GetEventsByHighSchoolId(int highSchoolId, string sort, int page,
             int limit);
@@ -39,11 +40,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
     {
         private readonly IConfigurationProvider _mapper;
         private readonly IReasonRepository _reasonRepository;
+        private readonly IFollowRepository _followRepository;
+        private readonly IFollowEventRepository _followEventRepository;
         
-        public EventCheckService(IUnitOfWork unitOfWork, IEventCheckRepository repository, IMapper mapper, IReasonRepository reasonRepository) : base(unitOfWork, 
+        public EventCheckService(IUnitOfWork unitOfWork, IEventCheckRepository repository, IMapper mapper, IReasonRepository reasonRepository, IFollowEventRepository followEventRepository, IFollowRepository followRepository) : base(unitOfWork, 
             repository)
         {
             _reasonRepository = reasonRepository;
+            _followEventRepository = followEventRepository;
+            _followRepository = followRepository;
             _mapper = mapper.ConfigurationProvider;
         }
         
@@ -203,6 +208,46 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                     $"Không tìm thấy sự kiện nào theo slot với slot id = {slotId}");
             }
             return eventBySlot;
+        }
+        
+        public async Task<PageResult<EventWithSlotViewModel>> GetCurrentEvents(int userId, int highSchoolId, int page, int limit)
+        {
+            var eventBySlot = Get().Where(ec =>
+                    ec.Status == (int)EventCheckStatus.Approved && ec.Slot.Status != (int)SlotStatus.Close &&
+                    ec.DeletedAt == null).OrderByDescending(ec => ec.Slot.StartDate)
+                .ProjectTo<EventWithSlotViewModel>(_mapper).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            var eventWithSlotViewModels = await eventBySlot.Item2.ToListAsync();
+
+            var events = eventWithSlotViewModels.Select(e => e.Event).ToList();
+            
+            var followEvents = _followEventRepository.Get().Where(fe => events.Select(e => e.Id).Contains(fe.EventId) && userId == fe.StudentId).ToDictionary(fe => fe.EventId, fe => fe);
+            foreach (var eventWithSlotModel in events)
+            {
+                if (eventWithSlotModel.Id != null && followEvents.ContainsKey(eventWithSlotModel.Id.Value))
+                {
+                    eventWithSlotModel.IsFollow = followEvents[eventWithSlotModel.Id.Value].Status ==
+                                                  (int?)FollowEventStatus.Followed;
+                }
+            }
+
+            var universities = eventWithSlotViewModels.Select(e => e.Event.University).ToList();
+            
+            var follows = _followRepository.Get().Where(f => f.StudentId == userId && universities.Select(u => u.Id).Contains(f.UniversityId))
+                .ToDictionary(f => f.UniversityId, f => f);
+            foreach (var universityBaseViewModel in universities)
+            {
+                universityBaseViewModel.IsFollow =
+                    follows.ContainsKey(universityBaseViewModel.Id!.Value)
+                    && follows[universityBaseViewModel.Id!.Value].Status == (int?)FollowUniversityStatus.Followed;
+            }
+
+            return new PageResult<EventWithSlotViewModel>
+            {
+                List = eventWithSlotViewModels,
+                Page = page == 0 ? 1 : page,
+                Limit = limit == 0 ? DefaultPaging : limit,
+                Total = eventBySlot.Item1 
+            };
         }
         
         private const int LimitPaging = 50;

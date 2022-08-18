@@ -23,12 +23,14 @@ namespace UniAdmissionPlatform.WebApi.Controllers
         private readonly IEventService _eventService;
         private readonly IAuthService _authService;
         private readonly ISlotService _slotService;
+        private readonly IEventCheckService _eventCheckService;
         
-        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService)
+        public EventsController(IEventService eventService, IAuthService authService, ISlotService slotService, IEventCheckService eventCheckService)
         {
             _eventService = eventService;
             _authService = authService;
             _slotService = slotService;
+            _eventCheckService = eventCheckService;
         }
         
         /// <summary>
@@ -360,7 +362,18 @@ namespace UniAdmissionPlatform.WebApi.Controllers
                 }
             }
         }
-        
+
+        [HttpGet]
+        [SwaggerOperation(Tags = new[] { "Events" })]
+        [Route("~/api/v{version:apiVersion}/student/[controller]/get-current-events")]
+        public async Task<IActionResult> GetCurrentEvents(int page, int limit)
+        {
+            var highSchoolId = _authService.GetHighSchoolId(HttpContext);
+            var userId = _authService.GetUserId(HttpContext);
+            var currentEvents = await _eventCheckService.GetCurrentEvents(userId, highSchoolId, page, limit);
+            return Ok(MyResponse<PageResult<EventWithSlotViewModel>>.OkWithData(currentEvents));
+        }
+
         /// <summary>
         /// Get a on going event by university id
         /// </summary>
