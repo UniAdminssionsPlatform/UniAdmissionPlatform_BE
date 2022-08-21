@@ -197,14 +197,15 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
 
         public async Task<PageResult<EventWithSlotModel>> GetAllEvents(EventWithSlotModel filter, string sort, int page, int limit, int? userId)
         {
-            var (total, queryable) = Get().Where(t => t.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper)
-                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
-        
+            var query = Get();
             if (sort != null)
             {
-                queryable = queryable.OrderBy(sort);
+                query = query.OrderBy(sort);
             }
-
+            
+            var (total, queryable) = query.Where(t => t.DeletedAt == null).ProjectTo<EventWithSlotModel>(_mapper)
+                .DynamicFilter(filter).PagingIQueryable(page, limit, LimitPaging, DefaultPaging);
+            
             var eventWithSlotModels = await queryable.ToListAsync();
 
             if (userId != null)
