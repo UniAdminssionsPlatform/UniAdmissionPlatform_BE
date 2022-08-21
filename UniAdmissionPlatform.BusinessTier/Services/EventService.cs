@@ -96,7 +96,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             
             
             uniEvent.Status = (int)EventStatus.Init;
-
+            uniEvent.CreatedAt = DateTime.Now;
+            uniEvent.UpdatedAt = DateTime.Now;
             await CreateAsyn(uniEvent);
             return uniEvent.Id;
         }
@@ -150,7 +151,7 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
                 }                
             }
             
-
+            @event.UpdatedAt = DateTime.Now;
             await UpdateAsyn(@event);
         }
 
@@ -184,7 +185,8 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             {
                 throw new ErrorResponse(StatusCodes.Status404NotFound, $"Không tìm thấy event với id = {id}");
             }
-            
+
+            uniEvent.UpdatedAt = DateTime.Now;
             uniEvent.DeletedAt = DateTime.Now;
             uniEvent.Status = (int) EventStatus.Cancel;
             await UpdateAsyn(uniEvent);
