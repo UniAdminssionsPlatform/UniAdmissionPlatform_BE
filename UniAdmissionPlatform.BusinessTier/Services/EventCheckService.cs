@@ -118,12 +118,12 @@ namespace UniAdmissionPlatform.BusinessTier.Generations.Services
             eventCheck.Status = (int)EventCheckStatus.Approved;
             eventCheck.UpdatedAt = DateTime.Now;
             await UpdateAsyn(eventCheck);
-
-            if (eventCheck.Event.Status == (int) EventStatus.OnGoing)
-            {
-                BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
-                    mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheck.Id));                
-            }
+            BackgroundJob.Enqueue<IMailBookingService>(mailBookingService => mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheck.Id));
+            // if (eventCheck.Event.Status == (int) EventStatus.OnGoing)
+            // {
+            //     BackgroundJob.Enqueue<IMailBookingService>(mailBookingService =>
+            //         mailBookingService.SendEmailForApprovedEventToUniAdmin(eventCheck.Id));                
+            // }
         }
         
         public async Task RejectEventToSlot(int highSchoolId, int eventCheckId, string reason)
