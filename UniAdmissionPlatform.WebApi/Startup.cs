@@ -76,7 +76,7 @@ namespace UniAdmissionPlatform.WebApi
             
             JobStorage.Current = mySqlStorage;
             
-            services.AddHangfireServer(options => options.WorkerCount = 2);
+            //services.AddHangfireServer(options => options.WorkerCount = 2);
             
             services.InitFirebase();
 
