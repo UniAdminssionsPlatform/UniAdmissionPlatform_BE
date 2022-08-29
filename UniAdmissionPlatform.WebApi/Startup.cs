@@ -53,28 +53,28 @@ namespace UniAdmissionPlatform.WebApi
 
             services.ConfigureJsonFormatServices();
 
-            var mySqlStorage = new MySqlStorage(
-                Configuration.GetConnectionString("HangFire"),
-                new MySqlStorageOptions
-                {
-                    QueuePollInterval = TimeSpan.FromSeconds(10),
-                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                    PrepareSchemaIfNecessary = true,
-                    DashboardJobListLimit = 25000,
-                    TransactionTimeout = TimeSpan.FromMinutes(1),
-                    TablesPrefix = "Hangfire",
-                }
-            );
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseStorage(
-                    mySqlStorage
-                ));
+            // var mySqlStorage = new MySqlStorage(
+            //     Configuration.GetConnectionString("HangFire"),
+            //     new MySqlStorageOptions
+            //     {
+            //         QueuePollInterval = TimeSpan.FromSeconds(10),
+            //         JobExpirationCheckInterval = TimeSpan.FromHours(1),
+            //         CountersAggregateInterval = TimeSpan.FromMinutes(5),
+            //         PrepareSchemaIfNecessary = true,
+            //         DashboardJobListLimit = 25000,
+            //         TransactionTimeout = TimeSpan.FromMinutes(1),
+            //         TablesPrefix = "Hangfire",
+            //     }
+            // );
+            // services.AddHangfire(configuration => configuration
+                // .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                // .UseSimpleAssemblyNameTypeSerializer()
+                // .UseRecommendedSerializerSettings()
+                // .UseStorage(
+                //     mySqlStorage
+                // ));
             
-            JobStorage.Current = mySqlStorage;
+            // JobStorage.Current = mySqlStorage;
             
             //services.AddHangfireServer(options => options.WorkerCount = 2);
             
@@ -103,7 +103,7 @@ namespace UniAdmissionPlatform.WebApi
 
             services.ConfigureAutoMapperServices();
 
-            services.InitCronJobVoid();
+            // services.InitCronJobVoid();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
